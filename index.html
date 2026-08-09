@@ -1,859 +1,363 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>101creations — Ticket Branches</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ticket Branches</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
-/* =========================================================
-   GLOBAL
-========================================================= */
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:Arial,Helvetica,sans-serif;
-}
-
-html,body{
-    min-height:100%;
-    background:#08090d;
-    color:#fff;
-}
-
-body{
-    min-height:100vh;
-}
-
-.hidden{
-    display:none!important;
-}
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#0d0f14;color:#fff}
+.hidden{display:none!important}
 
 button{
-    border:0;
-    cursor:pointer;
-    font-weight:700;
-    transition:.2s;
+ border:0;border-radius:10px;padding:13px 20px;
+ cursor:pointer;font-weight:bold;font-size:15px
 }
-
-button:hover{
-    transform:translateY(-1px);
-    filter:brightness(1.08);
-}
-
-button:disabled{
-    opacity:.6;
-    cursor:not-allowed;
-    transform:none;
-}
+button:disabled{opacity:.6;cursor:not-allowed}
 
 input,select{
-    width:100%;
-    padding:14px 15px;
-    border-radius:12px;
-    border:1px solid #343846;
-    background:#171922;
-    color:white;
-    font-size:15px;
-    outline:none;
-}
-
-input:focus,select:focus{
-    border-color:#8b5cf6;
-    box-shadow:0 0 0 3px rgba(139,92,246,.12);
+ width:100%;padding:13px;border-radius:10px;
+ border:1px solid #3d414c;background:#20232b;
+ color:#fff;font-size:16px;outline:none
 }
 
 label{
-    display:block;
-    margin:15px 0 7px;
-    color:#bfc3d1;
-    font-size:14px;
+ display:block;margin:14px 0 7px;color:#ddd
 }
-
-/* =========================================================
-   LOGIN
-========================================================= */
 
 #loginScreen{
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:25px;
-
-    background:
-        radial-gradient(
-            circle at 50% 0%,
-            rgba(139,92,246,.28),
-            transparent 35%
-        ),
-        linear-gradient(
-            135deg,
-            #08090d,
-            #111321 55%,
-            #090a0f
-        );
-
-    position:relative;
-    overflow:hidden;
-}
-
-#loginScreen:before{
-    content:"";
-    position:absolute;
-    width:500px;
-    height:500px;
-    border-radius:50%;
-    background:rgba(91,33,182,.18);
-    filter:blur(100px);
-    top:-200px;
-    left:-150px;
-}
-
-#loginScreen:after{
-    content:"";
-    position:absolute;
-    width:400px;
-    height:400px;
-    border-radius:50%;
-    background:rgba(37,99,235,.12);
-    filter:blur(100px);
-    bottom:-180px;
-    right:-100px;
-}
-
-.login-wrapper{
-    width:100%;
-    max-width:460px;
-    position:relative;
-    z-index:2;
-}
-
-.team-name{
-    text-align:center;
-    font-size:22px;
-    font-weight:800;
-    letter-spacing:4px;
-    margin-bottom:18px;
-    color:#fff;
-    text-transform:none;
-    text-shadow:0 4px 20px rgba(139,92,246,.5);
-}
-
-.team-line{
-    width:65px;
-    height:3px;
-    margin:0 auto 25px;
-    border-radius:20px;
-    background:linear-gradient(
-        90deg,
-        #7c3aed,
-        #a78bfa
-    );
+ min-height:100vh;display:flex;align-items:center;
+ justify-content:center;padding:20px;
+ background:radial-gradient(circle at top,#392260,#0d0f14 60%)
 }
 
 .login-box{
-    width:100%;
-    padding:35px;
-
-    background:rgba(19,21,30,.88);
-    border:1px solid rgba(255,255,255,.10);
-    border-radius:24px;
-
-    box-shadow:
-        0 30px 80px rgba(0,0,0,.55),
-        inset 0 1px 0 rgba(255,255,255,.04);
-
-    backdrop-filter:blur(18px);
+ width:100%;max-width:430px;padding:35px;
+ background:#1b1e26;border:1px solid #414552;
+ border-radius:22px
 }
 
-.login-logo{
-    text-align:center;
-    margin-bottom:8px;
-    font-size:32px;
-    font-weight:900;
-}
-
-.login-logo span{
-    color:#9b7cff;
-}
+.login-box h1{text-align:center;margin:0}
+.login-box span,header span{color:#a878ff}
 
 .login-subtitle{
-    text-align:center;
-    color:#858b9d;
-    font-size:14px;
-    margin-bottom:25px;
+ text-align:center;color:#999;margin:10px 0 25px
 }
 
-.login-btn{
-    width:100%;
-    margin-top:22px;
-    padding:15px;
-    border-radius:12px;
-
-    background:linear-gradient(
-        135deg,
-        #7c3aed,
-        #9b5cf6
-    );
-
-    color:#fff;
-    font-size:15px;
+#loginBtn{
+ width:100%;margin-top:20px;
+ background:#8b5cf6;color:white
 }
 
 #loginError{
-    min-height:22px;
-    text-align:center;
-    margin-top:15px;
-    color:#ff6b6b;
+ color:#ff7070;text-align:center;min-height:20px
 }
-
-/* =========================================================
-   HEADER
-========================================================= */
 
 header{
-    position:sticky;
-    top:0;
-    z-index:50;
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    padding:17px 28px;
-
-    background:rgba(11,12,17,.94);
-    border-bottom:1px solid #282b36;
-
-    backdrop-filter:blur(15px);
+ padding:18px 25px;background:#171920;
+ border-bottom:1px solid #363944;
+ display:flex;justify-content:space-between;
+ align-items:center;gap:20px
 }
 
-.logo{
-    font-size:25px;
-    font-weight:900;
-}
-
-.logo span{
-    color:#9b7cff;
-}
+header h1{margin:0}
 
 .user-area{
-    display:flex;
-    align-items:center;
-    gap:15px;
+ display:flex;align-items:center;gap:15px
 }
 
-#userName{
-    color:#d8dae2;
-    font-size:13px;
-}
+#userName{color:#ddd}
 
 #userRole{
-    color:#a78bfa;
-    font-size:12px;
-    font-weight:bold;
-    margin-top:3px;
+ color:#a98cff;font-weight:bold;
+ font-size:13px;margin-top:4px
 }
 
 .logout{
-    padding:10px 15px;
-    border-radius:10px;
-    background:#292c36;
-    color:white;
+ background:#454952;color:white
 }
 
-/* =========================================================
-   CONTAINER
-========================================================= */
-
 .container{
-    max-width:1150px;
-    margin:30px auto;
-    padding:0 20px 50px;
+ max-width:1150px;margin:25px auto;padding:15px
 }
 
 .card{
-    background:
-        linear-gradient(
-            145deg,
-            rgba(28,30,41,.96),
-            rgba(17,18,25,.96)
-        );
-
-    border:1px solid #2c2f3a;
-    border-radius:20px;
-    padding:25px;
-    margin-bottom:25px;
-
-    box-shadow:0 15px 45px rgba(0,0,0,.22);
+ background:#181b22;border:1px solid #373a45;
+ border-radius:18px;padding:24px;margin-bottom:22px
 }
 
-.card h2{
-    margin-bottom:5px;
-    font-size:22px;
-}
-
-/* =========================================================
-   BRANCH SALES
-========================================================= */
+.card h2{margin-top:0}
 
 .branch{
-    margin-top:20px;
-    padding:20px;
-
-    background:#11131a;
-    border:1px solid #2d3040;
-    border-radius:16px;
+ border:1px solid #393d48;border-radius:15px;
+ padding:18px;margin-top:18px;background:#14171d
 }
 
 .branch h3{
-    color:#a78bfa;
-    margin-bottom:5px;
+ color:#ad8aff;margin-top:0
 }
 
 .row{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:12px;
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:12px
 }
 
 .green{
-    background:linear-gradient(
-        135deg,
-        #059669,
-        #10b981
-    );
-    color:white;
-    padding:13px 20px;
-    border-radius:11px;
-    margin-top:20px;
+ background:#059669;color:#fff;margin-top:18px
 }
 
 .purple{
-    background:linear-gradient(
-        135deg,
-        #7c3aed,
-        #9b5cf6
-    );
-    color:white;
-    padding:13px 20px;
-    border-radius:11px;
-    margin-top:20px;
+ background:#8b5cf6;color:#fff;margin-top:18px
 }
 
-.result-box{
-    margin-top:15px;
-    padding:18px;
-    background:#11131a;
-    border:1px solid #303342;
-    border-radius:14px;
-    line-height:1.8;
+.gray{
+ background:#4b4f59;color:white;margin-top:12px
 }
 
-/* =========================================================
-   TICKET FORM
-========================================================= */
-
-.ticket-note{
-    color:#858b9d;
-    margin:5px 0 15px;
-    font-size:14px;
+.message{
+ min-height:20px;margin-top:12px
 }
 
-.ticket-status{
-    margin-top:15px;
-    padding:12px;
-    border-radius:10px;
-    background:#11131a;
-    border:1px solid #303342;
+.customer-grid{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:12px
 }
 
-/* =========================================================
-   HOST
-========================================================= */
-
-.host-dashboard{
-    border-color:#7148d9;
+.ticket-card{
+ background:#15181e;
+ border:1px solid #393d47;
+ border-radius:15px;
+ padding:18px;
+ margin-top:15px
 }
 
-.live{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    color:#4ade80;
-    font-size:13px;
-    font-weight:bold;
-    margin:15px 0;
+.ticket-top{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:15px
 }
 
-.live-dot{
-    width:9px;
-    height:9px;
-    border-radius:50%;
-    background:#4ade80;
-    box-shadow:0 0 12px #4ade80;
+.ticket-top h3{
+ margin:0;color:#cbb6ff
 }
 
-.summary-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:14px;
-    margin-top:20px;
+.ticket-badge{
+ padding:5px 9px;
+ border-radius:7px;
+ background:#30234b;
+ color:#c9b5ff;
+ font-size:12px;
+ font-weight:bold
 }
 
-.summary-card{
-    background:#171922;
-    border:1px solid #303342;
-    border-radius:15px;
-    padding:20px;
+.edit-btn{
+ background:#8b5cf6!important;
+ color:#fff!important;
+ margin-top:15px;
+ display:inline-block!important;
+ visibility:visible!important;
+ opacity:1!important
+}
+
+.summary-grid,.grand-grid{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:15px;
+ margin-top:20px
+}
+
+.summary-card,.grand-item,.stat{
+ background:#22252d;
+ border:1px solid #393d47;
+ border-radius:12px;
+ padding:18px
 }
 
 .summary-card h3{
-    color:#9297a7;
-    font-size:14px;
+ margin-top:0;color:#aaa
 }
 
 .summary-number{
-    font-size:30px;
-    font-weight:900;
-    margin-top:8px;
+ font-size:30px;
+ font-weight:bold;
+ margin-top:8px
 }
 
-.online-number{
-    color:#4ade80;
-}
-
-.offline-number{
-    color:#fbbf24;
-}
-
-.money-number{
-    color:#60a5fa;
-}
-
-.total-number{
-    color:#c084fc;
-}
-
-/* =========================================================
-   HOST BRANCH
-========================================================= */
+.online-number{color:#4ade80}
+.offline-number{color:#fbbf24}
+.money-number{color:#60a5fa}
+.total-number{color:#c084fc}
 
 .host-branch{
-    margin-top:20px;
-    padding:20px;
-
-    background:#11131a;
-    border:1px solid #303342;
-    border-radius:17px;
+ margin-top:20px;
+ background:#14171d;
+ border:1px solid #393d47;
+ border-radius:16px;
+ padding:20px
 }
 
 .host-branch-title{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:15px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center
 }
 
 .host-branch-title h3{
-    color:#c084fc;
-    font-size:21px;
+ color:#c084fc
 }
 
 .branch-total{
-    background:#7c3aed;
-    padding:8px 13px;
-    border-radius:9px;
-    font-weight:bold;
+ background:#8b5cf6;
+ padding:7px 12px;
+ border-radius:8px
 }
 
 .stats-row{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:12px;
-}
-
-.stat{
-    background:#191b24;
-    border-radius:12px;
-    padding:15px;
-    border:1px solid #292c38;
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:12px
 }
 
 .stat-title{
-    color:#9297a7;
-    font-size:13px;
+ color:#aaa;font-size:13px
 }
 
 .stat-value{
-    font-size:24px;
-    font-weight:900;
-    margin-top:5px;
+ font-size:25px;
+ font-weight:bold;
+ margin-top:5px
 }
 
-/* =========================================================
-   OFFLINE DETAILS
-========================================================= */
-
 .offline-details{
-    margin-top:18px;
-    border-top:1px solid #303342;
-    padding-top:18px;
+ margin-top:18px;
+ border-top:1px solid #393d47;
+ padding-top:15px
 }
 
 .offline-details h4{
-    color:#fbbf24;
-    margin-bottom:10px;
+ color:#fbbf24
 }
 
 .offline-item{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:12px;
-    margin-top:8px;
-    background:#191b24;
-    border-radius:10px;
-}
-
-.offline-type{
-    font-weight:bold;
-}
-
-.offline-branch{
-    display:block;
-    color:#777d8f;
-    font-size:12px;
-    margin-top:3px;
+ display:flex;
+ justify-content:space-between;
+ background:#22252d;
+ padding:12px;
+ border-radius:9px;
+ margin-top:8px
 }
 
 .offline-count{
-    color:#fbbf24;
-    font-weight:bold;
-    font-size:17px;
+ color:#fbbf24;
+ font-weight:bold
 }
-
-/* =========================================================
-   CASH
-========================================================= */
-
-.cash-box{
-    margin-top:18px;
-    padding:18px;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(37,99,235,.12),
-            rgba(30,41,59,.2)
-        );
-
-    border:1px solid rgba(96,165,250,.25);
-    border-radius:14px;
-}
-
-.cash-title{
-    color:#8ea0bb;
-    font-size:13px;
-}
-
-.cash-value{
-    color:#60a5fa;
-    font-size:27px;
-    font-weight:900;
-    margin-top:5px;
-}
-
-/* =========================================================
-   GRAND TOTAL
-========================================================= */
 
 .grand-total{
-    margin-top:25px;
-    padding:25px;
-
-    border:1px solid #7148d9;
-    border-radius:19px;
-
-    background:
-        radial-gradient(
-            circle at top right,
-            rgba(124,58,237,.16),
-            transparent 45%
-        ),
-        #171822;
+ margin-top:25px;
+ padding:25px;
+ border-radius:18px;
+ border:1px solid #8b5cf6;
+ background:#211b30
 }
 
-.grand-total h2{
-    color:#c084fc;
-    margin-bottom:18px;
-}
+@media(max-width:800px){
 
-.grand-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:14px;
-}
+ .row,
+ .summary-grid,
+ .grand-grid,
+ .stats-row,
+ .customer-grid{
+  grid-template-columns:1fr
+ }
 
-.grand-item{
-    background:#1d1f29;
-    border:1px solid #303342;
-    border-radius:12px;
-    padding:18px;
-}
+ header{
+  flex-direction:column;
+  text-align:center
+ }
 
-.grand-label{
-    color:#8d92a2;
-    font-size:13px;
-}
-
-.grand-value{
-    font-size:27px;
-    font-weight:900;
-    margin-top:6px;
-}
-
-/* =========================================================
-   CUSTOMER SEARCH
-========================================================= */
-
-.search-info{
-    color:#858b9d;
-    font-size:13px;
-    margin-top:7px;
-}
-
-.customer-result{
-    margin-top:15px;
-    padding:18px;
-
-    background:#11131a;
-    border:1px solid #343746;
-    border-radius:15px;
-}
-
-.customer-result h3{
-    color:#c084fc;
-    margin-bottom:12px;
-}
-
-.customer-row{
-    display:flex;
-    justify-content:space-between;
-    gap:15px;
-
-    padding:9px 0;
-    border-bottom:1px solid #252834;
-}
-
-.customer-row:last-child{
-    border-bottom:0;
-}
-
-.customer-label{
-    color:#858b9d;
-}
-
-.customer-value{
-    font-weight:bold;
-    text-align:right;
-    word-break:break-word;
-}
-
-.online-badge{
-    color:#4ade80;
-    font-weight:bold;
-}
-
-.offline-badge{
-    color:#fbbf24;
-    font-weight:bold;
-}
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media(max-width:1000px){
-
-    .row{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .summary-grid{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .grand-grid{
-        grid-template-columns:repeat(2,1fr);
-    }
+ .ticket-top{
+  flex-direction:column;
+  align-items:flex-start
+ }
 
 }
-
-@media(max-width:700px){
-
-    header{
-        position:relative;
-        flex-direction:column;
-        gap:12px;
-        text-align:center;
-    }
-
-    .user-area{
-        justify-content:center;
-        flex-wrap:wrap;
-    }
-
-    .container{
-        margin-top:15px;
-        padding:0 12px 30px;
-    }
-
-    .card{
-        padding:18px;
-    }
-
-    .row,
-    .summary-grid,
-    .grand-grid,
-    .stats-row{
-        grid-template-columns:1fr;
-    }
-
-    .host-branch-title{
-        flex-direction:column;
-        align-items:flex-start;
-        gap:10px;
-    }
-
-    .login-box{
-        padding:25px 20px;
-    }
-
-    .team-name{
-        font-size:18px;
-        letter-spacing:2px;
-    }
-
-}
-
-/* =========================================================
-   FOOTER
-========================================================= */
-
-.footer{
-    text-align:center;
-    color:#555b6c;
-    font-size:12px;
-    padding:20px;
-}
-
 </style>
-
 </head>
-
 
 <body>
 
-
-<!-- =========================================================
-     LOGIN
-========================================================= -->
+<!-- LOGIN -->
 
 <div id="loginScreen">
 
-    <div class="login-wrapper">
+ <div class="login-box">
 
-        <div class="team-name">
-            Team 101creations
-        </div>
+  <h1>
+   Ticket <span>Branches</span>
+  </h1>
 
-        <div class="team-line"></div>
+  <div class="login-subtitle">
+   Branch Management System
+  </div>
 
-        <div class="login-box">
+  <label>Email</label>
 
-            <div class="login-logo">
-                Ticket <span>Branches</span>
-            </div>
+  <input
+   id="loginEmail"
+   type="email"
+   placeholder="Enter your email"
+  >
 
-            <div class="login-subtitle">
-                Branch Management System
-            </div>
+  <label>Password</label>
 
-            <label>Email</label>
+  <input
+   id="loginPassword"
+   type="password"
+   placeholder="Enter your password"
+  >
 
-            <input
-                id="loginEmail"
-                type="email"
-                placeholder="Enter your email"
-                autocomplete="username"
-            >
+  <button id="loginBtn">
+   Login
+  </button>
 
-            <label>Password</label>
+  <p id="loginError"></p>
 
-            <input
-                id="loginPassword"
-                type="password"
-                placeholder="Enter your password"
-                autocomplete="current-password"
-            >
-
-            <button
-                id="loginBtn"
-                class="login-btn"
-            >
-                Login
-            </button>
-
-            <p id="loginError"></p>
-
-        </div>
-
-    </div>
+ </div>
 
 </div>
 
 
-<!-- =========================================================
-     WEBSITE
-========================================================= -->
+<!-- WEBSITE -->
 
 <div id="website" class="hidden">
 
-
 <header>
 
-    <div class="logo">
-        Ticket <span>Branches</span>
-    </div>
+ <h1>
+  Ticket <span>Branches</span>
+ </h1>
 
-    <div class="user-area">
+ <div class="user-area">
 
-        <div>
+  <div>
+   <div id="userName"></div>
+   <div id="userRole"></div>
+  </div>
 
-            <div id="userName"></div>
+  <button
+   id="logoutBtn"
+   class="logout"
+  >
+   Logout
+  </button>
 
-            <div id="userRole"></div>
-
-        </div>
-
-        <button
-            id="logoutBtn"
-            class="logout"
-        >
-            Logout
-        </button>
-
-    </div>
+ </div>
 
 </header>
 
@@ -861,401 +365,346 @@ header{
 <div class="container">
 
 
-<!-- =========================================================
-     BRANCH SALES
-========================================================= -->
+<!-- SALES -->
+
+<div class="card" id="branchSalesCard">
+
+ <h2>Enter Ticket Sales</h2>
+
+ <label>Date</label>
+
+ <input
+  type="date"
+  id="date"
+ >
+
+ <label>Branch</label>
+
+ <select id="branch">
+
+  <option value="Zayed">Zayed</option>
+  <option value="Zamalek">Zamalek</option>
+  <option value="Heliopolis">Heliopolis</option>
+  <option value="CFC">CFC</option>
+
+ </select>
+
+
+ <div class="branch">
+
+  <h3>Online Tickets</h3>
+
+  <div class="row">
+
+   <div>
+    <label>Premium Orbit</label>
+    <input
+     type="number"
+     id="onlinePremium"
+     value="0"
+     min="0"
+    >
+   </div>
+
+   <div>
+    <label>Fanpit</label>
+    <input
+     type="number"
+     id="onlineFanpit"
+     value="0"
+     min="0"
+    >
+   </div>
+
+   <div>
+    <label>VIP</label>
+    <input
+     type="number"
+     id="onlineVIP"
+     value="0"
+     min="0"
+    >
+   </div>
+
+   <div>
+    <label>High Regular</label>
+    <input
+     type="number"
+     id="onlineHigh"
+     value="0"
+     min="0"
+    >
+   </div>
+
+  </div>
+
+ </div>
+
+
+ <div class="branch">
+
+  <h3>Offline Tickets</h3>
+
+  <div class="row">
+
+   <div>
+    <label>Premium Orbit</label>
+    <input
+     type="number"
+     id="offlinePremium"
+     value="0"
+     min="0"
+    >
+   </div>
+
+   <div>
+    <label>Fanpit</label>
+    <input
+     type="number"
+     id="offlineFanpit"
+     value="0"
+     min="0"
+    >
+   </div>
+
+   <div>
+    <label>VIP</label>
+    <input
+     type="number"
+     id="offlineVIP"
+     value="0"
+     min="0"
+    >
+   </div>
+
+   <div>
+    <label>High Regular</label>
+    <input
+     type="number"
+     id="offlineHigh"
+     value="0"
+     min="0"
+    >
+   </div>
+
+  </div>
+
+  <label>Offline Cash</label>
+
+  <input
+   type="number"
+   id="offlineCash"
+   value="0"
+   readonly
+  >
+
+ </div>
+
+
+ <button
+  class="green"
+  id="saveDataBtn"
+ >
+  Save Data
+ </button>
+
+ <p
+  id="saveMessage"
+  class="message"
+ ></p>
+
+</div>
+
+
+<!-- TICKET HANDOVER -->
 
 <div
-    class="card"
-    id="branchSalesCard"
+ class="card"
+ id="ticketHandoverCard"
 >
 
-    <h2>Enter Ticket Sales</h2>
+ <h2>🎟️ Ticket Handover</h2>
 
-    <label>Date</label>
+ <label>Date</label>
 
-    <input
-        type="date"
-        id="date"
-    >
+ <input
+  type="date"
+  id="ticketDate"
+ >
 
-    <label>Branch</label>
+ <div class="customer-grid">
 
-    <select id="branch">
+  <div>
+   <label>Customer Name</label>
+   <input id="customerName" type="text">
+  </div>
 
-        <option value="Zayed">
-            Zayed
-        </option>
+  <div>
+   <label>Order Number</label>
+   <input id="orderNumber" type="text">
+  </div>
 
-        <option value="Zamalek">
-            Zamalek
-        </option>
+  <div>
+   <label>Serial</label>
+   <input id="ticketSerial" type="text">
+  </div>
 
-        <option value="Heliopolis">
-            Heliopolis
-        </option>
+  <div>
+   <label>Ticket Type</label>
 
-        <option value="CFC">
-            CFC
-        </option>
+   <select id="ticketType">
+    <option>Premium Orbit</option>
+    <option>Fanpit</option>
+    <option>VIP</option>
+    <option>High Regular</option>
+   </select>
 
-    </select>
+  </div>
 
+  <div>
+   <label>Gmail</label>
+   <input id="customerGmail" type="email">
+  </div>
 
-    <div class="branch">
+  <div>
+   <label>Phone</label>
+   <input id="customerPhone" type="tel">
+  </div>
 
-        <h3>Online Tickets</h3>
+  <div>
+   <label>Sale Type</label>
 
-        <div class="row">
+   <select id="saleType">
+    <option value="Online">Online</option>
+    <option value="Offline">Offline</option>
+   </select>
 
-            <div>
-                <label>Premium Orbit</label>
-                <input
-                    type="number"
-                    id="onlinePremium"
-                    value="0"
-                    min="0"
-                >
-            </div>
+  </div>
 
-            <div>
-                <label>Fanpit</label>
-                <input
-                    type="number"
-                    id="onlineFanpit"
-                    value="0"
-                    min="0"
-                >
-            </div>
-
-            <div>
-                <label>VIP</label>
-                <input
-                    type="number"
-                    id="onlineVIP"
-                    value="0"
-                    min="0"
-                >
-            </div>
-
-            <div>
-                <label>High Regular</label>
-                <input
-                    type="number"
-                    id="onlineHigh"
-                    value="0"
-                    min="0"
-                >
-            </div>
-
-        </div>
-
-    </div>
+ </div>
 
 
-    <div class="branch">
-
-        <h3>Offline Tickets</h3>
-
-        <div class="row">
-
-            <div>
-                <label>Premium Orbit</label>
-                <input
-                    type="number"
-                    id="offlinePremium"
-                    value="0"
-                    min="0"
-                >
-            </div>
-
-            <div>
-                <label>Fanpit</label>
-                <input
-                    type="number"
-                    id="offlineFanpit"
-                    value="0"
-                    min="0"
-                >
-            </div>
-
-            <div>
-                <label>VIP</label>
-                <input
-                    type="number"
-                    id="offlineVIP"
-                    value="0"
-                    min="0"
-                >
-            </div>
-
-            <div>
-                <label>High Regular</label>
-                <input
-                    type="number"
-                    id="offlineHigh"
-                    value="0"
-                    min="0"
-                >
-            </div>
-
-        </div>
-
-        <label>Offline Cash (EGP)</label>
-
-        <input
-            type="number"
-            id="offlineCash"
-            value="0"
-            readonly
-        >
-
-    </div>
+ <button
+  class="purple"
+  id="saveTicketBtn"
+ >
+  Save Ticket
+ </button>
 
 
-    <button
-        class="green"
-        id="saveDataBtn"
-    >
-        Save Data
-    </button>
+ <button
+  class="gray hidden"
+  id="cancelEditBtn"
+ >
+  Cancel Edit
+ </button>
 
-    <p id="saveMessage"></p>
+
+ <p
+  id="ticketMessage"
+  class="message"
+ ></p>
 
 </div>
 
 
-<!-- =========================================================
-     SEARCH DAY
-========================================================= -->
+<!-- MY TICKETS -->
 
 <div
-    class="card"
-    id="searchCard"
+ class="card"
+ id="branchTicketsCard"
 >
 
-    <h2>Search Day</h2>
+ <h2>🎟️ My Tickets</h2>
 
-    <label>Select Date</label>
+ <label>Select Date</label>
 
-    <input
-        type="date"
-        id="searchDate"
-    >
+ <input
+  type="date"
+  id="myTicketsDate"
+ >
 
-    <button
-        class="green"
-        id="searchBtn"
-    >
-        Show Day
-    </button>
+ <button
+  class="green"
+  id="loadMyTicketsBtn"
+ >
+  Show My Tickets
+ </button>
 
-    <div id="results"></div>
+ <div id="myTicketsResults"></div>
 
 </div>
 
 
-<!-- =========================================================
-     TICKET HANDOVER
-========================================================= -->
+<!-- SEARCH -->
 
 <div
-    class="card"
-    id="ticketHandoverCard"
+ class="card"
+ id="searchCard"
 >
 
-    <h2>🎟️ Ticket Handover</h2>
+ <h2>Search Day</h2>
 
-    <p class="ticket-note">
-        Select the ticket and enter the customer's information.
-    </p>
+ <label>Select Date</label>
 
+ <input
+  type="date"
+  id="searchDate"
+ >
 
-    <label>Date</label>
+ <button
+  class="green"
+  id="searchBtn"
+ >
+  Show Day
+ </button>
 
-    <input
-        type="date"
-        id="ticketDate"
-    >
-
-
-    <label>Ticket Type</label>
-
-    <select id="ticketType">
-
-        <option>
-            Premium Orbit
-        </option>
-
-        <option>
-            Fanpit
-        </option>
-
-        <option>
-            VIP
-        </option>
-
-        <option>
-            High Regular
-        </option>
-
-    </select>
-
-
-    <label>Sale Type</label>
-
-    <select id="saleType">
-
-        <option value="Online">
-            Online
-        </option>
-
-        <option value="Offline">
-            Offline
-        </option>
-
-    </select>
-
-
-    <label>Customer Name</label>
-
-    <input
-        type="text"
-        id="customerName"
-        placeholder="Customer name"
-    >
-
-
-    <label>Order Number</label>
-
-    <input
-        type="text"
-        id="orderNumber"
-        placeholder="Order number"
-    >
-
-
-    <label>Ticket Serial</label>
-
-    <input
-        type="text"
-        id="ticketSerial"
-        placeholder="Ticket serial"
-    >
-
-
-    <label>Gmail</label>
-
-    <input
-        type="email"
-        id="customerGmail"
-        placeholder="customer@gmail.com"
-    >
-
-
-    <label>Phone</label>
-
-    <input
-        type="tel"
-        id="customerPhone"
-        placeholder="Phone number"
-    >
-
-
-    <button
-        class="purple"
-        id="saveTicketBtn"
-    >
-        Save Ticket
-    </button>
-
-    <div
-        id="ticketMessage"
-        class="ticket-status"
-    ></div>
+ <div id="results"></div>
 
 </div>
 
 
-<!-- =========================================================
-     HOST DASHBOARD
-========================================================= -->
+<!-- HOST -->
 
 <div
-    class="card host-dashboard hidden"
-    id="hostDashboard"
+ class="card hidden"
+ id="hostDashboard"
 >
 
-    <h2>👑 Host Dashboard</h2>
+ <h2>👑 Host Dashboard</h2>
 
-    <div class="live">
+ <label>Select Date</label>
 
-        <span class="live-dot"></span>
+ <input
+  type="date"
+  id="hostDate"
+ >
 
-        LIVE — Branch sales update automatically
+ <div id="hostDashboardResults"></div>
 
-    </div>
+ <hr
+  style="margin:30px 0;border-color:#333"
+ >
 
+ <h2>🔎 Customer Search</h2>
 
-    <label>Select Date</label>
+ <label>Search Customer</label>
 
-    <input
-        type="date"
-        id="hostDate"
-    >
+ <input
+  id="hostCustomerSearch"
+  placeholder="Name / Phone / Serial / Gmail / Order Number"
+ >
 
+ <button
+  class="purple"
+  id="hostSearchBtn"
+ >
+  Search Customer
+ </button>
 
-    <div id="hostDashboardResults">
-        <p style="color:#888;">
-            Loading...
-        </p>
-    </div>
-
-</div>
-
-
-<!-- =========================================================
-     HOST CUSTOMER SEARCH
-========================================================= -->
-
-<div
-    class="card hidden"
-    id="hostCustomerSearch"
->
-
-    <h2>🔎 Customer Search</h2>
-
-    <p class="search-info">
-        Search by Customer Name, Phone, Serial, Gmail or Order Number.
-    </p>
-
-
-    <label>Search Customer</label>
-
-    <input
-        type="text"
-        id="customerSearchInput"
-        placeholder="Name / Phone / Serial / Gmail / Order Number"
-    >
-
-
-    <button
-        class="purple"
-        id="customerSearchBtn"
-    >
-        Search Customer
-    </button>
-
-
-    <div id="customerSearchResults"></div>
+ <div id="hostCustomerResults"></div>
 
 </div>
-
-
-<div class="footer">
-    Team 101creations
-</div>
-
 
 </div>
 
@@ -1264,9 +713,9 @@ header{
 
 <script>
 
-/* =========================================================
+/* ================================
    SUPABASE
-========================================================= */
+================================ */
 
 const SUPABASE_URL =
 "https://ubaooclkpgminlbifpjf.supabase.co";
@@ -1276,1877 +725,2063 @@ const SUPABASE_KEY =
 
 const supabaseClient =
 window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
+ SUPABASE_URL,
+ SUPABASE_KEY
 );
 
 
-/* =========================================================
+/* ================================
    STATE
-========================================================= */
+================================ */
 
 let currentUser = null;
 let currentBranch = "";
 let isHost = false;
+let editingTicketId = null;
 
 
-/* =========================================================
-   TODAY
-========================================================= */
+/* ================================
+   HELPERS
+================================ */
 
 function today(){
 
-    const d = new Date();
+ const d = new Date();
 
-    return (
-        d.getFullYear() +
-        "-" +
-        String(d.getMonth()+1).padStart(2,"0") +
-        "-" +
-        String(d.getDate()).padStart(2,"0")
-    );
-
-}
-
-
-/* =========================================================
-   ELEMENTS
-========================================================= */
-
-const loginScreen =
-document.getElementById("loginScreen");
-
-const website =
-document.getElementById("website");
-
-const loginBtn =
-document.getElementById("loginBtn");
-
-const loginError =
-document.getElementById("loginError");
-
-
-/* =========================================================
-   USER PROFILE
-========================================================= */
-
-async function loadUserProfile(user){
-
-    const {data,error} =
-        await supabaseClient
-        .from("branch_users")
-        .select("branch")
-        .eq("user_id",user.id)
-        .maybeSingle();
-
-
-    if(error)
-        throw error;
-
-
-    if(!data)
-        throw new Error(
-            "User is not assigned to a branch."
-        );
-
-
-    currentUser = user;
-
-    currentBranch = data.branch;
-
-    isHost =
-        String(data.branch)
-        .toUpperCase() === "ALL";
-
-
-    document.getElementById(
-        "userName"
-    ).textContent =
-        user.email;
-
-
-    document.getElementById(
-        "userRole"
-    ).textContent =
-        isHost
-        ? "HOST — ALL BRANCHES"
-        : currentBranch;
-
-
-    if(isHost){
-
-        document.getElementById(
-            "branchSalesCard"
-        ).classList.add("hidden");
-
-        document.getElementById(
-            "searchCard"
-        ).classList.add("hidden");
-
-        document.getElementById(
-            "ticketHandoverCard"
-        ).classList.add("hidden");
-
-        document.getElementById(
-            "hostDashboard"
-        ).classList.remove("hidden");
-
-        document.getElementById(
-            "hostCustomerSearch"
-        ).classList.remove("hidden");
-
-    }
-
-    else{
-
-        document.getElementById(
-            "branchSalesCard"
-        ).classList.remove("hidden");
-
-        document.getElementById(
-            "searchCard"
-        ).classList.remove("hidden");
-
-        document.getElementById(
-            "ticketHandoverCard"
-        ).classList.remove("hidden");
-
-        document.getElementById(
-            "hostDashboard"
-        ).classList.add("hidden");
-
-        document.getElementById(
-            "hostCustomerSearch"
-        ).classList.add("hidden");
-
-
-        document.getElementById(
-            "branch"
-        ).value =
-            currentBranch;
-
-
-        document.getElementById(
-            "branch"
-        ).disabled = true;
-
-    }
+ return (
+  d.getFullYear() +
+  "-" +
+  String(d.getMonth()+1).padStart(2,"0") +
+  "-" +
+  String(d.getDate()).padStart(2,"0")
+ );
 
 }
 
 
-/* =========================================================
-   OPEN WEBSITE
-========================================================= */
+function esc(value){
 
-async function openWebsite(user){
-
-    await loadUserProfile(user);
-
-    loginScreen.style.display = "none";
-
-    website.classList.remove("hidden");
-
-
-    document.getElementById("date").value =
-        today();
-
-    document.getElementById("searchDate").value =
-        today();
-
-    document.getElementById("ticketDate").value =
-        today();
-
-    document.getElementById("hostDate").value =
-        today();
-
-
-    calculateOfflineCash();
-
-
-    if(isHost){
-
-        await loadHostDashboard();
-
-    }
+ return String(value ?? "")
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
 
 }
 
 
-/* =========================================================
+/* ================================
    LOGIN
-========================================================= */
+================================ */
 
 async function login(){
 
-    loginError.textContent = "";
+ const email =
+ document
+ .getElementById("loginEmail")
+ .value
+ .trim();
 
-    const email =
-        document.getElementById(
-            "loginEmail"
-        ).value.trim();
+ const password =
+ document
+ .getElementById("loginPassword")
+ .value;
 
+ const error =
+ document
+ .getElementById("loginError");
 
-    const password =
-        document.getElementById(
-            "loginPassword"
-        ).value;
+ const btn =
+ document
+ .getElementById("loginBtn");
 
+ error.textContent = "";
 
-    if(!email || !password){
+ if(!email || !password){
 
-        loginError.textContent =
-            "Enter email and password.";
+  error.textContent =
+  "Enter email and password.";
 
-        return;
+  return;
 
-    }
+ }
 
+ btn.disabled = true;
 
-    loginBtn.disabled = true;
-
-    loginBtn.textContent =
-        "Logging in...";
-
-
-    try{
-
-        const {data,error} =
-            await supabaseClient.auth
-            .signInWithPassword({
-                email,
-                password
-            });
+ btn.textContent =
+ "Logging in...";
 
 
-        if(error)
-            throw error;
+ try{
 
+  const {
+   data,
+   error:loginError
+  } =
+  await supabaseClient.auth
+  .signInWithPassword({
+   email,
+   password
+  });
 
-        await openWebsite(
-            data.user
-        );
+  if(loginError)
+   throw loginError;
 
-    }
+  await openWebsite(data.user);
 
-    catch(error){
+ }catch(e){
 
-        console.error(error);
+  console.error(e);
 
-        loginError.textContent =
-            "Invalid login credentials.";
+  error.textContent =
+  e.message ||
+  "Login failed.";
 
-    }
+ }finally{
 
-    finally{
+  btn.disabled = false;
 
-        loginBtn.disabled = false;
+  btn.textContent =
+  "Login";
 
-        loginBtn.textContent =
-            "Login";
-
-    }
+ }
 
 }
 
 
-loginBtn.addEventListener(
-    "click",
-    login
+document
+.getElementById("loginBtn")
+.addEventListener(
+ "click",
+ login
 );
 
 
-document.getElementById(
-    "loginPassword"
-).addEventListener(
-    "keydown",
-    e => {
+document
+.getElementById("loginPassword")
+.addEventListener(
+ "keydown",
+ e=>{
 
-        if(e.key === "Enter")
-            login();
+  if(e.key==="Enter")
+   login();
 
-    }
+ }
 );
 
 
-/* =========================================================
+/* ================================
+   PROFILE
+================================ */
+
+async function loadUserProfile(user){
+
+ const {
+  data,
+  error
+ } =
+ await supabaseClient
+ .from("branch_users")
+ .select("branch")
+ .eq("user_id",user.id)
+ .maybeSingle();
+
+
+ if(error)
+  throw error;
+
+
+ if(!data){
+
+  throw new Error(
+   "No branch profile found for this user."
+  );
+
+ }
+
+
+ currentUser =
+ user;
+
+ currentBranch =
+ String(
+  data.branch || ""
+ ).trim();
+
+
+ isHost =
+ currentBranch
+ .toUpperCase() === "ALL";
+
+
+ document
+ .getElementById("userName")
+ .textContent =
+ user.email || "";
+
+
+ document
+ .getElementById("userRole")
+ .textContent =
+ isHost
+ ? "HOST — ALL BRANCHES"
+ : currentBranch;
+
+
+/* HOST */
+
+ if(isHost){
+
+  document
+  .getElementById(
+   "branchSalesCard"
+  )
+  .classList.add("hidden");
+
+  document
+  .getElementById(
+   "ticketHandoverCard"
+  )
+  .classList.add("hidden");
+
+  document
+  .getElementById(
+   "branchTicketsCard"
+  )
+  .classList.add("hidden");
+
+  document
+  .getElementById(
+   "searchCard"
+  )
+  .classList.add("hidden");
+
+  document
+  .getElementById(
+   "hostDashboard"
+  )
+  .classList.remove("hidden");
+
+
+ }else{
+
+/* BRANCH */
+
+  document
+  .getElementById(
+   "branchSalesCard"
+  )
+  .classList.remove("hidden");
+
+  document
+  .getElementById(
+   "ticketHandoverCard"
+  )
+  .classList.remove("hidden");
+
+  document
+  .getElementById(
+   "branchTicketsCard"
+  )
+  .classList.remove("hidden");
+
+  document
+  .getElementById(
+   "searchCard"
+  )
+  .classList.remove("hidden");
+
+  document
+  .getElementById(
+   "hostDashboard"
+  )
+  .classList.add("hidden");
+
+  document
+  .getElementById("branch")
+  .value =
+  currentBranch;
+
+  document
+  .getElementById("branch")
+  .disabled =
+  true;
+
+ }
+
+}
+
+
+/* ================================
+   OPEN WEBSITE
+================================ */
+
+async function openWebsite(user){
+
+ await loadUserProfile(user);
+
+ document
+ .getElementById("loginScreen")
+ .classList.add("hidden");
+
+ document
+ .getElementById("website")
+ .classList.remove("hidden");
+
+
+ [
+  "date",
+  "ticketDate",
+  "myTicketsDate",
+  "searchDate",
+  "hostDate"
+ ]
+ .forEach(
+  id=>{
+
+   const el =
+   document.getElementById(id);
+
+   if(el)
+    el.value =
+    today();
+
+  }
+ );
+
+
+ calculateOfflineCash();
+
+
+ if(isHost)
+  await loadHostDashboard();
+ else
+  await loadMyTickets();
+
+}
+
+
+/* ================================
    SESSION
-========================================================= */
+================================ */
 
 async function checkSession(){
 
-    const {data,error} =
-        await supabaseClient.auth
-        .getSession();
+ try{
 
+  const {
+   data,
+   error
+  } =
+  await supabaseClient
+  .auth
+  .getSession();
 
-    if(error){
+  if(error)
+   throw error;
 
-        console.error(error);
+  if(data.session){
 
-        return;
+   await openWebsite(
+    data.session.user
+   );
 
-    }
+  }
 
+ }catch(e){
 
-    if(data?.session?.user){
+  console.error(e);
 
-        try{
-
-            await openWebsite(
-                data.session.user
-            );
-
-        }
-
-        catch(error){
-
-            console.error(error);
-
-            await supabaseClient.auth
-            .signOut();
-
-        }
-
-    }
+ }
 
 }
 
 
-supabaseClient.auth
-.onAuthStateChange(
-    async(event,session)=>{
-
-        if(
-            event === "SIGNED_IN" &&
-            session?.user
-        ){
-
-            try{
-
-                await openWebsite(
-                    session.user
-                );
-
-            }
-
-            catch(error){
-
-                console.error(error);
-
-            }
-
-        }
+checkSession();
 
 
-        if(event === "SIGNED_OUT"){
-
-            location.reload();
-
-        }
-
-    }
-);
-
-
-/* =========================================================
+/* ================================
    LOGOUT
-========================================================= */
+================================ */
 
-document.getElementById(
-    "logoutBtn"
-).addEventListener(
-    "click",
-    async()=>{
+document
+.getElementById("logoutBtn")
+.addEventListener(
+ "click",
+ async()=>{
 
-        await supabaseClient.auth
-        .signOut();
+  await supabaseClient
+  .auth
+  .signOut();
 
-    }
+  location.reload();
+
+ }
 );
 
 
-/* =========================================================
-   PRICES
-========================================================= */
-
-const PRICES = {
-
-    "Premium Orbit":1500,
-    "Fanpit":1200,
-    "VIP":800,
-    "High Regular":500
-
-};
-
-
-/* =========================================================
+/* ================================
    OFFLINE CASH
-========================================================= */
+================================ */
 
 function calculateOfflineCash(){
 
-    const premium =
-        Number(
-            document.getElementById(
-                "offlinePremium"
-            )?.value || 0
-        );
+ const premium =
+ Number(
+  document
+  .getElementById(
+   "offlinePremium"
+  ).value || 0
+ );
+
+ const fanpit =
+ Number(
+  document
+  .getElementById(
+   "offlineFanpit"
+  ).value || 0
+ );
+
+ const vip =
+ Number(
+  document
+  .getElementById(
+   "offlineVIP"
+  ).value || 0
+ );
+
+ const high =
+ Number(
+  document
+  .getElementById(
+   "offlineHigh"
+  ).value || 0
+ );
 
 
-    const fanpit =
-        Number(
-            document.getElementById(
-                "offlineFanpit"
-            )?.value || 0
-        );
+ const total =
+ premium * 1500 +
+ fanpit * 1200 +
+ vip * 800 +
+ high * 500;
 
 
-    const vip =
-        Number(
-            document.getElementById(
-                "offlineVIP"
-            )?.value || 0
-        );
+ document
+ .getElementById(
+  "offlineCash"
+ )
+ .value =
+ total;
 
 
-    const high =
-        Number(
-            document.getElementById(
-                "offlineHigh"
-            )?.value || 0
-        );
-
-
-    const total =
-        premium * 1500 +
-        fanpit * 1200 +
-        vip * 800 +
-        high * 500;
-
-
-    const input =
-        document.getElementById(
-            "offlineCash"
-        );
-
-
-    if(input)
-        input.value = total;
-
-
-    return total;
+ return total;
 
 }
 
 
 [
-    "offlinePremium",
-    "offlineFanpit",
-    "offlineVIP",
-    "offlineHigh"
-].forEach(id=>{
+ "offlinePremium",
+ "offlineFanpit",
+ "offlineVIP",
+ "offlineHigh"
+]
+.forEach(
+ id=>{
 
-    document.getElementById(id)
-    ?.addEventListener(
-        "input",
-        calculateOfflineCash
-    );
+  document
+  .getElementById(id)
+  .addEventListener(
+   "input",
+   calculateOfflineCash
+  );
 
-});
+ }
+);
 
 
-/* =========================================================
+/* ================================
    SAVE SALES
-========================================================= */
+================================ */
 
 async function saveData(){
 
-    if(isHost)
-        return;
+ if(isHost)
+  return;
 
 
-    const date =
-        document.getElementById(
-            "date"
-        ).value;
+ const btn =
+ document
+ .getElementById(
+  "saveDataBtn"
+ );
+
+ const msg =
+ document
+ .getElementById(
+  "saveMessage"
+ );
+
+ const date =
+ document
+ .getElementById(
+  "date"
+ ).value;
 
 
-    const data = {
+ const data = {
 
-        sale_date:date,
+  sale_date:date,
 
-        branch:currentBranch,
+  branch:currentBranch,
 
-        online_premium:
-            Number(
-                document.getElementById(
-                    "onlinePremium"
-                ).value || 0
-            ),
+  online_premium:
+   Number(
+    document
+    .getElementById(
+     "onlinePremium"
+    ).value || 0
+   ),
 
-        online_fanpit:
-            Number(
-                document.getElementById(
-                    "onlineFanpit"
-                ).value || 0
-            ),
+  online_fanpit:
+   Number(
+    document
+    .getElementById(
+     "onlineFanpit"
+    ).value || 0
+   ),
 
-        online_vip:
-            Number(
-                document.getElementById(
-                    "onlineVIP"
-                ).value || 0
-            ),
+  online_vip:
+   Number(
+    document
+    .getElementById(
+     "onlineVIP"
+    ).value || 0
+   ),
 
-        online_high_regular:
-            Number(
-                document.getElementById(
-                    "onlineHigh"
-                ).value || 0
-            ),
+  online_high_regular:
+   Number(
+    document
+    .getElementById(
+     "onlineHigh"
+    ).value || 0
+   ),
 
-        offline_premium:
-            Number(
-                document.getElementById(
-                    "offlinePremium"
-                ).value || 0
-            ),
+  offline_premium:
+   Number(
+    document
+    .getElementById(
+     "offlinePremium"
+    ).value || 0
+   ),
 
-        offline_fanpit:
-            Number(
-                document.getElementById(
-                    "offlineFanpit"
-                ).value || 0
-            ),
+  offline_fanpit:
+   Number(
+    document
+    .getElementById(
+     "offlineFanpit"
+    ).value || 0
+   ),
 
-        offline_vip:
-            Number(
-                document.getElementById(
-                    "offlineVIP"
-                ).value || 0
-            ),
+  offline_vip:
+   Number(
+    document
+    .getElementById(
+     "offlineVIP"
+    ).value || 0
+   ),
 
-        offline_high_regular:
-            Number(
-                document.getElementById(
-                    "offlineHigh"
-                ).value || 0
-            ),
+  offline_high_regular:
+   Number(
+    document
+    .getElementById(
+     "offlineHigh"
+    ).value || 0
+   ),
 
-        offline_cash:
-            calculateOfflineCash()
+  offline_cash:
+   calculateOfflineCash()
 
-    };
-
-
-    const button =
-        document.getElementById(
-            "saveDataBtn"
-        );
-
-
-    const message =
-        document.getElementById(
-            "saveMessage"
-        );
+ };
 
 
-    button.disabled = true;
-
-    button.textContent =
-        "Saving...";
+ btn.disabled = true;
+ btn.textContent = "Saving...";
 
 
-    try{
+ try{
 
-        const {
-            data:existing,
-            error:findError
-        } =
-            await supabaseClient
-            .from("ticket_sales")
-            .select("id")
-            .eq("sale_date",date)
-            .eq("branch",currentBranch)
-            .maybeSingle();
-
-
-        if(findError)
-            throw findError;
+  const {
+   data:existing,
+   error:e1
+  } =
+  await supabaseClient
+  .from("ticket_sales")
+  .select("id")
+  .eq("sale_date",date)
+  .eq("branch",currentBranch)
+  .maybeSingle();
 
 
-        let result;
+  if(e1)
+   throw e1;
 
 
-        if(existing){
-
-            result =
-                await supabaseClient
-                .from("ticket_sales")
-                .update(data)
-                .eq("id",existing.id);
-
-        }
-
-        else{
-
-            result =
-                await supabaseClient
-                .from("ticket_sales")
-                .insert([data]);
-
-        }
+  let result;
 
 
-        if(result.error)
-            throw result.error;
+  if(existing){
+
+   result =
+   await supabaseClient
+   .from("ticket_sales")
+   .update(data)
+   .eq(
+    "id",
+    existing.id
+   );
+
+  }else{
+
+   result =
+   await supabaseClient
+   .from("ticket_sales")
+   .insert([data]);
+
+  }
 
 
-        message.style.color =
-            "#4ade80";
-
-        message.textContent =
-            "✓ Data saved successfully";
+  if(result.error)
+   throw result.error;
 
 
-        if(isHost)
-            await loadHostDashboard();
+  msg.style.color =
+  "#4ade80";
 
-    }
+  msg.textContent =
+  "✓ Data saved successfully";
 
-    catch(error){
 
-        console.error(error);
+ }catch(e){
 
-        message.style.color =
-            "#ff6b6b";
+  console.error(e);
 
-        message.textContent =
-            "❌ " + error.message;
+  msg.style.color =
+  "#ff7070";
 
-    }
+  msg.textContent =
+  "❌ " + e.message;
 
-    finally{
 
-        button.disabled = false;
+ }finally{
 
-        button.textContent =
-            "Save Data";
+  btn.disabled = false;
+  btn.textContent = "Save Data";
 
-    }
+ }
 
 }
 
 
-document.getElementById(
-    "saveDataBtn"
-).addEventListener(
-    "click",
-    saveData
+document
+.getElementById("saveDataBtn")
+.addEventListener(
+ "click",
+ saveData
 );
 
 
-/* =========================================================
-   SEARCH DAY
-========================================================= */
+/* ================================
+   CLEAR TICKET FORM
+================================ */
 
-async function searchDay(){
+function clearTicketForm(){
 
-    const date =
-        document.getElementById(
-            "searchDate"
-        ).value;
+ document
+ .getElementById("customerName")
+ .value = "";
 
+ document
+ .getElementById("orderNumber")
+ .value = "";
 
-    const results =
-        document.getElementById(
-            "results"
-        );
+ document
+ .getElementById("ticketSerial")
+ .value = "";
 
+ document
+ .getElementById("customerGmail")
+ .value = "";
 
-    results.innerHTML =
-        "<p>Loading...</p>";
+ document
+ .getElementById("customerPhone")
+ .value = "";
 
+ document
+ .getElementById("ticketType")
+ .value =
+ "Premium Orbit";
 
-    try{
+ document
+ .getElementById("saleType")
+ .value =
+ "Online";
 
-        let query =
-            supabaseClient
-            .from("ticket_sales")
-            .select("*")
-            .eq("sale_date",date);
+ editingTicketId =
+ null;
 
+ document
+ .getElementById("saveTicketBtn")
+ .textContent =
+ "Save Ticket";
 
-        if(!isHost){
-
-            query =
-                query.eq(
-                    "branch",
-                    currentBranch
-                );
-
-        }
-
-
-        const {data,error} =
-            await query;
-
-
-        if(error)
-            throw error;
-
-
-        if(!data?.length){
-
-            results.innerHTML =
-                "<p>No data found.</p>";
-
-            return;
-
-        }
-
-
-        results.innerHTML =
-            data.map(item=>{
-
-                const online =
-                    Number(item.online_premium||0)+
-                    Number(item.online_fanpit||0)+
-                    Number(item.online_vip||0)+
-                    Number(item.online_high_regular||0);
-
-
-                const offline =
-                    Number(item.offline_premium||0)+
-                    Number(item.offline_fanpit||0)+
-                    Number(item.offline_vip||0)+
-                    Number(item.offline_high_regular||0);
-
-
-                return `
-
-                <div class="result-box">
-
-                    <h3>${item.branch}</h3>
-
-                    <b>Online Tickets:</b>
-                    ${online}
-
-                    <br><br>
-
-                    <b>Offline Tickets:</b>
-                    ${offline}
-
-                    <br><br>
-
-                    Premium Orbit:
-                    ${item.offline_premium||0}
-
-                    <br>
-
-                    Fanpit:
-                    ${item.offline_fanpit||0}
-
-                    <br>
-
-                    VIP:
-                    ${item.offline_vip||0}
-
-                    <br>
-
-                    High Regular:
-                    ${item.offline_high_regular||0}
-
-                    <br><br>
-
-                    <b>Offline Cash:</b>
-                    ${Number(
-                        item.offline_cash||0
-                    ).toLocaleString()}
-                    EGP
-
-                </div>
-
-                `;
-
-            }).join("");
-
-    }
-
-    catch(error){
-
-        results.innerHTML =
-            `<p style="color:#ff6b6b;">
-                ❌ ${error.message}
-            </p>`;
-
-    }
+ document
+ .getElementById("cancelEditBtn")
+ .classList
+ .add("hidden");
 
 }
 
 
-document.getElementById(
-    "searchBtn"
-).addEventListener(
-    "click",
-    searchDay
-);
-
-
-/* =========================================================
-   SAVE TICKET
-========================================================= */
+/* ================================
+   SAVE / UPDATE TICKET
+================================ */
 
 async function saveTicket(){
 
-    if(isHost)
-        return;
+ if(isHost)
+  return;
+
+
+ const msg =
+ document
+ .getElementById(
+  "ticketMessage"
+ );
+
+ const btn =
+ document
+ .getElementById(
+  "saveTicketBtn"
+ );
 
+ const date =
+ document
+ .getElementById(
+  "ticketDate"
+ ).value;
 
-    const date =
-        document.getElementById(
-            "ticketDate"
-        ).value;
+ const name =
+ document
+ .getElementById(
+  "customerName"
+ ).value.trim();
 
+ const order =
+ document
+ .getElementById(
+  "orderNumber"
+ ).value.trim();
 
-    const name =
-        document.getElementById(
-            "customerName"
-        ).value.trim();
+ const serial =
+ document
+ .getElementById(
+  "ticketSerial"
+ ).value.trim();
+
+ const type =
+ document
+ .getElementById(
+  "ticketType"
+ ).value;
 
+ const gmail =
+ document
+ .getElementById(
+  "customerGmail"
+ ).value.trim();
 
-    const orderNumber =
-        document.getElementById(
-            "orderNumber"
-        ).value.trim();
+ const phone =
+ document
+ .getElementById(
+  "customerPhone"
+ ).value.trim();
 
+ const saleType =
+ document
+ .getElementById(
+  "saleType"
+ ).value;
 
-    const serial =
-        document.getElementById(
-            "ticketSerial"
-        ).value.trim();
 
+ if(
+  !date ||
+  !name ||
+  !serial ||
+  !gmail ||
+  !phone
+ ){
 
-    const type =
-        document.getElementById(
-            "ticketType"
-        ).value;
+  msg.style.color =
+  "#ff7070";
 
+  msg.textContent =
+  "Please fill all required fields.";
 
-    const gmail =
-        document.getElementById(
-            "customerGmail"
-        ).value.trim();
+  return;
 
+ }
 
-    const phone =
-        document.getElementById(
-            "customerPhone"
-        ).value.trim();
 
+ const ticket = {
 
-    const saleType =
-        document.getElementById(
-            "saleType"
-        ).value;
+  sale_date:date,
+  branch:currentBranch,
+  customer_name:name,
+  order_number:order,
+  serial:serial,
+  ticket_type:type,
+  gmail:gmail,
+  phone:phone,
+  sale_type:saleType
 
+ };
 
-    const message =
-        document.getElementById(
-            "ticketMessage"
-        );
 
+ const wasEditing =
+ Boolean(editingTicketId);
 
-    if(
-        !date ||
-        !name ||
-        !orderNumber ||
-        !serial ||
-        !gmail ||
-        !phone
-    ){
 
-        message.style.color =
-            "#ff6b6b";
+ btn.disabled = true;
 
-        message.textContent =
-            "Please fill all customer fields.";
+ btn.textContent =
+ wasEditing
+ ? "Saving Changes..."
+ : "Saving...";
 
-        return;
 
-    }
+ try{
 
+  let result;
 
-    const button =
-        document.getElementById(
-            "saveTicketBtn"
-        );
 
+  if(wasEditing){
 
-    button.disabled = true;
+   result =
+   await supabaseClient
+   .from("ticket_handover")
+   .update(ticket)
+   .eq(
+    "id",
+    editingTicketId
+   )
+   .eq(
+    "branch",
+    currentBranch
+   );
 
-    button.textContent =
-        "Saving...";
+  }else{
 
+   result =
+   await supabaseClient
+   .from("ticket_handover")
+   .insert([
+    ticket
+   ]);
 
-    try{
+  }
 
-        const ticket = {
 
-            sale_date:date,
+  if(result.error)
+   throw result.error;
 
-            branch:currentBranch,
 
-            customer_name:name,
+  msg.style.color =
+  "#4ade80";
 
-            order_number:orderNumber,
+  msg.textContent =
+  wasEditing
+  ? "✓ Customer updated successfully"
+  : "✓ Ticket saved successfully";
 
-            serial:serial,
 
-            ticket_type:type,
+  clearTicketForm();
 
-            gmail:gmail,
+  await loadMyTickets();
 
-            phone:phone,
 
-            sale_type:saleType
+ }catch(e){
 
-        };
+  console.error(e);
 
+  msg.style.color =
+  "#ff7070";
 
-        const {error} =
-            await supabaseClient
-            .from("ticket_handover")
-            .insert([ticket]);
+  msg.textContent =
+  "❌ " + e.message;
 
 
-        if(error)
-            throw error;
+ }finally{
 
+  btn.disabled = false;
+  btn.textContent =
+  "Save Ticket";
 
-        message.style.color =
-            "#4ade80";
-
-        message.textContent =
-            "✓ Ticket saved successfully";
-
-
-        document.getElementById(
-            "customerName"
-        ).value = "";
-
-
-        document.getElementById(
-            "orderNumber"
-        ).value = "";
-
-
-        document.getElementById(
-            "ticketSerial"
-        ).value = "";
-
-
-        document.getElementById(
-            "customerGmail"
-        ).value = "";
-
-
-        document.getElementById(
-            "customerPhone"
-        ).value = "";
-
-
-        playSuccessSound();
-
-    }
-
-    catch(error){
-
-        console.error(error);
-
-        message.style.color =
-            "#ff6b6b";
-
-        message.textContent =
-            "❌ " + error.message;
-
-    }
-
-    finally{
-
-        button.disabled = false;
-
-        button.textContent =
-            "Save Ticket";
-
-    }
+ }
 
 }
 
 
-document.getElementById(
-    "saveTicketBtn"
-).addEventListener(
-    "click",
-    saveTicket
+document
+.getElementById("saveTicketBtn")
+.addEventListener(
+ "click",
+ saveTicket
 );
 
 
-/* =========================================================
+/* ================================
+   EDIT TICKET
+================================ */
+
+async function editTicket(id){
+
+ if(!id){
+
+  alert(
+   "Ticket ID is missing."
+  );
+
+  return;
+
+ }
+
+
+ try{
+
+  const {
+   data,
+   error
+  } =
+  await supabaseClient
+  .from("ticket_handover")
+  .select("*")
+  .eq("id",id)
+  .eq("branch",currentBranch)
+  .single();
+
+
+  if(error)
+   throw error;
+
+
+  editingTicketId =
+  id;
+
+
+  document
+  .getElementById(
+   "ticketDate"
+  )
+  .value =
+  data.sale_date ||
+  today();
+
+  document
+  .getElementById(
+   "customerName"
+  )
+  .value =
+  data.customer_name ||
+  "";
+
+  document
+  .getElementById(
+   "orderNumber"
+  )
+  .value =
+  data.order_number ||
+  "";
+
+  document
+  .getElementById(
+   "ticketSerial"
+  )
+  .value =
+  data.serial ||
+  "";
+
+  document
+  .getElementById(
+   "ticketType"
+  )
+  .value =
+  data.ticket_type ||
+  "Premium Orbit";
+
+  document
+  .getElementById(
+   "customerGmail"
+  )
+  .value =
+  data.gmail ||
+  "";
+
+  document
+  .getElementById(
+   "customerPhone"
+  )
+  .value =
+  data.phone ||
+  "";
+
+  document
+  .getElementById(
+   "saleType"
+  )
+  .value =
+  data.sale_type ||
+  "Online";
+
+
+  document
+  .getElementById(
+   "saveTicketBtn"
+  )
+  .textContent =
+  "Save Changes";
+
+
+  document
+  .getElementById(
+   "cancelEditBtn"
+  )
+  .classList
+  .remove("hidden");
+
+
+  document
+  .getElementById(
+   "ticketMessage"
+  )
+  .textContent = "";
+
+
+  document
+  .getElementById(
+   "ticketHandoverCard"
+  )
+  .scrollIntoView({
+   behavior:"smooth",
+   block:"start"
+  });
+
+
+ }catch(e){
+
+  console.error(e);
+
+  alert(
+   "Could not open customer:\n" +
+   e.message
+  );
+
+ }
+
+}
+
+
+/* ================================
+   EDIT BUTTON
+================================ */
+
+document
+.getElementById(
+ "myTicketsResults"
+)
+.addEventListener(
+ "click",
+ e=>{
+
+  const button =
+  e.target.closest(
+   ".edit-btn"
+  );
+
+  if(!button)
+   return;
+
+
+  editTicket(
+   button.getAttribute(
+    "data-ticket-id"
+   )
+  );
+
+ }
+);
+
+
+/* ================================
+   CANCEL EDIT
+================================ */
+
+document
+.getElementById(
+ "cancelEditBtn"
+)
+.addEventListener(
+ "click",
+ ()=>{
+
+  clearTicketForm();
+
+  document
+  .getElementById(
+   "ticketMessage"
+  )
+  .textContent = "";
+
+ }
+);
+
+
+/* ================================
+   MY TICKETS
+================================ */
+
+async function loadMyTickets(){
+
+ if(isHost)
+  return;
+
+
+ const date =
+ document
+ .getElementById(
+  "myTicketsDate"
+ ).value;
+
+ const container =
+ document
+ .getElementById(
+  "myTicketsResults"
+ );
+
+
+ container.innerHTML =
+ "<p>Loading...</p>";
+
+
+ try{
+
+  const {
+   data,
+   error
+  } =
+  await supabaseClient
+  .from("ticket_handover")
+  .select("*")
+  .eq(
+   "sale_date",
+   date
+  )
+  .eq(
+   "branch",
+   currentBranch
+  )
+  .order(
+   "id",
+   {
+    ascending:false
+   }
+  );
+
+
+  if(error)
+   throw error;
+
+
+  if(!data || !data.length){
+
+   container.innerHTML =
+   "<p style='color:#999'>No tickets found.</p>";
+
+   return;
+
+  }
+
+
+  container.innerHTML =
+  data
+  .map(
+   ticket=>`
+
+   <div class="ticket-card">
+
+    <div class="ticket-top">
+
+     <h3>
+      ${esc(ticket.customer_name)}
+     </h3>
+
+     <span class="ticket-badge">
+      ${esc(ticket.sale_type)}
+     </span>
+
+    </div>
+
+    <br>
+
+    <b>Date:</b>
+    ${esc(ticket.sale_date)}
+
+    <br><br>
+
+    <b>Order Number:</b>
+    ${esc(ticket.order_number) || "—"}
+
+    <br>
+
+    <b>Serial:</b>
+    ${esc(ticket.serial)}
+
+    <br>
+
+    <b>Ticket:</b>
+    ${esc(ticket.ticket_type)}
+
+    <br>
+
+    <b>Gmail:</b>
+    ${esc(ticket.gmail)}
+
+    <br>
+
+    <b>Phone:</b>
+    ${esc(ticket.phone)}
+
+    <br>
+
+    <button
+     type="button"
+     class="edit-btn"
+     data-ticket-id="${esc(ticket.id)}"
+    >
+     ✏️ Edit
+    </button>
+
+   </div>
+
+  `
+  )
+  .join("");
+
+
+ }catch(e){
+
+  console.error(e);
+
+  container.innerHTML =
+  `
+   <p style="color:#ff7070">
+    ❌ ${esc(e.message)}
+   </p>
+  `;
+
+ }
+
+}
+
+
+document
+.getElementById(
+ "loadMyTicketsBtn"
+)
+.addEventListener(
+ "click",
+ loadMyTickets
+);
+
+
+document
+.getElementById(
+ "myTicketsDate"
+)
+.addEventListener(
+ "change",
+ loadMyTickets
+);
+
+
+/* ================================
+   SEARCH DAY
+================================ */
+
+async function searchDay(){
+
+ const date =
+ document
+ .getElementById(
+  "searchDate"
+ ).value;
+
+ const results =
+ document
+ .getElementById(
+  "results"
+ );
+
+
+ results.innerHTML =
+ "<p>Loading...</p>";
+
+
+ try{
+
+  let query =
+  supabaseClient
+  .from("ticket_sales")
+  .select("*")
+  .eq(
+   "sale_date",
+   date
+  );
+
+
+  if(!isHost)
+   query =
+   query.eq(
+    "branch",
+    currentBranch
+   );
+
+
+  const {
+   data,
+   error
+  } =
+  await query;
+
+
+  if(error)
+   throw error;
+
+
+  if(!data || !data.length){
+
+   results.innerHTML =
+   "<p>No data found.</p>";
+
+   return;
+
+  }
+
+
+  results.innerHTML =
+  data
+  .map(
+   item=>{
+
+    const online =
+    Number(
+     item.online_premium || 0
+    ) +
+    Number(
+     item.online_fanpit || 0
+    ) +
+    Number(
+     item.online_vip || 0
+    ) +
+    Number(
+     item.online_high_regular || 0
+    );
+
+
+    const offline =
+    Number(
+     item.offline_premium || 0
+    ) +
+    Number(
+     item.offline_fanpit || 0
+    ) +
+    Number(
+     item.offline_vip || 0
+    ) +
+    Number(
+     item.offline_high_regular || 0
+    );
+
+
+    return `
+
+    <div class="ticket-card">
+
+     <h3>
+      ${esc(item.branch)}
+     </h3>
+
+     <b>Online Tickets:</b>
+     ${online}
+
+     <br><br>
+
+     <b>Offline Tickets:</b>
+     ${offline}
+
+     <br>
+
+     Premium Orbit:
+     ${item.offline_premium || 0}
+
+     <br>
+
+     Fanpit:
+     ${item.offline_fanpit || 0}
+
+     <br>
+
+     VIP:
+     ${item.offline_vip || 0}
+
+     <br>
+
+     High Regular:
+     ${item.offline_high_regular || 0}
+
+     <br><br>
+
+     <b>Offline Cash:</b>
+     ${Number(
+      item.offline_cash || 0
+     ).toLocaleString()} EGP
+
+    </div>
+
+    `;
+
+   }
+  )
+  .join("");
+
+
+ }catch(e){
+
+  results.innerHTML =
+  `
+   <p style="color:#ff7070">
+    ❌ ${esc(e.message)}
+   </p>
+  `;
+
+ }
+
+}
+
+
+document
+.getElementById(
+ "searchBtn"
+)
+.addEventListener(
+ "click",
+ searchDay
+);
+
+
+/* ================================
    HOST DASHBOARD
-========================================================= */
+================================ */
 
 async function loadHostDashboard(){
 
-    if(!isHost)
-        return;
+ if(!isHost)
+  return;
+
+
+ const date =
+ document
+ .getElementById(
+  "hostDate"
+ ).value;
+
+ const container =
+ document
+ .getElementById(
+  "hostDashboardResults"
+ );
+
+
+ container.innerHTML =
+ "<p>Loading...</p>";
+
+
+ try{
+
+  const {
+   data,
+   error
+  } =
+  await supabaseClient
+  .from("ticket_sales")
+  .select("*")
+  .eq(
+   "sale_date",
+   date
+  );
+
 
+  if(error)
+   throw error;
 
-    const date =
-        document.getElementById(
-            "hostDate"
-        ).value;
 
+  const branches = [
+   "Zayed",
+   "Zamalek",
+   "Heliopolis",
+   "CFC"
+  ];
 
-    const container =
-        document.getElementById(
-            "hostDashboardResults"
-        );
 
+  let grandOnline = 0;
+  let grandOffline = 0;
+  let grandCash = 0;
+  let html = "";
 
-    container.innerHTML =
-        "<p>Loading...</p>";
 
+  branches.forEach(
+   branch=>{
 
-    try{
+    const item =
+    data?.find(
+     x=>
+      String(
+       x.branch
+      ).toLowerCase() ===
+      branch.toLowerCase()
+    );
 
-        const {data,error} =
-            await supabaseClient
-            .from("ticket_sales")
-            .select("*")
-            .eq("sale_date",date);
 
+    const online =
+    item
+    ?
+    Number(
+     item.online_premium || 0
+    ) +
+    Number(
+     item.online_fanpit || 0
+    ) +
+    Number(
+     item.online_vip || 0
+    ) +
+    Number(
+     item.online_high_regular || 0
+    )
+    : 0;
 
-        if(error)
-            throw error;
 
+    const offline =
+    item
+    ?
+    Number(
+     item.offline_premium || 0
+    ) +
+    Number(
+     item.offline_fanpit || 0
+    ) +
+    Number(
+     item.offline_vip || 0
+    ) +
+    Number(
+     item.offline_high_regular || 0
+    )
+    : 0;
 
-        const branches = [
-            "Zayed",
-            "Zamalek",
-            "Heliopolis",
-            "CFC"
-        ];
 
+    const cash =
+    item
+    ?
+    Number(
+     item.offline_cash || 0
+    )
+    : 0;
 
-        let grandOnline = 0;
-        let grandOffline = 0;
-        let grandCash = 0;
 
+    grandOnline += online;
+    grandOffline += offline;
+    grandCash += cash;
 
-        let branchHTML = "";
 
+    html += `
 
-        branches.forEach(branchName=>{
+    <div class="host-branch">
 
-            const item =
-                data?.find(
-                    x =>
-                        String(x.branch)
-                        .toLowerCase() ===
-                        branchName.toLowerCase()
-                );
+     <div class="host-branch-title">
 
+      <h3>
+       ${branch}
+      </h3>
 
-            const online = item
-                ? Number(item.online_premium||0) +
-                  Number(item.online_fanpit||0) +
-                  Number(item.online_vip||0) +
-                  Number(item.online_high_regular||0)
-                : 0;
+      <div class="branch-total">
+       Total:
+       ${online + offline}
+      </div>
 
+     </div>
 
-            const offline = item
-                ? Number(item.offline_premium||0) +
-                  Number(item.offline_fanpit||0) +
-                  Number(item.offline_vip||0) +
-                  Number(item.offline_high_regular||0)
-                : 0;
 
+     <div class="stats-row">
 
-            const cash = item
-                ? Number(item.offline_cash||0)
-                : 0;
+      <div class="stat">
 
+       <div class="stat-title">
+        Online
+       </div>
 
-            grandOnline += online;
-            grandOffline += offline;
-            grandCash += cash;
+       <div class="stat-value online-number">
+        ${online}
+       </div>
 
+      </div>
 
-            const total =
-                online + offline;
 
+      <div class="stat">
 
-            branchHTML += `
+       <div class="stat-title">
+        Offline
+       </div>
 
-            <div class="host-branch">
+       <div class="stat-value offline-number">
+        ${offline}
+       </div>
 
-                <div class="host-branch-title">
+      </div>
 
-                    <h3>
-                        ${branchName}
-                    </h3>
 
-                    <div class="branch-total">
-                        Total Tickets: ${total}
-                    </div>
+      <div class="stat">
 
-                </div>
+       <div class="stat-title">
+        Cash
+       </div>
 
+       <div class="stat-value money-number">
+        ${cash.toLocaleString()} EGP
+       </div>
 
-                <div class="stats-row">
+      </div>
 
-                    <div class="stat">
+     </div>
 
-                        <div class="stat-title">
-                            Online
-                        </div>
 
-                        <div class="stat-value online-number">
-                            ${online}
-                        </div>
+     <div class="offline-details">
 
-                    </div>
+      <h4>
+       Offline Tickets
+      </h4>
 
+      <div class="offline-item">
+       <span>Premium Orbit</span>
+       <span class="offline-count">
+        ${item?.offline_premium || 0}
+       </span>
+      </div>
 
-                    <div class="stat">
+      <div class="offline-item">
+       <span>Fanpit</span>
+       <span class="offline-count">
+        ${item?.offline_fanpit || 0}
+       </span>
+      </div>
 
-                        <div class="stat-title">
-                            Offline
-                        </div>
+      <div class="offline-item">
+       <span>VIP</span>
+       <span class="offline-count">
+        ${item?.offline_vip || 0}
+       </span>
+      </div>
 
-                        <div class="stat-value offline-number">
-                            ${offline}
-                        </div>
+      <div class="offline-item">
+       <span>High Regular</span>
+       <span class="offline-count">
+        ${item?.offline_high_regular || 0}
+       </span>
+      </div>
 
-                    </div>
-
-
-                    <div class="stat">
+     </div>
 
-                        <div class="stat-title">
-                            All Tickets
-                        </div>
+    </div>
 
-                        <div class="stat-value total-number">
-                            ${total}
-                        </div>
+    `;
 
-                    </div>
+   }
+  );
 
-                </div>
 
+  container.innerHTML = `
 
-                <div class="offline-details">
+  <div class="summary-grid">
 
-                    <h4>
-                        🎟️ Ticket Details — ${branchName}
-                    </h4>
+   <div class="summary-card">
 
+    <h3>
+     Total Online
+    </h3>
 
-                    <div class="offline-item">
-                        <div>
-                            <span class="offline-type">
-                                Premium Orbit
-                            </span>
-                            <span class="offline-branch">
-                                ${branchName}
-                            </span>
-                        </div>
+    <div class="summary-number online-number">
+     ${grandOnline}
+    </div>
 
-                        <span class="offline-count">
-                            ${
-                                item
-                                ? item.offline_premium || 0
-                                : 0
-                            }
-                        </span>
-                    </div>
+   </div>
 
 
-                    <div class="offline-item">
-                        <div>
-                            <span class="offline-type">
-                                Fanpit
-                            </span>
-                            <span class="offline-branch">
-                                ${branchName}
-                            </span>
-                        </div>
+   <div class="summary-card">
 
-                        <span class="offline-count">
-                            ${
-                                item
-                                ? item.offline_fanpit || 0
-                                : 0
-                            }
-                        </span>
-                    </div>
+    <h3>
+     Total Offline
+    </h3>
 
+    <div class="summary-number offline-number">
+     ${grandOffline}
+    </div>
 
-                    <div class="offline-item">
-                        <div>
-                            <span class="offline-type">
-                                VIP
-                            </span>
-                            <span class="offline-branch">
-                                ${branchName}
-                            </span>
-                        </div>
+   </div>
 
-                        <span class="offline-count">
-                            ${
-                                item
-                                ? item.offline_vip || 0
-                                : 0
-                            }
-                        </span>
-                    </div>
 
+   <div class="summary-card">
 
-                    <div class="offline-item">
-                        <div>
-                            <span class="offline-type">
-                                High Regular
-                            </span>
-                            <span class="offline-branch">
-                                ${branchName}
-                            </span>
-                        </div>
+    <h3>
+     Total Tickets
+    </h3>
 
-                        <span class="offline-count">
-                            ${
-                                item
-                                ? item.offline_high_regular || 0
-                                : 0
-                            }
-                        </span>
-                    </div>
+    <div class="summary-number total-number">
+     ${grandOnline + grandOffline}
+    </div>
 
+   </div>
 
-                    <div class="cash-box">
 
-                        <div class="cash-title">
-                            Total Cash — ${branchName}
-                        </div>
+   <div class="summary-card">
 
-                        <div class="cash-value">
-                            ${cash.toLocaleString()} EGP
-                        </div>
+    <h3>
+     Total Cash
+    </h3>
 
-                    </div>
+    <div class="summary-number money-number">
+     ${grandCash.toLocaleString()} EGP
+    </div>
 
-                </div>
+   </div>
 
-            </div>
+  </div>
 
-            `;
 
-        });
+  ${html}
 
 
-        container.innerHTML = `
+  <div class="grand-total">
 
-        <div class="summary-grid">
+   <h2>
+    📊 Grand Total — ${date}
+   </h2>
 
-            <div class="summary-card">
+   <div class="grand-grid">
 
-                <h3>
-                    Total Online
-                </h3>
+    <div class="grand-item">
+     <div>Online</div>
+     <div class="grand-value online-number">
+      ${grandOnline}
+     </div>
+    </div>
 
-                <div class="summary-number online-number">
-                    ${grandOnline}
-                </div>
+    <div class="grand-item">
+     <div>Offline</div>
+     <div class="grand-value offline-number">
+      ${grandOffline}
+     </div>
+    </div>
 
-            </div>
+    <div class="grand-item">
+     <div>All Tickets</div>
+     <div class="grand-value total-number">
+      ${grandOnline + grandOffline}
+     </div>
+    </div>
 
+    <div class="grand-item">
+     <div>Total Cash</div>
+     <div class="grand-value money-number">
+      ${grandCash.toLocaleString()} EGP
+     </div>
+    </div>
 
-            <div class="summary-card">
+   </div>
 
-                <h3>
-                    Total Offline
-                </h3>
+  </div>
 
-                <div class="summary-number offline-number">
-                    ${grandOffline}
-                </div>
+  `;
 
-            </div>
 
+ }catch(e){
 
-            <div class="summary-card">
+  console.error(e);
 
-                <h3>
-                    Total Tickets
-                </h3>
+  container.innerHTML =
+  `
+   <p style="color:#ff7070">
+    ❌ ${esc(e.message)}
+   </p>
+  `;
 
-                <div class="summary-number total-number">
-                    ${
-                        grandOnline +
-                        grandOffline
-                    }
-                </div>
-
-            </div>
-
-
-            <div class="summary-card">
-
-                <h3>
-                    Total Cash — All Branches
-                </h3>
-
-                <div class="summary-number money-number">
-                    ${grandCash.toLocaleString()}
-                    EGP
-                </div>
-
-            </div>
-
-        </div>
-
-
-        ${branchHTML}
-
-
-        <div class="grand-total">
-
-            <h2>
-                📊 Grand Total — ${date}
-            </h2>
-
-            <div class="grand-grid">
-
-                <div class="grand-item">
-
-                    <div class="grand-label">
-                        Online
-                    </div>
-
-                    <div class="grand-value online-number">
-                        ${grandOnline}
-                    </div>
-
-                </div>
-
-
-                <div class="grand-item">
-
-                    <div class="grand-label">
-                        Offline
-                    </div>
-
-                    <div class="grand-value offline-number">
-                        ${grandOffline}
-                    </div>
-
-                </div>
-
-
-                <div class="grand-item">
-
-                    <div class="grand-label">
-                        All Tickets
-                    </div>
-
-                    <div class="grand-value total-number">
-                        ${
-                            grandOnline +
-                            grandOffline
-                        }
-                    </div>
-
-                </div>
-
-
-                <div class="grand-item">
-
-                    <div class="grand-label">
-                        Total Cash — All Branches
-                    </div>
-
-                    <div class="grand-value money-number">
-                        ${grandCash.toLocaleString()}
-                        EGP
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        `;
-
-    }
-
-    catch(error){
-
-        console.error(error);
-
-        container.innerHTML =
-            `<p style="color:#ff6b6b;">
-                ❌ ${error.message}
-            </p>`;
-
-    }
+ }
 
 }
 
 
-/* =========================================================
-   HOST DATE
-========================================================= */
-
-document.getElementById(
-    "hostDate"
-).addEventListener(
-    "change",
-    loadHostDashboard
+document
+.getElementById(
+ "hostDate"
+)
+.addEventListener(
+ "change",
+ loadHostDashboard
 );
 
 
-/* =========================================================
+/* ================================
    HOST CUSTOMER SEARCH
-========================================================= */
+================================ */
 
-async function searchCustomer(){
+async function hostCustomerSearch(){
 
-    if(!isHost)
-        return;
+ if(!isHost)
+  return;
 
 
-    const input =
-        document.getElementById(
-            "customerSearchInput"
-        );
+ const search =
+ document
+ .getElementById(
+  "hostCustomerSearch"
+ )
+ .value
+ .trim();
 
 
-    const results =
-        document.getElementById(
-            "customerSearchResults"
-        );
+ const container =
+ document
+ .getElementById(
+  "hostCustomerResults"
+ );
 
 
-    const term =
-        input.value.trim();
+ if(!search){
 
+  container.innerHTML =
+  "<p style='color:#aaa'>Write something to search.</p>";
 
-    if(!term){
+  return;
 
-        results.innerHTML =
-            `<p style="color:#fbbf24;margin-top:15px;">
-                Enter something to search.
-            </p>`;
+ }
 
-        return;
 
-    }
+ container.innerHTML =
+ "<p>Searching...</p>";
 
 
-    results.innerHTML =
-        "<p style='margin-top:15px;'>Searching...</p>";
+ try{
 
+  const pattern =
+  "%" + search + "%";
 
-    try{
 
-        const safe =
-            term.replace(
-                /[%_]/g,
-                "\\$&"
-            );
+  const {
+   data,
+   error
+  } =
+  await supabaseClient
+  .from("ticket_handover")
+  .select("*")
+  .or(
+   "customer_name.ilike."+pattern+
+   ",phone.ilike."+pattern+
+   ",serial.ilike."+pattern+
+   ",gmail.ilike."+pattern+
+   ",order_number.ilike."+pattern
+  )
+  .order(
+   "id",
+   {
+    ascending:false
+   }
+  )
+  .limit(50);
 
 
-        const {data,error} =
-            await supabaseClient
-            .from("ticket_handover")
-            .select("*")
-            .or(
-                `customer_name.ilike.%${safe}%,phone.ilike.%${safe}%,serial.ilike.%${safe}%,gmail.ilike.%${safe}%,order_number.ilike.%${safe}%`
-            )
-            .order(
-                "sale_date",
-                {
-                    ascending:false
-                }
-            );
+  if(error)
+   throw error;
 
 
-        if(error)
-            throw error;
+  if(!data || !data.length){
 
+   container.innerHTML =
+   "<p style='color:#aaa'>No customer found.</p>";
 
-        if(!data?.length){
+   return;
 
-            results.innerHTML =
-                `<p style="color:#aaa;margin-top:15px;">
-                    No customer found.
-                </p>`;
+  }
 
-            return;
 
-        }
+  container.innerHTML =
+  data
+  .map(
+   ticket=>`
 
+   <div class="ticket-card">
 
-        results.innerHTML =
-            data.map(ticket=>`
+    <div class="ticket-top">
 
-                <div class="customer-result">
+     <h3>
+      ${esc(ticket.customer_name)}
+     </h3>
 
-                    <h3>
-                        👤 ${escapeHTML(
-                            ticket.customer_name
-                        )}
-                    </h3>
+     <span class="ticket-badge">
+      ${esc(ticket.sale_type)}
+     </span>
 
+    </div>
 
-                    <div class="customer-row">
+    <br>
 
-                        <span class="customer-label">
-                            Branch
-                        </span>
+    <b>Branch:</b>
+    ${esc(ticket.branch)}
 
-                        <span class="customer-value">
-                            ${escapeHTML(
-                                ticket.branch || "-"
-                            )}
-                        </span>
+    <br><br>
 
-                    </div>
+    <b>Date:</b>
+    ${esc(ticket.sale_date)}
 
+    <br>
 
-                    <div class="customer-row">
+    <b>Order:</b>
+    ${esc(ticket.order_number) || "—"}
 
-                        <span class="customer-label">
-                            Date
-                        </span>
+    <br>
 
-                        <span class="customer-value">
-                            ${escapeHTML(
-                                ticket.sale_date || "-"
-                            )}
-                        </span>
+    <b>Serial:</b>
+    ${esc(ticket.serial)}
 
-                    </div>
+    <br>
 
+    <b>Ticket:</b>
+    ${esc(ticket.ticket_type)}
 
-                    <div class="customer-row">
+    <br>
 
-                        <span class="customer-label">
-                            Order Number
-                        </span>
+    <b>Gmail:</b>
+    ${esc(ticket.gmail)}
 
-                        <span class="customer-value">
-                            ${escapeHTML(
-                                ticket.order_number || "-"
-                            )}
-                        </span>
+    <br>
 
-                    </div>
+    <b>Phone:</b>
+    ${esc(ticket.phone)}
 
+   </div>
 
-                    <div class="customer-row">
+   `
+  )
+  .join("");
 
-                        <span class="customer-label">
-                            Ticket Serial
-                        </span>
 
-                        <span class="customer-value">
-                            ${escapeHTML(
-                                ticket.serial || "-"
-                            )}
-                        </span>
+ }catch(e){
 
-                    </div>
+  container.innerHTML =
+  `
+   <p style="color:#ff7070">
+    ❌ ${esc(e.message)}
+   </p>
+  `;
 
-
-                    <div class="customer-row">
-
-                        <span class="customer-label">
-                            Ticket Type
-                        </span>
-
-                        <span class="customer-value">
-                            ${escapeHTML(
-                                ticket.ticket_type || "-"
-                            )}
-                        </span>
-
-                    </div>
-
-
-                    <div class="customer-row">
-
-                        <span class="customer-label">
-                            Gmail
-                        </span>
-
-                        <span class="customer-value">
-                            ${escapeHTML(
-                                ticket.gmail || "-"
-                            )}
-                        </span>
-
-                    </div>
-
-
-                    <div class="customer-row">
-
-                        <span class="customer-label">
-                            Phone
-                        </span>
-
-                        <span class="customer-value">
-                            ${escapeHTML(
-                                ticket.phone || "-"
-                            )}
-                        </span>
-
-                    </div>
-
-
-                    <div class="customer-row">
-
-                        <span class="customer-label">
-                            Sale Type
-                        </span>
-
-                        <span class="customer-value ${
-                            ticket.sale_type === "Online"
-                            ? "online-badge"
-                            : "offline-badge"
-                        }">
-                            ${escapeHTML(
-                                ticket.sale_type || "-"
-                            )}
-                        </span>
-
-                    </div>
-
-                </div>
-
-            `).join("");
-
-    }
-
-    catch(error){
-
-        console.error(error);
-
-        results.innerHTML =
-            `<p style="color:#ff6b6b;margin-top:15px;">
-                ❌ ${escapeHTML(error.message)}
-            </p>`;
-
-    }
+ }
 
 }
 
 
-function escapeHTML(value){
-
-    return String(value ?? "")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-
-}
-
-
-document.getElementById(
-    "customerSearchBtn"
-).addEventListener(
-    "click",
-    searchCustomer
+document
+.getElementById(
+ "hostSearchBtn"
+)
+.addEventListener(
+ "click",
+ hostCustomerSearch
 );
 
 
-document.getElementById(
-    "customerSearchInput"
-).addEventListener(
-    "keydown",
-    e=>{
+document
+.getElementById(
+ "hostCustomerSearch"
+)
+.addEventListener(
+ "keydown",
+ e=>{
 
-        if(e.key === "Enter")
-            searchCustomer();
+  if(e.key==="Enter")
+   hostCustomerSearch();
 
-    }
+ }
 );
 
 
-/* =========================================================
-   REALTIME SALES
-========================================================= */
+/* ================================
+   REALTIME
+================================ */
 
 supabaseClient
-.channel("ticket-sales-live")
+.channel("sales-live")
 .on(
-    "postgres_changes",
-    {
-        event:"*",
-        schema:"public",
-        table:"ticket_sales"
-    },
-    payload=>{
-
-        if(isHost){
-
-            const selected =
-                document.getElementById(
-                    "hostDate"
-                ).value;
-
-
-            const changedDate =
-                payload.new?.sale_date ||
-                payload.old?.sale_date;
-
-
-            if(selected === changedDate){
-
-                loadHostDashboard();
-
-                playSuccessSound();
-
-            }
-
-        }
-
-    }
+ "postgres_changes",
+ {
+  event:"*",
+  schema:"public",
+  table:"ticket_sales"
+ },
+ ()=>{
+  if(isHost)
+   loadHostDashboard();
+ }
 )
 .subscribe();
 
 
-/* =========================================================
-   REALTIME TICKET HANDOVER
-========================================================= */
-
 supabaseClient
-.channel("ticket-handover-live")
+.channel("tickets-live")
 .on(
-    "postgres_changes",
-    {
-        event:"INSERT",
-        schema:"public",
-        table:"ticket_handover"
-    },
-    payload=>{
+ "postgres_changes",
+ {
+  event:"*",
+  schema:"public",
+  table:"ticket_handover"
+ },
+ ()=>{
+  if(isHost){
 
-        if(isHost){
+   const search =
+   document
+   .getElementById(
+    "hostCustomerSearch"
+   )
+   .value
+   .trim();
 
-            console.log(
-                "New customer ticket:",
-                payload.new
-            );
+   if(search)
+    hostCustomerSearch();
 
-        }
+  }else{
 
-    }
+   loadMyTickets();
+
+  }
+ }
 )
 .subscribe();
-
-
-/* =========================================================
-   SOUND
-========================================================= */
-
-function playSuccessSound(){
-
-    try{
-
-        const AudioContext =
-            window.AudioContext ||
-            window.webkitAudioContext;
-
-
-        if(!AudioContext)
-            return;
-
-
-        const audio =
-            new AudioContext();
-
-
-        const oscillator =
-            audio.createOscillator();
-
-
-        const gain =
-            audio.createGain();
-
-
-        oscillator.type =
-            "sine";
-
-
-        oscillator.frequency.value =
-            700;
-
-
-        gain.gain.setValueAtTime(
-            .001,
-            audio.currentTime
-        );
-
-
-        gain.gain.exponentialRampToValueAtTime(
-            .15,
-            audio.currentTime + .02
-        );
-
-
-        gain.gain.exponentialRampToValueAtTime(
-            .001,
-            audio.currentTime + .3
-        );
-
-
-        oscillator.connect(gain);
-
-        gain.connect(
-            audio.destination
-        );
-
-
-        oscillator.start();
-
-        oscillator.stop(
-            audio.currentTime + .3
-        );
-
-    }
-
-    catch(error){
-
-        console.log(
-            "Audio unavailable"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   START
-========================================================= */
-
-checkSession();
 
 </script>
 
