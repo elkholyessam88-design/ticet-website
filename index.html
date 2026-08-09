@@ -1,364 +1,552 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
 
 <title>Ticket Branches</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+
 <style>
-*{
-  box-sizing:border-box;
-  font-family:Arial,Helvetica,sans-serif;
+
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
 
-html,body{
-  margin:0;
-  padding:0;
-  min-height:100%;
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: #17181c;
+  color: white;
 }
 
-body{
-  background:#17181c;
-  color:white;
+body {
+  min-height: 100vh;
 }
 
-/* ================= LOGIN ================= */
-
-#loginScreen{
-  position:fixed;
-  inset:0;
-  z-index:9999;
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-  background:#17181c;
+.hidden {
+  display: none !important;
 }
 
-.loginBox{
-  width:100%;
-  max-width:420px;
-  background:#202126;
-  border:1px solid #444;
-  border-radius:22px;
-  padding:35px 30px;
-  box-shadow:0 20px 60px rgba(0,0,0,.4);
+button {
+  border: none;
+  border-radius: 10px;
+  padding: 13px 20px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 15px;
 }
 
-.loginBox h1{
-  text-align:center;
-  margin:0 0 10px;
+button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
 }
 
-.subtitle{
-  text-align:center;
-  color:#999;
-  margin-bottom:28px;
+input,
+select {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid #555;
+  background: #303136;
+  color: white;
+  font-size: 16px;
+  outline: none;
 }
 
-label{
-  display:block;
-  margin:15px 0 7px;
-  color:#ddd;
+input:focus,
+select:focus {
+  border-color: #8b5cf6;
 }
 
-input,select{
-  width:100%;
-  padding:14px;
-  border-radius:10px;
-  border:1px solid #555;
-  background:#303136;
-  color:white;
-  font-size:16px;
-  outline:none;
+label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 7px;
+  color: #ddd;
 }
 
-input:focus,select:focus{
-  border-color:#8b5cf6;
+/* =========================
+   LOGIN
+========================= */
+
+#loginScreen {
+
+  min-height: 100vh;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  padding: 20px;
+
+  background:
+    radial-gradient(
+      circle at top,
+      #30245b,
+      #17181c 50%
+    );
 }
 
-#loginBtn{
-  width:100%;
-  margin-top:22px;
-  padding:14px;
-  border:0;
-  border-radius:10px;
-  background:#8b5cf6;
-  color:white;
-  font-size:17px;
-  font-weight:bold;
-  cursor:pointer;
+.login-box {
+
+  width: 100%;
+
+  max-width: 420px;
+
+  padding: 35px;
+
+  background: #202126;
+
+  border: 1px solid #444;
+
+  border-radius: 22px;
+
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.4);
+
 }
 
-#loginBtn:disabled{
-  opacity:.6;
+.login-box h1 {
+
+  text-align: center;
+
+  margin-top: 0;
+
 }
 
-#loginError{
-  min-height:20px;
-  text-align:center;
-  color:#ff6b6b;
+.login-box h1 span {
+
+  color: #8b5cf6;
+
 }
 
-/* ================= HEADER ================= */
+.login-subtitle {
 
-.hidden{
-  display:none!important;
+  text-align: center;
+
+  color: #aaa;
+
+  margin-bottom: 25px;
+
 }
 
-header{
-  padding:18px 30px;
-  background:#202126;
-  border-bottom:1px solid #444;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:20px;
+#loginBtn {
+
+  width: 100%;
+
+  margin-top: 20px;
+
+  background: #8b5cf6;
+
+  color: white;
+
 }
 
-header h1{
-  margin:0;
-  font-size:28px;
+#loginError {
+
+  min-height: 20px;
+
+  text-align: center;
+
+  color: #ff6b6b;
+
 }
 
-header h1 span{
-  color:#8b5cf6;
+/* =========================
+   HEADER
+========================= */
+
+header {
+
+  padding: 18px 25px;
+
+  background: #202126;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
+
+  border-bottom: 1px solid #444;
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 10;
+
 }
 
-#userArea{
-  display:flex;
-  align-items:center;
-  gap:15px;
+header h1 {
+
+  margin: 0;
+
+  font-size: 27px;
+
 }
 
-#userName{
-  font-weight:bold;
+header h1 span {
+
+  color: #8b5cf6;
+
 }
 
-#userRole{
-  color:#9b7cff;
-  font-size:13px;
+.user-area {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
 }
 
-.logout{
-  background:#55565d;
-  color:white;
+#userName {
+
+  color: #ddd;
+
+  font-size: 14px;
+
 }
 
-/* ================= MAIN ================= */
+#userRole {
 
-.container{
-  width:100%;
-  max-width:1450px;
-  margin:25px auto;
-  padding:0 25px;
+  color: #9b7cff;
+
+  font-weight: bold;
+
+  font-size: 13px;
+
 }
 
-.card{
-  background:#202126;
-  border:1px solid #444;
-  border-radius:18px;
-  padding:25px;
-  margin-bottom:25px;
+.logout {
+
+  background: #55565d;
+
+  color: white;
+
 }
 
-.branch{
-  background:#1c1d21;
-  border:1px solid #444;
-  border-radius:15px;
-  padding:20px;
-  margin-top:20px;
+/* =========================
+   CONTAINER
+========================= */
+
+.container {
+
+  max-width: 1100px;
+
+  margin: 30px auto;
+
+  padding: 20px;
+
 }
 
-.branch h3{
-  color:#9b7cff;
-  margin-top:0;
+.card {
+
+  background: #202126;
+
+  border: 1px solid #444;
+
+  border-radius: 18px;
+
+  padding: 25px;
+
+  margin-bottom: 25px;
+
 }
 
-.row{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:15px;
+.branch {
+
+  border: 1px solid #444;
+
+  border-radius: 15px;
+
+  padding: 20px;
+
+  margin-top: 20px;
+
+  background: #1c1d21;
+
 }
 
-button{
-  border:0;
-  border-radius:10px;
-  padding:13px 20px;
-  cursor:pointer;
-  font-weight:bold;
-  font-size:15px;
+.branch h3 {
+
+  color: #9b7cff;
+
+  margin-top: 0;
+
 }
 
-.green{
-  background:#008f68;
-  color:white;
-  margin-top:20px;
+.row {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 12px;
+
 }
 
-.success{
-  color:#4ade80;
-  font-weight:bold;
+.green {
+
+  background: #008f68;
+
+  color: white;
+
+  margin-top: 20px;
+
 }
 
-.error{
-  color:#ff6b6b;
-  font-weight:bold;
+.purple {
+
+  background: #8b5cf6;
+
+  color: white;
+
+  margin-top: 20px;
+
 }
 
-.result{
-  line-height:1.8;
-  font-size:16px;
+.result-box {
+
+  background: #1c1d21;
+
+  border: 1px solid #444;
+
+  border-radius: 14px;
+
+  padding: 18px;
+
+  margin-top: 15px;
+
+  line-height: 1.8;
+
 }
 
-.resultTotal{
-  color:#4ade80;
-  font-weight:bold;
+/* =========================
+   HOST
+========================= */
+
+#hostTicketsCard {
+
+  display: none;
+
+  border-color: #8b5cf6;
+
 }
 
-/* ================= SAVE ANIMATION ================= */
+body.host-user #hostTicketsCard {
 
-#ticketSuccess{
-  position:fixed;
-  inset:0;
-  z-index:10000;
-  display:none;
-  justify-content:center;
-  align-items:center;
-  background:rgba(0,0,0,.65);
+  display: block !important;
+
 }
 
-.successBox{
-  background:#202126;
-  border:1px solid #444;
-  border-radius:25px;
-  padding:40px;
-  text-align:center;
-  animation:pop .45s ease;
+body.host-user #ticketHandoverCard {
+
+  display: none !important;
+
 }
 
-.successIcon{
-  width:80px;
-  height:80px;
-  margin:auto;
-  border-radius:50%;
-  background:#008f68;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:45px;
-  animation:scale .5s ease;
+/* =========================
+   LIVE INDICATOR
+========================= */
+
+.live {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  color: #4ade80;
+
+  font-size: 13px;
+
+  font-weight: bold;
+
+  margin-bottom: 15px;
+
 }
 
-.successBox h2{
-  margin-bottom:5px;
+.live-dot {
+
+  width: 9px;
+
+  height: 9px;
+
+  border-radius: 50%;
+
+  background: #4ade80;
+
+  box-shadow:
+    0 0 10px #4ade80;
+
 }
 
-.successBox p{
-  color:#aaa;
+/* =========================
+   SUCCESS
+========================= */
+
+.ticket-success {
+
+  animation:
+    successPop .5s ease;
+
 }
 
-@keyframes pop{
-  0%{
-    transform:scale(.5);
-    opacity:0;
+@keyframes successPop {
+
+  0% {
+
+    transform: scale(.97);
+
+    opacity: .5;
+
   }
-  70%{
-    transform:scale(1.08);
-  }
-  100%{
-    transform:scale(1);
-    opacity:1;
-  }
-}
 
-@keyframes scale{
-  0%{transform:scale(0)}
-  70%{transform:scale(1.15)}
-  100%{transform:scale(1)}
-}
+  50% {
 
-/* ================= TABLET ================= */
+    transform: scale(1.02);
 
-@media(min-width:600px) and (max-width:999px){
-
-  .row{
-    grid-template-columns:repeat(2,1fr);
   }
 
-  .container{
-    padding:0 18px;
+  100% {
+
+    transform: scale(1);
+
+    opacity: 1;
+
   }
 
 }
 
-/* ================= MOBILE ================= */
+.success-message {
 
-@media(max-width:599px){
+  color: #4ade80;
 
-  #loginScreen{
-    padding:15px;
-  }
+  min-height: 20px;
 
-  .loginBox{
-    padding:28px 20px;
-  }
+  font-weight: bold;
 
-  header{
-    padding:15px;
-    flex-direction:column;
-    text-align:center;
-  }
-
-  header h1{
-    font-size:23px;
-  }
-
-  #userArea{
-    justify-content:center;
-    flex-wrap:wrap;
-  }
-
-  .container{
-    padding:0 10px;
-    margin-top:15px;
-  }
-
-  .card{
-    padding:16px;
-  }
-
-  .branch{
-    padding:15px;
-  }
-
-  .row{
-    grid-template-columns:1fr;
-  }
-
-  button{
-    width:100%;
-  }
 }
+
+/* =========================
+   TABLET
+========================= */
+
+@media
+(min-width: 701px)
+and
+(max-width: 1100px) {
+
+  .container {
+
+    max-width: 95%;
+
+  }
+
+  .row {
+
+    grid-template-columns:
+      repeat(2, 1fr);
+
+  }
+
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+
+  header {
+
+    position: relative;
+
+    flex-direction: column;
+
+    text-align: center;
+
+  }
+
+  .user-area {
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+  }
+
+  .container {
+
+    margin: 15px auto;
+
+    padding: 12px;
+
+  }
+
+  .card {
+
+    padding: 18px;
+
+  }
+
+  .row {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  header h1 {
+
+    font-size: 23px;
+
+  }
+
+}
+
 </style>
+
 </head>
 
-<body>
 
-<!-- ================= LOGIN ================= -->
+<body class="logged-out">
+
+
+<!-- ==================================================
+     LOGIN
+================================================== -->
 
 <div id="loginScreen">
 
-  <div class="loginBox">
+  <div class="login-box">
 
-    <h1>Tickets Website</h1>
+    <h1>
+      Ticket <span>Branches</span>
+    </h1>
 
-    <div class="subtitle">
-      Login to continue
+    <div class="login-subtitle">
+      Branch Management System
     </div>
 
     <label>Email</label>
@@ -366,7 +554,7 @@ button{
     <input
       id="loginEmail"
       type="email"
-      placeholder="Enter email"
+      placeholder="Enter your email"
       autocomplete="username"
     >
 
@@ -375,11 +563,14 @@ button{
     <input
       id="loginPassword"
       type="password"
-      placeholder="Enter password"
+      placeholder="Enter your password"
       autocomplete="current-password"
     >
 
-    <button id="loginBtn">
+    <button
+      id="loginBtn"
+      type="button"
+    >
       Login
     </button>
 
@@ -390,28 +581,15 @@ button{
 </div>
 
 
-<!-- ================= SUCCESS POPUP ================= -->
+<!-- ==================================================
+     WEBSITE
+================================================== -->
 
-<div id="ticketSuccess">
+<div
+  id="website"
+  class="hidden"
+>
 
-  <div class="successBox">
-
-    <div class="successIcon">
-      ✓
-    </div>
-
-    <h2>Ticket Saved!</h2>
-
-    <p>Ticket handed over successfully.</p>
-
-  </div>
-
-</div>
-
-
-<!-- ================= WEBSITE ================= -->
-
-<div id="website" class="hidden">
 
 <header>
 
@@ -419,14 +597,21 @@ button{
     Ticket <span>Branches</span>
   </h1>
 
-  <div id="userArea">
+  <div class="user-area">
 
     <div>
+
       <div id="userName"></div>
+
       <div id="userRole"></div>
+
     </div>
 
-    <button class="logout" onclick="logout()">
+    <button
+      id="logoutBtn"
+      class="logout"
+      type="button"
+    >
       Logout
     </button>
 
@@ -438,503 +623,907 @@ button{
 <div class="container">
 
 
-<!-- ================= TICKET HANDOVER ================= -->
+<!-- ==================================================
+     SALES
+================================================== -->
 
 <div class="card">
 
-<h2>🎟️ Ticket Handover</h2>
+  <h2>Enter Ticket Sales</h2>
 
-<label>Date</label>
+  <label>Date</label>
 
-<input
-  type="date"
-  id="handoverDate"
->
-
-
-<label>Customer Name</label>
-
-<input
-  type="text"
-  id="customerName"
-  placeholder="Enter customer name"
->
+  <input
+    type="date"
+    id="date"
+  >
 
 
-<label>Gmail</label>
+  <label>Branch</label>
 
-<input
-  type="email"
-  id="customerGmail"
-  placeholder="Enter Gmail"
->
+  <select id="branch">
 
+    <option value="Zayed">
+      Zayed
+    </option>
 
-<label>Ticket Serial</label>
+    <option value="Zamalek">
+      Zamalek
+    </option>
 
-<input
-  type="text"
-  id="ticketSerial"
-  placeholder="Enter ticket serial"
->
+    <option value="Heliopolis">
+      Heliopolis
+    </option>
 
+    <option value="CFC">
+      CFC
+    </option>
 
-<label>Ticket Type</label>
-
-<select id="ticketType">
-
-  <option value="">
-    Select ticket type
-  </option>
-
-  <option value="Premium">
-    Premium
-  </option>
-
-  <option value="Fanpit">
-    Fanpit
-  </option>
-
-  <option value="VIP">
-    VIP
-  </option>
-
-  <option value="High Regular">
-    High Regular
-  </option>
-
-</select>
+  </select>
 
 
-<label>Online / Offline</label>
+  <!-- ONLINE -->
 
-<select id="ticketStatus">
+  <div class="branch">
 
-  <option value="">
-    Select status
-  </option>
+    <h3>Online Tickets</h3>
 
-  <option value="Online">
-    Online
-  </option>
+    <div class="row">
 
-  <option value="Offline">
-    Offline
-  </option>
+      <div>
 
-</select>
+        <label>Premium Orbit</label>
+
+        <input
+          type="number"
+          id="onlinePremium"
+          value="0"
+          min="0"
+        >
+
+      </div>
+
+      <div>
+
+        <label>Fanpit</label>
+
+        <input
+          type="number"
+          id="onlineFanpit"
+          value="0"
+          min="0"
+        >
+
+      </div>
+
+      <div>
+
+        <label>VIP</label>
+
+        <input
+          type="number"
+          id="onlineVIP"
+          value="0"
+          min="0"
+        >
+
+      </div>
+
+      <div>
+
+        <label>High Regular</label>
+
+        <input
+          type="number"
+          id="onlineHigh"
+          value="0"
+          min="0"
+        >
+
+      </div>
+
+    </div>
+
+  </div>
 
 
-<label>Phone Number</label>
+  <!-- OFFLINE -->
 
-<input
-  type="tel"
-  id="customerPhone"
-  placeholder="Enter phone number"
->
+  <div class="branch">
+
+    <h3>Offline Tickets</h3>
+
+    <div class="row">
+
+      <div>
+
+        <label>Premium Orbit</label>
+
+        <input
+          type="number"
+          id="offlinePremium"
+          value="0"
+          min="0"
+        >
+
+      </div>
+
+      <div>
+
+        <label>Fanpit</label>
+
+        <input
+          type="number"
+          id="offlineFanpit"
+          value="0"
+          min="0"
+        >
+
+      </div>
+
+      <div>
+
+        <label>VIP</label>
+
+        <input
+          type="number"
+          id="offlineVIP"
+          value="0"
+          min="0"
+        >
+
+      </div>
+
+      <div>
+
+        <label>High Regular</label>
+
+        <input
+          type="number"
+          id="offlineHigh"
+          value="0"
+          min="0"
+        >
+
+      </div>
+
+    </div>
 
 
-<button
-  class="green"
-  onclick="saveTicketHandover()"
->
-  💾 Save Ticket
-</button>
+    <label>
+      Offline Cash (EGP)
+    </label>
 
-<p id="handoverMessage"></p>
+    <input
+      type="number"
+      id="offlineCash"
+      value="0"
+      readonly
+    >
+
+  </div>
+
+
+  <button
+    class="green"
+    id="saveDataBtn"
+    type="button"
+  >
+    Save Data
+  </button>
+
+  <p id="saveMessage"></p>
 
 </div>
 
 
-<!-- ================= SALES ================= -->
+<!-- ==================================================
+     SEARCH
+================================================== -->
 
 <div class="card">
 
-<h2>Enter Ticket Sales</h2>
+  <h2>Search Day</h2>
 
-<label>Date</label>
+  <label>Select Date</label>
 
-<input
-  type="date"
-  id="date"
+  <input
+    type="date"
+    id="searchDate"
+  >
+
+  <button
+    class="green"
+    id="searchBtn"
+    type="button"
+  >
+    Show Day
+  </button>
+
+  <div id="results"></div>
+
+</div>
+
+
+<!-- ==================================================
+     BRANCH TICKET HANDOVER
+================================================== -->
+
+<div
+  class="card"
+  id="ticketHandoverCard"
 >
 
-<label>Branch</label>
+  <h2>🎟️ Ticket Handover</h2>
 
-<select id="branch">
-
-  <option>Zayed</option>
-  <option>Zamalek</option>
-  <option>Heliopolis</option>
-  <option>CFC</option>
-
-</select>
+  <p style="color:#aaa;">
+    Enter customer ticket information.
+  </p>
 
 
-<div class="branch">
+  <label>Date</label>
 
-<h3>Online Tickets</h3>
+  <input
+    type="date"
+    id="ticketDate"
+  >
 
-<div class="row">
 
-<div>
-<label>Premium</label>
-<input type="number" id="onlinePremium" value="0" min="0">
+  <label>Customer Name</label>
+
+  <input
+    type="text"
+    id="customerName"
+    placeholder="Customer name"
+  >
+
+
+  <label>Serial</label>
+
+  <input
+    type="text"
+    id="ticketSerial"
+    placeholder="Ticket serial"
+  >
+
+
+  <label>Ticket Type</label>
+
+  <select id="ticketType">
+
+    <option value="Premium Orbit">
+      Premium Orbit
+    </option>
+
+    <option value="Fanpit">
+      Fanpit
+    </option>
+
+    <option value="VIP">
+      VIP
+    </option>
+
+    <option value="High Regular">
+      High Regular
+    </option>
+
+  </select>
+
+
+  <label>Gmail</label>
+
+  <input
+    type="email"
+    id="customerGmail"
+    placeholder="customer@gmail.com"
+  >
+
+
+  <label>Phone</label>
+
+  <input
+    type="tel"
+    id="customerPhone"
+    placeholder="Phone number"
+  >
+
+
+  <label>Sale Type</label>
+
+  <select id="saleType">
+
+    <option value="Online">
+      Online
+    </option>
+
+    <option value="Offline">
+      Offline
+    </option>
+
+  </select>
+
+
+  <button
+    class="purple"
+    id="saveTicketBtn"
+    type="button"
+  >
+    Save Ticket
+  </button>
+
+
+  <p
+    id="ticketMessage"
+    class="success-message"
+  ></p>
+
 </div>
 
-<div>
-<label>Fanpit</label>
-<input type="number" id="onlineFanpit" value="0" min="0">
-</div>
 
-<div>
-<label>VIP</label>
-<input type="number" id="onlineVIP" value="0" min="0">
-</div>
+<!-- ==================================================
+     HOST DASHBOARD
+================================================== -->
 
-<div>
-<label>High Regular</label>
-<input type="number" id="onlineHigh" value="0" min="0">
-</div>
-
-</div>
-</div>
-
-
-<div class="branch">
-
-<h3>Offline Tickets</h3>
-
-<div class="row">
-
-<div>
-<label>Premium</label>
-<input type="number" id="offlinePremium" value="0" min="0">
-</div>
-
-<div>
-<label>Fanpit</label>
-<input type="number" id="offlineFanpit" value="0" min="0">
-</div>
-
-<div>
-<label>VIP</label>
-<input type="number" id="offlineVIP" value="0" min="0">
-</div>
-
-<div>
-<label>High Regular</label>
-<input type="number" id="offlineHigh" value="0" min="0">
-</div>
-
-</div>
-
-<label>Offline Cash (EGP)</label>
-
-<input
-  type="number"
-  id="offlineCash"
-  value="0"
-  min="0"
+<div
+  class="card"
+  id="hostTicketsCard"
 >
 
+  <h2>🎟️ All Branch Tickets</h2>
+
+  <div class="live">
+
+    <span class="live-dot"></span>
+
+    LIVE — New tickets appear automatically
+
+  </div>
+
+
+  <label>Date</label>
+
+  <input
+    type="date"
+    id="hostTicketDate"
+  >
+
+
+  <div id="hostTicketsResults">
+
+    <p style="color:#aaa;">
+      Select a date.
+    </p>
+
+  </div>
+
 </div>
 
-
-<button
-  class="green"
-  onclick="saveData()"
->
-  Save Data
-</button>
-
-<p id="saveMessage"></p>
-
-</div>
-
-
-<!-- ================= SEARCH ================= -->
-
-<div class="card">
-
-<h2>Search Day</h2>
-
-<label>Select Date</label>
-
-<input
-  type="date"
-  id="searchDate"
->
-
-<button
-  class="green"
-  onclick="searchDay()"
->
-  Show Day
-</button>
-
-<div id="results"></div>
 
 </div>
 
 </div>
-</div>
 
+
+<!-- ==================================================
+     JAVASCRIPT
+================================================== -->
 
 <script>
 
-/* =========================
+
+/* ==================================================
    SUPABASE
-========================= */
+================================================== */
 
 const SUPABASE_URL =
-"https://ubaooclkpgminlbifpjf.supabase.co";
+  "https://ubaooclkpgminlbifpjf.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_iNL7NMiqyDKAUCmUYNKqpQ_rpOi12EB";
+  "sb_publishable_iNL7NMiqyDKAUCmUYNKqpQ_rpOi12EB";
+
 
 const supabaseClient =
-window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 
-/* =========================
-   VARIABLES
-========================= */
+/* ==================================================
+   STATE
+================================================== */
 
 let currentUser = null;
-let currentBranch = null;
+
+let currentBranch = "";
+
 let isAllUser = false;
 
 
-/* =========================
-   DEFAULT DATE
-========================= */
+/* ==================================================
+   ELEMENTS
+================================================== */
 
-function setToday(){
-
-  const today =
-    new Date().toISOString().split("T")[0];
-
+const loginScreen =
   document.getElementById(
-    "handoverDate"
-  ).value = today;
+    "loginScreen"
+  );
 
+const website =
   document.getElementById(
-    "date"
-  ).value = today;
+    "website"
+  );
 
+const loginEmail =
   document.getElementById(
-    "searchDate"
-  ).value = today;
+    "loginEmail"
+  );
+
+const loginPassword =
+  document.getElementById(
+    "loginPassword"
+  );
+
+const loginBtn =
+  document.getElementById(
+    "loginBtn"
+  );
+
+const loginError =
+  document.getElementById(
+    "loginError"
+  );
+
+
+/* ==================================================
+   DATE
+================================================== */
+
+function today() {
+
+  const d =
+    new Date();
+
+  return (
+    d.getFullYear() +
+    "-" +
+    String(
+      d.getMonth() + 1
+    ).padStart(2,"0") +
+    "-" +
+    String(
+      d.getDate()
+    ).padStart(2,"0")
+  );
+
 }
 
 
-/* =========================
-   LOGIN
-========================= */
+function setDates() {
 
-document.getElementById(
-  "loginBtn"
-).addEventListener(
-  "click",
-  login
-);
+  const d = today();
 
+  document.getElementById(
+    "date"
+  ).value = d;
 
-async function login(){
+  document.getElementById(
+    "searchDate"
+  ).value = d;
 
-  const email =
-    document.getElementById(
-      "loginEmail"
-    ).value.trim();
+  document.getElementById(
+    "ticketDate"
+  ).value = d;
 
-  const password =
-    document.getElementById(
-      "loginPassword"
-    ).value;
+  document.getElementById(
+    "hostTicketDate"
+  ).value = d;
 
-  const errorBox =
-    document.getElementById(
-      "loginError"
-    );
-
-  const button =
-    document.getElementById(
-      "loginBtn"
-    );
+}
 
 
-  errorBox.textContent = "";
+/* ==================================================
+   SHOW USER
+================================================== */
 
-
-  if(!email || !password){
-
-    errorBox.textContent =
-      "Enter email and password.";
-
-    return;
-  }
-
-
-  button.disabled = true;
-  button.textContent = "Logging in...";
-
+async function loadUserProfile(user) {
 
   const {
     data,
     error
-  } =
-    await supabaseClient.auth
-      .signInWithPassword({
-        email:email,
-        password:password
-      });
-
-
-  if(error){
-
-    errorBox.textContent =
-      error.message;
-
-    button.disabled = false;
-    button.textContent = "Login";
-
-    return;
-  }
-
-
-  currentUser =
-    data.user;
-
-
-  const {
-    data:branchData,
-    error:branchError
   } =
     await supabaseClient
       .from("branch_users")
       .select("branch")
       .eq(
         "user_id",
-        data.user.id
+        user.id
       )
-      .single();
+      .maybeSingle();
 
 
-  if(branchError || !branchData){
+  if (error) {
 
-    errorBox.textContent =
-      "Branch not found.";
+    console.error(error);
 
-    await supabaseClient.auth.signOut();
+    throw error;
 
-    button.disabled = false;
-    button.textContent = "Login";
-
-    return;
   }
 
 
+  if (!data) {
+
+    throw new Error(
+      "User is not assigned to a branch."
+    );
+
+  }
+
+
+  currentUser =
+    user;
+
   currentBranch =
-    branchData.branch;
+    data.branch;
 
   isAllUser =
-    currentBranch === "ALL";
-
-
-  document.getElementById(
-    "loginScreen"
-  ).style.display = "none";
-
-
-  document.getElementById(
-    "website"
-  ).classList.remove("hidden");
+    String(
+      currentBranch
+    ).toUpperCase() === "ALL";
 
 
   document.getElementById(
     "userName"
   ).textContent =
-    data.user.email;
+    user.email;
 
 
   document.getElementById(
     "userRole"
   ).textContent =
     isAllUser
-      ? "ALL BRANCHES"
+      ? "HOST — ALL BRANCHES"
       : currentBranch;
 
 
-  const branchSelect =
-    document.getElementById("branch");
+  if (isAllUser) {
 
+    document.body.classList.add(
+      "host-user"
+    );
 
-  if(isAllUser){
+    document.getElementById(
+      "branch"
+    ).disabled = false;
 
-    branchSelect.disabled = false;
+  }
 
-  }else{
+  else {
 
-    branchSelect.value =
+    document.body.classList.remove(
+      "host-user"
+    );
+
+    document.getElementById(
+      "branch"
+    ).value =
       currentBranch;
 
-    branchSelect.disabled = true;
+    document.getElementById(
+      "branch"
+    ).disabled = true;
+
+  }
+
+}
+
+
+/* ==================================================
+   OPEN WEBSITE
+================================================== */
+
+async function openWebsite(user) {
+
+  await loadUserProfile(user);
+
+  loginScreen.style.display =
+    "none";
+
+  website.classList.remove(
+    "hidden"
+  );
+
+  document.body.classList.remove(
+    "logged-out"
+  );
+
+  setDates();
+
+  calculateOfflineCash();
+
+
+  /*
+    Host:
+    automatically load today's tickets
+  */
+
+  if (isAllUser) {
+
+    await loadHostTickets();
+
+  }
+
+}
+
+
+/* ==================================================
+   LOGIN
+================================================== */
+
+async function login() {
+
+  loginError.textContent = "";
+
+  const email =
+    loginEmail.value.trim();
+
+  const password =
+    loginPassword.value;
+
+
+  if (!email || !password) {
+
+    loginError.textContent =
+      "Enter email and password.";
+
+    return;
 
   }
 
 
-  setToday();
+  loginBtn.disabled = true;
+
+  loginBtn.textContent =
+    "Logging in...";
 
 
-  button.disabled = false;
-  button.textContent = "Login";
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth
+        .signInWithPassword({
+
+          email: email,
+
+          password: password
+
+        });
+
+
+    if (error) {
+
+      loginError.textContent =
+        "Invalid login credentials.";
+
+      console.error(error);
+
+      return;
+
+    }
+
+
+    await openWebsite(
+      data.user
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    loginError.textContent =
+      error.message ||
+      "Login failed.";
+
+  }
+
+  finally {
+
+    loginBtn.disabled =
+      false;
+
+    loginBtn.textContent =
+      "Login";
+
+  }
 
 }
 
 
-/* =========================
+/* ==================================================
+   LOGIN CLICK
+================================================== */
+
+loginBtn.addEventListener(
+  "click",
+  login
+);
+
+
+/* ==================================================
+   ENTER LOGIN
+================================================== */
+
+loginPassword.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (
+      event.key === "Enter"
+    ) {
+
+      login();
+
+    }
+
+  }
+);
+
+
+/* ==================================================
+   CHECK EXISTING SESSION
+================================================== */
+
+async function checkSession() {
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient.auth
+      .getSession();
+
+
+  if (error) {
+
+    console.error(error);
+
+    return;
+
+  }
+
+
+  if (
+    data &&
+    data.session &&
+    data.session.user
+  ) {
+
+    try {
+
+      await openWebsite(
+        data.session.user
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      await supabaseClient.auth.signOut();
+
+    }
+
+  }
+
+}
+
+
+/* ==================================================
+   AUTH STATE
+================================================== */
+
+supabaseClient.auth
+  .onAuthStateChange(
+    async function(
+      event,
+      session
+    ) {
+
+      if (
+        event ===
+        "SIGNED_IN" &&
+        session &&
+        session.user
+      ) {
+
+        try {
+
+          await openWebsite(
+            session.user
+          );
+
+        }
+
+        catch (error) {
+
+          console.error(error);
+
+        }
+
+      }
+
+
+      if (
+        event ===
+        "SIGNED_OUT"
+      ) {
+
+        currentUser =
+          null;
+
+        currentBranch =
+          "";
+
+        isAllUser =
+          false;
+
+        website.classList.add(
+          "hidden"
+        );
+
+        loginScreen.style.display =
+          "flex";
+
+      }
+
+    }
+  );
+
+
+/* ==================================================
    LOGOUT
-========================= */
+================================================== */
 
-async function logout(){
+document.getElementById(
+  "logoutBtn"
+).addEventListener(
+  "click",
+  async function() {
 
-  await supabaseClient.auth.signOut();
+    await supabaseClient.auth.signOut();
 
-  currentUser = null;
-  currentBranch = null;
-  isAllUser = false;
-
-
-  document.getElementById(
-    "website"
-  ).classList.add("hidden");
+  }
+);
 
 
-  document.getElementById(
-    "loginScreen"
-  ).style.display = "flex";
+/* ==================================================
+   PRICES
+================================================== */
+
+const PRICES = {
+
+  "Premium Orbit": 1500,
+
+  "Fanpit": 1200,
+
+  "VIP": 800,
+
+  "High Regular": 500
+
+};
 
 
-  document.getElementById(
-    "loginEmail"
-  ).value = "";
-
-  document.getElementById(
-    "loginPassword"
-  ).value = "";
-
-}
-
-
-/* =========================
+/* ==================================================
    OFFLINE CASH
-========================= */
+================================================== */
 
-function calculateOfflineCash(){
+function calculateOfflineCash() {
 
   const premium =
     Number(
@@ -966,15 +1555,23 @@ function calculateOfflineCash(){
 
 
   const total =
+
     premium * 1500 +
+
     fanpit * 1200 +
+
     vip * 800 +
+
     high * 500;
 
 
   document.getElementById(
     "offlineCash"
-  ).value = total;
+  ).value =
+    total;
+
+
+  return total;
 
 }
 
@@ -984,304 +1581,72 @@ function calculateOfflineCash(){
   "offlineFanpit",
   "offlineVIP",
   "offlineHigh"
-].forEach(id=>{
+].forEach(
+  function(id) {
 
-  document.getElementById(id)
-    .addEventListener(
+    document.getElementById(
+      id
+    ).addEventListener(
       "input",
       calculateOfflineCash
     );
 
-});
-
-
-/* =========================
-   SAVE TICKET
-========================= */
-
-async function saveTicketHandover(){
-
-  if(!currentUser){
-
-    alert("Please login first.");
-    return;
-
   }
+);
 
 
-  const date =
-    document.getElementById(
-      "handoverDate"
-    ).value;
-
-  const name =
-    document.getElementById(
-      "customerName"
-    ).value.trim();
-
-  const gmail =
-    document.getElementById(
-      "customerGmail"
-    ).value.trim();
-
-  const serial =
-    document.getElementById(
-      "ticketSerial"
-    ).value.trim();
-
-  const type =
-    document.getElementById(
-      "ticketType"
-    ).value;
-
-  const status =
-    document.getElementById(
-      "ticketStatus"
-    ).value;
-
-  const phone =
-    document.getElementById(
-      "customerPhone"
-    ).value.trim();
-
-
-  const message =
-    document.getElementById(
-      "handoverMessage"
-    );
-
-
-  if(
-    !date ||
-    !name ||
-    !gmail ||
-    !serial ||
-    !type ||
-    !status ||
-    !phone
-  ){
-
-    message.textContent =
-      "❌ Please fill all fields.";
-
-    message.className =
-      "error";
-
-    return;
-  }
-
-
-  const branch =
-    isAllUser
-      ? document.getElementById(
-          "branch"
-        ).value
-      : currentBranch;
-
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .from("ticket_handover")
-      .insert([{
-
-        handover_date:date,
-
-        customer_name:name,
-
-        gmail:gmail,
-
-        ticket_serial:serial,
-
-        ticket_type:type,
-
-        ticket_status:status,
-
-        phone:phone,
-
-        branch:branch
-
-      }]);
-
-
-  if(error){
-
-    message.textContent =
-      "❌ " + error.message;
-
-    message.className =
-      "error";
-
-    return;
-  }
-
-
-  /* SUCCESS ANIMATION */
-
-  showTicketSuccess();
-
-
-  /* CLEAR FORM */
-
-  document.getElementById(
-    "customerName"
-  ).value = "";
-
-  document.getElementById(
-    "customerGmail"
-  ).value = "";
-
-  document.getElementById(
-    "ticketSerial"
-  ).value = "";
-
-  document.getElementById(
-    "ticketType"
-  ).value = "";
-
-  document.getElementById(
-    "ticketStatus"
-  ).value = "";
-
-  document.getElementById(
-    "customerPhone"
-  ).value = "";
-
-
-  setToday();
-
-}
-
-
-/* =========================
-   SUCCESS ANIMATION + SOUND
-========================= */
-
-function showTicketSuccess(){
-
-  const popup =
-    document.getElementById(
-      "ticketSuccess"
-    );
-
-
-  popup.style.display =
-    "flex";
-
-
-  /* Simple success sound */
-
-  try{
-
-    const AudioContext =
-      window.AudioContext ||
-      window.webkitAudioContext;
-
-    const audio =
-      new AudioContext();
-
-    const oscillator =
-      audio.createOscillator();
-
-    const gain =
-      audio.createGain();
-
-
-    oscillator.type = "sine";
-
-    oscillator.frequency.setValueAtTime(
-      650,
-      audio.currentTime
-    );
-
-    oscillator.frequency.exponentialRampToValueAtTime(
-      950,
-      audio.currentTime + 0.12
-    );
-
-
-    gain.gain.setValueAtTime(
-      0.0001,
-      audio.currentTime
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-      0.18,
-      audio.currentTime + 0.02
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-      0.0001,
-      audio.currentTime + 0.25
-    );
-
-
-    oscillator.connect(gain);
-    gain.connect(audio.destination);
-
-    oscillator.start();
-
-    oscillator.stop(
-      audio.currentTime + 0.25
-    );
-
-  }catch(e){}
-
-
-  setTimeout(()=>{
-
-    popup.style.display =
-      "none";
-
-  },1800);
-
-}
-
-
-/* =========================
+/* ==================================================
    SAVE SALES
-========================= */
+================================================== */
 
-async function saveData(){
-
-  if(!currentUser){
-
-    alert("Please login first.");
-    return;
-
-  }
-
+async function saveData() {
 
   const date =
     document.getElementById(
       "date"
     ).value;
 
+  const branch =
+    document.getElementById(
+      "branch"
+    ).value;
 
-  if(!date){
+
+  if (!date) {
 
     alert(
-      "Please select a date."
+      "Select date."
     );
 
     return;
+
   }
 
 
-  const branch =
-    isAllUser
-      ? document.getElementById(
-          "branch"
-        ).value
-      : currentBranch;
+  const button =
+    document.getElementById(
+      "saveDataBtn"
+    );
+
+  const message =
+    document.getElementById(
+      "saveMessage"
+    );
+
+
+  button.disabled = true;
+
+  button.textContent =
+    "Saving...";
 
 
   const data = {
 
-    sale_date:date,
+    sale_date:
+      date,
 
-    branch:branch,
+    branch:
+      branch,
 
     online_premium:
       Number(
@@ -1340,122 +1705,125 @@ async function saveData(){
       ),
 
     offline_cash:
-      Number(
-        document.getElementById(
-          "offlineCash"
-        ).value || 0
-      )
+      calculateOfflineCash()
 
   };
 
 
-  const {
-    data:existing,
-    error:findError
-  } =
-    await supabaseClient
-      .from("ticket_sales")
-      .select("id")
-      .eq(
-        "sale_date",
-        date
-      )
-      .eq(
-        "branch",
-        branch
-      )
-      .maybeSingle();
+  try {
 
-
-  if(findError){
-
-    document.getElementById(
-      "saveMessage"
-    ).textContent =
-      "❌ " + findError.message;
-
-    return;
-  }
-
-
-  let error;
-
-
-  if(existing){
-
-    const result =
+    const {
+      data: existing,
+      error: findError
+    } =
       await supabaseClient
         .from("ticket_sales")
-        .update(data)
+        .select("id")
         .eq(
-          "id",
-          existing.id
-        );
+          "sale_date",
+          date
+        )
+        .eq(
+          "branch",
+          branch
+        )
+        .maybeSingle();
 
-    error =
-      result.error;
 
-  }else{
+    if (findError)
+      throw findError;
 
-    const result =
-      await supabaseClient
-        .from("ticket_sales")
-        .insert([data]);
 
-    error =
-      result.error;
+    let error = null;
+
+
+    if (existing) {
+
+      const result =
+        await supabaseClient
+          .from("ticket_sales")
+          .update(data)
+          .eq(
+            "id",
+            existing.id
+          );
+
+      error =
+        result.error;
+
+    }
+
+    else {
+
+      const result =
+        await supabaseClient
+          .from("ticket_sales")
+          .insert([
+            data
+          ]);
+
+      error =
+        result.error;
+
+    }
+
+
+    if (error)
+      throw error;
+
+
+    message.style.color =
+      "#4ade80";
+
+    message.textContent =
+      "✓ Data saved successfully";
 
   }
 
+  catch (error) {
 
-  if(error){
+    console.error(error);
 
-    document.getElementById(
-      "saveMessage"
-    ).textContent =
-      "❌ " + error.message;
+    message.style.color =
+      "#ff6b6b";
 
-    return;
+    message.textContent =
+      "❌ " +
+      error.message;
+
   }
 
+  finally {
 
-  document.getElementById(
-    "saveMessage"
-  ).textContent =
-    "✓ Data saved successfully";
+    button.disabled =
+      false;
+
+    button.textContent =
+      "Save Data";
+
+  }
 
 }
 
 
-/* =========================
-   SEARCH DAY
-========================= */
+document.getElementById(
+  "saveDataBtn"
+).addEventListener(
+  "click",
+  saveData
+);
 
-async function searchDay(){
 
-  if(!currentUser){
+/* ==================================================
+   SEARCH SALES
+================================================== */
 
-    alert("Please login first.");
-    return;
-
-  }
-
+async function searchDay() {
 
   const date =
     document.getElementById(
       "searchDate"
     ).value;
-
-
-  if(!date){
-
-    alert(
-      "Select a date first."
-    );
-
-    return;
-  }
-
 
   const results =
     document.getElementById(
@@ -1463,23 +1831,464 @@ async function searchDay(){
     );
 
 
-  let query =
-    supabaseClient
-      .from("ticket_sales")
-      .select("*")
-      .eq(
-        "sale_date",
-        date
+  if (!date) {
+
+    alert(
+      "Select date."
+    );
+
+    return;
+
+  }
+
+
+  results.innerHTML =
+    "<p>Loading...</p>";
+
+
+  try {
+
+    let query =
+      supabaseClient
+        .from("ticket_sales")
+        .select("*")
+        .eq(
+          "sale_date",
+          date
+        )
+        .order(
+          "branch"
+        );
+
+
+    if (!isAllUser) {
+
+      query =
+        query.eq(
+          "branch",
+          currentBranch
+        );
+
+    }
+
+
+    const {
+      data,
+      error
+    } =
+      await query;
+
+
+    if (error)
+      throw error;
+
+
+    if (
+      !data ||
+      data.length === 0
+    ) {
+
+      results.innerHTML =
+        "<p>No data found.</p>";
+
+      return;
+
+    }
+
+
+    let html = "";
+
+
+    data.forEach(
+      function(item) {
+
+        const online =
+
+          Number(
+            item.online_premium || 0
+          ) +
+
+          Number(
+            item.online_fanpit || 0
+          ) +
+
+          Number(
+            item.online_vip || 0
+          ) +
+
+          Number(
+            item.online_high_regular || 0
+          );
+
+
+        const offline =
+
+          Number(
+            item.offline_premium || 0
+          ) +
+
+          Number(
+            item.offline_fanpit || 0
+          ) +
+
+          Number(
+            item.offline_vip || 0
+          ) +
+
+          Number(
+            item.offline_high_regular || 0
+          );
+
+
+        html += `
+
+          <div class="result-box">
+
+            <h3>
+              ${item.branch}
+            </h3>
+
+            <b>
+              Online Tickets:
+            </b>
+
+            ${online}
+
+            <br>
+
+            Premium Orbit:
+            ${item.online_premium || 0}
+
+            <br>
+
+            Fanpit:
+            ${item.online_fanpit || 0}
+
+            <br>
+
+            VIP:
+            ${item.online_vip || 0}
+
+            <br>
+
+            High Regular:
+            ${item.online_high_regular || 0}
+
+            <br><br>
+
+            <b>
+              Offline Tickets:
+            </b>
+
+            ${offline}
+
+            <br>
+
+            Premium Orbit:
+            ${item.offline_premium || 0}
+
+            <br>
+
+            Fanpit:
+            ${item.offline_fanpit || 0}
+
+            <br>
+
+            VIP:
+            ${item.offline_vip || 0}
+
+            <br>
+
+            High Regular:
+            ${item.offline_high_regular || 0}
+
+            <br><br>
+
+            <b>
+              Offline Cash:
+            </b>
+
+            ${Number(
+              item.offline_cash || 0
+            ).toLocaleString()}
+
+            EGP
+
+          </div>
+
+        `;
+
+      }
+    );
+
+
+    results.innerHTML =
+      html;
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    results.innerHTML =
+      `<p style="color:#ff6b6b;">
+        ❌ ${error.message}
+      </p>`;
+
+  }
+
+}
+
+
+document.getElementById(
+  "searchBtn"
+).addEventListener(
+  "click",
+  searchDay
+);
+
+
+/* ==================================================
+   SAVE TICKET
+================================================== */
+
+async function saveTicket() {
+
+  if (isAllUser)
+    return;
+
+
+  const date =
+    document.getElementById(
+      "ticketDate"
+    ).value;
+
+  const name =
+    document.getElementById(
+      "customerName"
+    ).value.trim();
+
+  const serial =
+    document.getElementById(
+      "ticketSerial"
+    ).value.trim();
+
+  const type =
+    document.getElementById(
+      "ticketType"
+    ).value;
+
+  const gmail =
+    document.getElementById(
+      "customerGmail"
+    ).value.trim();
+
+  const phone =
+    document.getElementById(
+      "customerPhone"
+    ).value.trim();
+
+  const saleType =
+    document.getElementById(
+      "saleType"
+    ).value;
+
+
+  const message =
+    document.getElementById(
+      "ticketMessage"
+    );
+
+
+  if (
+    !date ||
+    !name ||
+    !serial ||
+    !gmail ||
+    !phone
+  ) {
+
+    message.style.color =
+      "#ff6b6b";
+
+    message.textContent =
+      "Please fill all fields.";
+
+    return;
+
+  }
+
+
+  const button =
+    document.getElementById(
+      "saveTicketBtn"
+    );
+
+
+  button.disabled = true;
+
+  button.textContent =
+    "Saving...";
+
+
+  try {
+
+    const ticket = {
+
+      sale_date:
+        date,
+
+      branch:
+        currentBranch,
+
+      customer_name:
+        name,
+
+      serial:
+        serial,
+
+      ticket_type:
+        type,
+
+      gmail:
+        gmail,
+
+      phone:
+        phone,
+
+      sale_type:
+        saleType
+
+    };
+
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from(
+          "ticket_handover"
+        )
+        .insert([
+          ticket
+        ]);
+
+
+    if (error)
+      throw error;
+
+
+    message.style.color =
+      "#4ade80";
+
+    message.textContent =
+      "✓ Ticket saved successfully";
+
+
+    const card =
+      document.getElementById(
+        "ticketHandoverCard"
       );
 
 
-  if(!isAllUser){
+    card.classList.remove(
+      "ticket-success"
+    );
 
-    query =
-      query.eq(
-        "branch",
-        currentBranch
-      );
+
+    void card.offsetWidth;
+
+
+    card.classList.add(
+      "ticket-success"
+    );
+
+
+    playSuccessSound();
+
+
+    document.getElementById(
+      "customerName"
+    ).value = "";
+
+    document.getElementById(
+      "ticketSerial"
+    ).value = "";
+
+    document.getElementById(
+      "customerGmail"
+    ).value = "";
+
+    document.getElementById(
+      "customerPhone"
+    ).value = "";
+
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    message.style.color =
+      "#ff6b6b";
+
+    message.textContent =
+      "❌ " +
+      error.message;
+
+  }
+
+  finally {
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      "Save Ticket";
+
+  }
+
+}
+
+
+document.getElementById(
+  "saveTicketBtn"
+).addEventListener(
+  "click",
+  saveTicket
+);
+
+
+/* ==================================================
+   HOST LOAD TICKETS
+================================================== */
+
+async function loadHostTickets() {
+
+  if (!isAllUser)
+    return;
+
+
+  const date =
+    document.getElementById(
+      "hostTicketDate"
+    ).value;
+
+
+  const results =
+    document.getElementById(
+      "hostTicketsResults"
+    );
+
+
+  if (!date) {
+
+    results.innerHTML =
+      "<p>Select a date.</p>";
+
+    return;
 
   }
 
@@ -1488,181 +2297,124 @@ async function searchDay(){
     data,
     error
   } =
-    await query.order(
-      "branch"
+    await supabaseClient
+      .from(
+        "ticket_handover"
+      )
+      .select("*")
+      .eq(
+        "sale_date",
+        date
+      )
+      .order(
+        "created_at",
+        {
+          ascending: false
+        }
+      );
+
+
+  if (error) {
+
+    console.error(error);
+
+    results.innerHTML =
+      `<p style="color:#ff6b6b;">
+        ❌ ${error.message}
+      </p>`;
+
+    return;
+
+  }
+
+
+  if (
+    !data ||
+    data.length === 0
+  ) {
+
+    results.innerHTML =
+      "<p style='color:#aaa;'>No tickets found.</p>";
+
+    return;
+
+  }
+
+
+  renderHostTickets(
+    data
+  );
+
+}
+
+
+/* ==================================================
+   RENDER HOST TICKETS
+================================================== */
+
+function renderHostTickets(
+  tickets
+) {
+
+  const results =
+    document.getElementById(
+      "hostTicketsResults"
     );
-
-
-  if(error){
-
-    results.innerHTML =
-      "<p class='error'>❌ " +
-      error.message +
-      "</p>";
-
-    return;
-  }
-
-
-  if(!data || data.length === 0){
-
-    results.innerHTML =
-      "<p>No data found.</p>";
-
-    return;
-  }
 
 
   let html = "";
 
-  let totalOnline = 0;
-  let totalOffline = 0;
-  let totalCash = 0;
 
+  tickets.forEach(
+    function(ticket) {
 
-  data.forEach(item=>{
+      html += `
 
-    const online =
+        <div class="result-box">
 
-      Number(
-        item.online_premium || 0
-      ) +
+          <h3>
+            ${ticket.branch}
+          </h3>
 
-      Number(
-        item.online_fanpit || 0
-      ) +
+          <b>Date:</b>
+          ${ticket.sale_date}
 
-      Number(
-        item.online_vip || 0
-      ) +
+          <br>
 
-      Number(
-        item.online_high_regular || 0
-      );
+          <b>Name:</b>
+          ${ticket.customer_name}
 
+          <br>
 
-    const offline =
+          <b>Serial:</b>
+          ${ticket.serial}
 
-      Number(
-        item.offline_premium || 0
-      ) +
+          <br>
 
-      Number(
-        item.offline_fanpit || 0
-      ) +
+          <b>Ticket Type:</b>
+          ${ticket.ticket_type}
 
-      Number(
-        item.offline_vip || 0
-      ) +
+          <br>
 
-      Number(
-        item.offline_high_regular || 0
-      );
+          <b>Gmail:</b>
+          ${ticket.gmail}
 
+          <br>
 
-    totalOnline += online;
-    totalOffline += offline;
+          <b>Phone:</b>
+          ${ticket.phone}
 
-    totalCash +=
-      Number(
-        item.offline_cash || 0
-      );
+          <br>
 
+          <b>Sale Type:</b>
+          ${ticket.sale_type}
 
-    html += `
+        </div>
 
-      <div class="branch result">
+      `;
 
-        <h3>${item.branch}</h3>
-
-        <b>Online Tickets:</b>
-        ${online}
-
-        <br><br>
-
-        Premium:
-        ${item.online_premium}
-
-        |
-
-        Fanpit:
-        ${item.online_fanpit}
-
-        |
-
-        VIP:
-        ${item.online_vip}
-
-        |
-
-        High Regular:
-        ${item.online_high_regular}
-
-        <br><br>
-
-        <b>Offline Tickets:</b>
-        ${offline}
-
-        <br><br>
-
-        Premium:
-        ${item.offline_premium}
-
-        |
-
-        Fanpit:
-        ${item.offline_fanpit}
-
-        |
-
-        VIP:
-        ${item.offline_vip}
-
-        |
-
-        High Regular:
-        ${item.offline_high_regular}
-
-        <br><br>
-
-        <b>Offline Cash:</b>
-        ${item.offline_cash} EGP
-
-      </div>
-
-    `;
-
-  });
-
-
-  if(isAllUser){
-
-    html += `
-
-      <div class="branch resultTotal">
-
-        TOTAL ALL BRANCHES
-
-        <br><br>
-
-        Online Tickets:
-        ${totalOnline}
-
-        <br>
-
-        Offline Tickets:
-        ${totalOffline}
-
-        <br>
-
-        Offline Cash:
-        ${totalCash} EGP
-
-      </div>
-
-    `;
-
-  }
+    }
+  );
 
 
   results.innerHTML =
@@ -1671,14 +2423,173 @@ async function searchDay(){
 }
 
 
-/* =========================
-   START
-========================= */
+/* ==================================================
+   HOST DATE CHANGE
+================================================== */
 
-setToday();
+document.getElementById(
+  "hostTicketDate"
+).addEventListener(
+  "change",
+  loadHostTickets
+);
+
+
+/* ==================================================
+   REALTIME
+================================================== */
+
+const ticketChannel =
+  supabaseClient
+    .channel(
+      "ticket-handover-live"
+    )
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "ticket_handover"
+      },
+      function(payload) {
+
+        console.log(
+          "New ticket:",
+          payload.new
+        );
+
+
+        /*
+          لو المستخدم Host
+          والتاريخ الحالي هو تاريخ التذكرة
+        */
+
+        if (
+          isAllUser
+        ) {
+
+          const selectedDate =
+            document.getElementById(
+              "hostTicketDate"
+            ).value;
+
+
+          if (
+            selectedDate ===
+            payload.new.sale_date
+          ) {
+
+            loadHostTickets();
+
+            playSuccessSound();
+
+          }
+
+        }
+
+      }
+    )
+    .subscribe();
+
+
+/* ==================================================
+   SUCCESS SOUND
+================================================== */
+
+function playSuccessSound() {
+
+  try {
+
+    const AudioContext =
+      window.AudioContext ||
+      window.webkitAudioContext;
+
+
+    if (!AudioContext)
+      return;
+
+
+    const audio =
+      new AudioContext();
+
+
+    const oscillator =
+      audio.createOscillator();
+
+
+    const gain =
+      audio.createGain();
+
+
+    oscillator.type =
+      "sine";
+
+
+    oscillator.frequency.value =
+      700;
+
+
+    gain.gain.setValueAtTime(
+      .001,
+      audio.currentTime
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+      .15,
+      audio.currentTime + .02
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+      .001,
+      audio.currentTime + .3
+    );
+
+
+    oscillator.connect(
+      gain
+    );
+
+
+    gain.connect(
+      audio.destination
+    );
+
+
+    oscillator.start();
+
+
+    oscillator.stop(
+      audio.currentTime + .3
+    );
+
+  }
+
+  catch (error) {
+
+    console.log(
+      "Audio unavailable"
+    );
+
+  }
+
+}
+
+
+/* ==================================================
+   START
+================================================== */
+
+setDates();
+
 calculateOfflineCash();
+
+checkSession();
+
 
 </script>
 
 </body>
+
 </html>
