@@ -1,0 +1,607 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Ticket Branches</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #17181c;
+      color: white;
+    }
+
+    header {
+      padding: 20px;
+      background: #202126;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #444;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    header h1 span {
+      color: #8b5cf6;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 13px 20px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .logout {
+      background: #55565d;
+      color: white;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: #202126;
+      border: 1px solid #444;
+      border-radius: 18px;
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 7px;
+      color: #ddd;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #555;
+      background: #303136;
+      color: white;
+      font-size: 16px;
+    }
+
+    .green {
+      background: #008f68;
+      color: white;
+      margin-top: 20px;
+    }
+
+    .login {
+      max-width: 420px;
+      margin: 100px auto;
+      padding: 30px;
+      background: #202126;
+      border-radius: 20px;
+      border: 1px solid #444;
+    }
+
+    .login h1 {
+      text-align: center;
+    }
+
+    .branch {
+      border: 1px solid #444;
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 20px;
+      background: #1c1d21;
+    }
+
+    .branch h3 {
+      color: #9b7cff;
+      margin-top: 0;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .result {
+      line-height: 1.8;
+      font-size: 17px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media(max-width:700px) {
+      .row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .container {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage" class="login">
+
+  <h1>Ticket Branches</h1>
+
+  <label>Username</label>
+  <input id="username" placeholder="Enter username">
+
+  <label>Password</label>
+  <input id="password" type="password" placeholder="Enter password">
+
+  <button class="green" style="width:100%" onclick="login()">
+    Login
+  </button>
+
+  <p id="loginError" style="color:#ff6b6b;"></p>
+
+</div>
+
+
+<!-- WEBSITE -->
+<div id="website" class="hidden">
+
+  <header>
+    <h1>Ticket <span>Branches</span></h1>
+
+    <div>
+      <span id="userName"></span>
+      <button class="logout" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+
+  <div class="container">
+
+    <!-- ADD DATA -->
+
+    <div class="card">
+
+      <h2>Enter Ticket Sales</h2>
+
+      <label>Date</label>
+      <input type="date" id="date">
+
+      <label>Branch</label>
+      <select id="branch">
+        <option>Zayed</option>
+        <option>Zamalek</option>
+        <option>Heliopolis</option>
+      </select>
+
+
+      <div class="branch">
+
+        <h3>Online Tickets</h3>
+
+        <div class="row">
+
+          <div>
+            <label>Premium</label>
+            <input type="number" id="onlinePremium" value="0">
+          </div>
+
+          <div>
+            <label>Fanpit</label>
+            <input type="number" id="onlineFanpit" value="0">
+          </div>
+
+          <div>
+            <label>VIP</label>
+            <input type="number" id="onlineVIP" value="0">
+          </div>
+
+          <div>
+            <label>High Regular</label>
+            <input type="number" id="onlineHigh" value="0">
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="branch">
+
+        <h3>Offline Tickets</h3>
+
+        <div class="row">
+
+          <div>
+            <label>Premium</label>
+            <input type="number" id="offlinePremium" value="0">
+          </div>
+
+          <div>
+            <label>Fanpit</label>
+            <input type="number" id="offlineFanpit" value="0">
+          </div>
+
+          <div>
+            <label>VIP</label>
+            <input type="number" id="offlineVIP" value="0">
+          </div>
+
+          <div>
+            <label>High Regular</label>
+            <input type="number" id="offlineHigh" value="0">
+          </div>
+
+        </div>
+
+        <label>Offline Cash (EGP)</label>
+        <input type="number" id="offlineCash" value="0">
+
+      </div>
+
+
+      <button class="green" onclick="saveData()">
+        Save Data
+      </button>
+
+      <p id="saveMessage"></p>
+
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <div class="card">
+
+      <h2>Search Day</h2>
+
+      <label>Select Date</label>
+      <input type="date" id="searchDate">
+
+      <button class="green" onclick="searchDay()">
+        Show Day
+      </button>
+
+      <div id="results"></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* ==============================
+   SUPABASE CONNECTION
+   ============================== */
+
+const SUPABASE_URL = "https://ubaooclkpgminlbifpjf.supabase.co";
+const SUPABASE_KEY = "sb_publishable_iNL7NMiqyDKAUCmUYNKqpQ_rpOi12EB";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+let currentUser = "";
+
+
+/* ==============================
+   LOGIN
+   ============================== */
+
+function login() {
+
+  const username =
+    document.getElementById("username").value.trim();
+
+  const password =
+    document.getElementById("password").value.trim();
+
+
+  if (username === "admin1" && password === "1234") {
+
+    currentUser = username;
+
+    document.getElementById("loginPage")
+      .classList.add("hidden");
+
+    document.getElementById("website")
+      .classList.remove("hidden");
+
+    document.getElementById("userName")
+      .innerText = "Hi, " + username;
+
+  } else {
+
+    document.getElementById("loginError")
+      .innerText = "Wrong username or password.";
+
+  }
+
+}
+
+
+/* ==============================
+   LOGOUT
+   ============================== */
+
+function logout() {
+
+  currentUser = "";
+
+  document.getElementById("website")
+    .classList.add("hidden");
+
+  document.getElementById("loginPage")
+    .classList.remove("hidden");
+
+}
+
+
+/* ==============================
+   SAVE DATA
+   ============================== */
+
+async function saveData() {
+
+  const date =
+    document.getElementById("date").value;
+
+  const branch =
+    document.getElementById("branch").value;
+
+
+  if (!date) {
+
+    alert("Please select a date.");
+
+    return;
+
+  }
+
+
+  const data = {
+
+    sale_date: date,
+
+    branch: branch,
+
+    online_premium:
+      Number(document.getElementById("onlinePremium").value),
+
+    online_fanpit:
+      Number(document.getElementById("onlineFanpit").value),
+
+    online_vip:
+      Number(document.getElementById("onlineVIP").value),
+
+    online_high_regular:
+      Number(document.getElementById("onlineHigh").value),
+
+    offline_premium:
+      Number(document.getElementById("offlinePremium").value),
+
+    offline_fanpit:
+      Number(document.getElementById("offlineFanpit").value),
+
+    offline_vip:
+      Number(document.getElementById("offlineVIP").value),
+
+    offline_high_regular:
+      Number(document.getElementById("offlineHigh").value),
+
+    offline_cash:
+      Number(document.getElementById("offlineCash").value)
+
+  };
+
+
+  /* Check if this date + branch already exists */
+
+  const { data: existing, error: findError } =
+    await supabaseClient
+      .from("ticket_sales")
+      .select("id")
+      .eq("sale_date", date)
+      .eq("branch", branch)
+      .maybeSingle();
+
+
+  if (findError) {
+
+    document.getElementById("saveMessage")
+      .innerText =
+      "❌ Error: " + findError.message;
+
+    return;
+
+  }
+
+
+  let error;
+
+
+  /* Update existing row */
+
+  if (existing) {
+
+    const result =
+      await supabaseClient
+        .from("ticket_sales")
+        .update(data)
+        .eq("id", existing.id);
+
+    error = result.error;
+
+  }
+
+
+  /* Insert new row */
+
+  else {
+
+    const result =
+      await supabaseClient
+        .from("ticket_sales")
+        .insert([data]);
+
+    error = result.error;
+
+  }
+
+
+  if (error) {
+
+    document.getElementById("saveMessage")
+      .innerText =
+      "❌ Error: " + error.message;
+
+    return;
+
+  }
+
+
+  document.getElementById("saveMessage")
+    .innerText =
+    "✓ Data saved successfully";
+
+}
+
+
+/* ==============================
+   SEARCH DAY
+   ============================== */
+
+async function searchDay() {
+
+  const date =
+    document.getElementById("searchDate").value;
+
+
+  if (!date) {
+
+    alert("Select a date first.");
+
+    return;
+
+  }
+
+
+  const { data: dayData, error } =
+    await supabaseClient
+      .from("ticket_sales")
+      .select("*")
+      .eq("sale_date", date)
+      .order("branch");
+
+
+  const results =
+    document.getElementById("results");
+
+
+  if (error) {
+
+    results.innerHTML =
+      "<p>❌ Error: " +
+      error.message +
+      "</p>";
+
+    return;
+
+  }
+
+
+  if (!dayData || dayData.length === 0) {
+
+    results.innerHTML =
+      "<p>No data found for this day.</p>";
+
+    return;
+
+  }
+
+
+  let html = "";
+
+
+  dayData.forEach(item => {
+
+    html += `
+
+      <div class="branch result">
+
+        <h3>${item.branch}</h3>
+
+        <b>Online:</b><br>
+
+        Premium: ${item.online_premium} |
+
+        Fanpit: ${item.online_fanpit} |
+
+        VIP: ${item.online_vip} |
+
+        High regular: ${item.online_high_regular}
+
+        <br><br>
+
+        <b>Offline:</b><br>
+
+        Premium: ${item.offline_premium} |
+
+        Fanpit: ${item.offline_fanpit} |
+
+        VIP: ${item.offline_vip} |
+
+        High regular: ${item.offline_high_regular}
+
+        <br><br>
+
+        <b>Offline cash:</b>
+
+        ${item.offline_cash} EGP
+
+      </div>
+
+    `;
+
+  });
+
+
+  results.innerHTML = html;
+
+}
+
+</script>
+
+</body>
+</html>
