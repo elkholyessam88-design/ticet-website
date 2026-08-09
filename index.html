@@ -5,94 +5,80 @@
 
 <meta charset="UTF-8">
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
 <title>Ticket Branches</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-
 <style>
 
-* {
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
+*{
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
-  background: #17181c;
-  color: white;
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+  background:#17181c;
+  color:white;
 }
 
-body {
-  min-height: 100vh;
+body{
+  min-height:100vh;
 }
 
-.hidden {
-  display: none !important;
+.hidden{
+  display:none!important;
 }
 
-button {
-  border: none;
-  border-radius: 10px;
-  padding: 13px 20px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 15px;
+button{
+  border:none;
+  border-radius:10px;
+  padding:13px 20px;
+  cursor:pointer;
+  font-weight:bold;
+  font-size:15px;
 }
 
-button:disabled {
-  opacity: .6;
-  cursor: not-allowed;
+button:disabled{
+  opacity:.6;
 }
 
-input,
-select {
-  width: 100%;
-  padding: 14px;
-  border-radius: 10px;
-  border: 1px solid #555;
-  background: #303136;
-  color: white;
-  font-size: 16px;
-  outline: none;
+input,select{
+  width:100%;
+  padding:14px;
+  border-radius:10px;
+  border:1px solid #555;
+  background:#303136;
+  color:white;
+  font-size:16px;
+  outline:none;
 }
 
 input:focus,
-select:focus {
-  border-color: #8b5cf6;
+select:focus{
+  border-color:#8b5cf6;
 }
 
-label {
-  display: block;
-  margin-top: 15px;
-  margin-bottom: 7px;
-  color: #ddd;
+label{
+  display:block;
+  margin-top:15px;
+  margin-bottom:7px;
+  color:#ddd;
 }
 
-/* =========================
-   LOGIN
-========================= */
+/* LOGIN */
 
-#loginScreen {
-
-  min-height: 100vh;
-
-  display: flex;
-
-  justify-content: center;
-
-  align-items: center;
-
-  padding: 20px;
-
+#loginScreen{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
   background:
     radial-gradient(
       circle at top,
@@ -101,426 +87,416 @@ label {
     );
 }
 
-.login-box {
-
-  width: 100%;
-
-  max-width: 420px;
-
-  padding: 35px;
-
-  background: #202126;
-
-  border: 1px solid #444;
-
-  border-radius: 22px;
-
-  box-shadow:
-    0 20px 60px rgba(0,0,0,.4);
-
+.login-box{
+  width:100%;
+  max-width:420px;
+  padding:35px;
+  background:#202126;
+  border:1px solid #444;
+  border-radius:22px;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
 }
 
-.login-box h1 {
-
-  text-align: center;
-
-  margin-top: 0;
-
+.login-box h1{
+  text-align:center;
+  margin-top:0;
 }
 
-.login-box h1 span {
-
-  color: #8b5cf6;
-
+.login-box h1 span{
+  color:#8b5cf6;
 }
 
-.login-subtitle {
-
-  text-align: center;
-
-  color: #aaa;
-
-  margin-bottom: 25px;
-
+.login-subtitle{
+  text-align:center;
+  color:#aaa;
+  margin-bottom:25px;
 }
 
-#loginBtn {
-
-  width: 100%;
-
-  margin-top: 20px;
-
-  background: #8b5cf6;
-
-  color: white;
-
+#loginBtn{
+  width:100%;
+  margin-top:20px;
+  background:#8b5cf6;
+  color:white;
 }
 
-#loginError {
-
-  min-height: 20px;
-
-  text-align: center;
-
-  color: #ff6b6b;
-
+#loginError{
+  min-height:20px;
+  text-align:center;
+  color:#ff6b6b;
 }
 
-/* =========================
-   HEADER
-========================= */
+/* HEADER */
 
-header {
-
-  padding: 18px 25px;
-
-  background: #202126;
-
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
-
-  gap: 20px;
-
-  border-bottom: 1px solid #444;
-
-  position: sticky;
-
-  top: 0;
-
-  z-index: 10;
-
+header{
+  padding:18px 25px;
+  background:#202126;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  border-bottom:1px solid #444;
+  position:sticky;
+  top:0;
+  z-index:10;
 }
 
-header h1 {
-
-  margin: 0;
-
-  font-size: 27px;
-
+header h1{
+  margin:0;
+  font-size:27px;
 }
 
-header h1 span {
-
-  color: #8b5cf6;
-
+header h1 span{
+  color:#8b5cf6;
 }
 
-.user-area {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 12px;
-
+.user-area{
+  display:flex;
+  align-items:center;
+  gap:12px;
 }
 
-#userName {
-
-  color: #ddd;
-
-  font-size: 14px;
-
+#userName{
+  color:#ddd;
+  font-size:14px;
 }
 
-#userRole {
-
-  color: #9b7cff;
-
-  font-weight: bold;
-
-  font-size: 13px;
-
+#userRole{
+  color:#9b7cff;
+  font-weight:bold;
+  font-size:13px;
 }
 
-.logout {
-
-  background: #55565d;
-
-  color: white;
-
+.logout{
+  background:#55565d;
+  color:white;
 }
 
-/* =========================
-   CONTAINER
-========================= */
+/* CONTAINER */
 
-.container {
-
-  max-width: 1100px;
-
-  margin: 30px auto;
-
-  padding: 20px;
-
+.container{
+  max-width:1100px;
+  margin:30px auto;
+  padding:20px;
 }
 
-.card {
-
-  background: #202126;
-
-  border: 1px solid #444;
-
-  border-radius: 18px;
-
-  padding: 25px;
-
-  margin-bottom: 25px;
-
+.card{
+  background:#202126;
+  border:1px solid #444;
+  border-radius:18px;
+  padding:25px;
+  margin-bottom:25px;
 }
 
-.branch {
-
-  border: 1px solid #444;
-
-  border-radius: 15px;
-
-  padding: 20px;
-
-  margin-top: 20px;
-
-  background: #1c1d21;
-
+.branch{
+  border:1px solid #444;
+  border-radius:15px;
+  padding:20px;
+  margin-top:20px;
+  background:#1c1d21;
 }
 
-.branch h3 {
-
-  color: #9b7cff;
-
-  margin-top: 0;
-
+.branch h3{
+  color:#9b7cff;
+  margin-top:0;
 }
 
-.row {
-
-  display: grid;
-
-  grid-template-columns:
-    repeat(4, 1fr);
-
-  gap: 12px;
-
+.row{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
 }
 
-.green {
-
-  background: #008f68;
-
-  color: white;
-
-  margin-top: 20px;
-
+.green{
+  background:#008f68;
+  color:white;
+  margin-top:20px;
 }
 
-.purple {
-
-  background: #8b5cf6;
-
-  color: white;
-
-  margin-top: 20px;
-
+.purple{
+  background:#8b5cf6;
+  color:white;
+  margin-top:20px;
 }
 
-.result-box {
-
-  background: #1c1d21;
-
-  border: 1px solid #444;
-
-  border-radius: 14px;
-
-  padding: 18px;
-
-  margin-top: 15px;
-
-  line-height: 1.8;
-
+.result-box{
+  background:#1c1d21;
+  border:1px solid #444;
+  border-radius:14px;
+  padding:18px;
+  margin-top:15px;
+  line-height:1.8;
 }
 
-/* =========================
-   HOST
-========================= */
+/* HOST */
 
-#hostTicketsCard {
-
-  display: none;
-
-  border-color: #8b5cf6;
-
+.host-dashboard{
+  border-color:#8b5cf6;
 }
 
-body.host-user #hostTicketsCard {
-
-  display: block !important;
-
+.live{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  color:#4ade80;
+  font-size:13px;
+  font-weight:bold;
+  margin-bottom:15px;
 }
 
-body.host-user #ticketHandoverCard {
-
-  display: none !important;
-
+.live-dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#4ade80;
+  box-shadow:0 0 10px #4ade80;
 }
 
-/* =========================
-   LIVE INDICATOR
-========================= */
+/* HOST SUMMARY */
 
-.live {
-
-  display: inline-flex;
-
-  align-items: center;
-
-  gap: 7px;
-
-  color: #4ade80;
-
-  font-size: 13px;
-
-  font-weight: bold;
-
-  margin-bottom: 15px;
-
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-top:20px;
 }
 
-.live-dot {
-
-  width: 9px;
-
-  height: 9px;
-
-  border-radius: 50%;
-
-  background: #4ade80;
-
-  box-shadow:
-    0 0 10px #4ade80;
-
+.summary-card{
+  background:#292a30;
+  border:1px solid #444;
+  border-radius:15px;
+  padding:20px;
 }
 
-/* =========================
-   SUCCESS
-========================= */
-
-.ticket-success {
-
-  animation:
-    successPop .5s ease;
-
+.summary-card h3{
+  margin-top:0;
+  color:#aaa;
 }
 
-@keyframes successPop {
+.summary-number{
+  font-size:32px;
+  font-weight:bold;
+  margin-top:10px;
+}
 
-  0% {
+.online-number{
+  color:#4ade80;
+}
 
-    transform: scale(.97);
+.offline-number{
+  color:#fbbf24;
+}
 
-    opacity: .5;
+.money-number{
+  color:#60a5fa;
+}
 
+.total-number{
+  color:#c084fc;
+}
+
+/* BRANCH HOST */
+
+.host-branch{
+  margin-top:20px;
+  background:#1c1d21;
+  border:1px solid #444;
+  border-radius:16px;
+  padding:20px;
+}
+
+.host-branch-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.host-branch-title h3{
+  color:#c084fc;
+  margin:0;
+  font-size:21px;
+}
+
+.branch-total{
+  background:#8b5cf6;
+  padding:7px 12px;
+  border-radius:8px;
+  font-weight:bold;
+}
+
+.stats-row{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.stat{
+  background:#292a30;
+  border-radius:12px;
+  padding:15px;
+}
+
+.stat-title{
+  color:#aaa;
+  font-size:13px;
+}
+
+.stat-value{
+  font-size:25px;
+  font-weight:bold;
+  margin-top:5px;
+}
+
+.offline-details{
+  margin-top:18px;
+  border-top:1px solid #444;
+  padding-top:15px;
+}
+
+.offline-details h4{
+  margin:0 0 10px;
+  color:#fbbf24;
+}
+
+.offline-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#292a30;
+  padding:12px;
+  border-radius:9px;
+  margin-top:8px;
+}
+
+.offline-item-left{
+  display:flex;
+  flex-direction:column;
+}
+
+.offline-type{
+  font-weight:bold;
+}
+
+.offline-branch{
+  color:#aaa;
+  font-size:12px;
+}
+
+.offline-count{
+  color:#fbbf24;
+  font-weight:bold;
+}
+
+/* GRAND TOTAL */
+
+.grand-total{
+  margin-top:25px;
+  padding:25px;
+  border-radius:18px;
+  border:1px solid #8b5cf6;
+  background:
+    linear-gradient(
+      135deg,
+      #27203d,
+      #202126
+    );
+}
+
+.grand-total h2{
+  margin-top:0;
+  color:#c084fc;
+}
+
+.grand-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+}
+
+.grand-item{
+  background:#292a30;
+  border-radius:12px;
+  padding:18px;
+}
+
+.grand-label{
+  color:#aaa;
+}
+
+.grand-value{
+  font-size:28px;
+  font-weight:bold;
+  margin-top:5px;
+}
+
+/* MOBILE */
+
+@media(max-width:1100px){
+
+  .container{
+    max-width:95%;
   }
 
-  50% {
-
-    transform: scale(1.02);
-
+  .row{
+    grid-template-columns:repeat(2,1fr);
   }
 
-  100% {
-
-    transform: scale(1);
-
-    opacity: 1;
-
+  .summary-grid{
+    grid-template-columns:repeat(2,1fr);
   }
 
-}
-
-.success-message {
-
-  color: #4ade80;
-
-  min-height: 20px;
-
-  font-weight: bold;
-
-}
-
-/* =========================
-   TABLET
-========================= */
-
-@media
-(min-width: 701px)
-and
-(max-width: 1100px) {
-
-  .container {
-
-    max-width: 95%;
-
-  }
-
-  .row {
-
-    grid-template-columns:
-      repeat(2, 1fr);
-
+  .grand-grid{
+    grid-template-columns:repeat(2,1fr);
   }
 
 }
 
-/* =========================
-   MOBILE
-========================= */
+@media(max-width:700px){
 
-@media (max-width: 700px) {
-
-  header {
-
-    position: relative;
-
-    flex-direction: column;
-
-    text-align: center;
-
+  header{
+    position:relative;
+    flex-direction:column;
+    text-align:center;
   }
 
-  .user-area {
-
-    justify-content: center;
-
-    flex-wrap: wrap;
-
+  .user-area{
+    justify-content:center;
+    flex-wrap:wrap;
   }
 
-  .container {
-
-    margin: 15px auto;
-
-    padding: 12px;
-
+  .container{
+    margin:15px auto;
+    padding:12px;
   }
 
-  .card {
-
-    padding: 18px;
-
+  .card{
+    padding:18px;
   }
 
-  .row {
-
-    grid-template-columns: 1fr;
-
+  .row{
+    grid-template-columns:1fr;
   }
 
-  header h1 {
+  .summary-grid{
+    grid-template-columns:1fr;
+  }
 
-    font-size: 23px;
+  .grand-grid{
+    grid-template-columns:1fr;
+  }
 
+  .stats-row{
+    grid-template-columns:1fr;
+  }
+
+  .host-branch-title{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  header h1{
+    font-size:23px;
   }
 
 }
@@ -530,12 +506,10 @@ and
 </head>
 
 
-<body class="logged-out">
+<body>
 
 
-<!-- ==================================================
-     LOGIN
-================================================== -->
+<!-- LOGIN -->
 
 <div id="loginScreen">
 
@@ -567,10 +541,7 @@ and
       autocomplete="current-password"
     >
 
-    <button
-      id="loginBtn"
-      type="button"
-    >
+    <button id="loginBtn">
       Login
     </button>
 
@@ -581,14 +552,9 @@ and
 </div>
 
 
-<!-- ==================================================
-     WEBSITE
-================================================== -->
+<!-- WEBSITE -->
 
-<div
-  id="website"
-  class="hidden"
->
+<div id="website" class="hidden">
 
 
 <header>
@@ -610,7 +576,6 @@ and
     <button
       id="logoutBtn"
       class="logout"
-      type="button"
     >
       Logout
     </button>
@@ -623,11 +588,14 @@ and
 <div class="container">
 
 
-<!-- ==================================================
-     SALES
-================================================== -->
+<!-- =================================================
+     BRANCH USER SALES
+================================================= -->
 
-<div class="card">
+<div
+  class="card"
+  id="branchSalesCard"
+>
 
   <h2>Enter Ticket Sales</h2>
 
@@ -637,7 +605,6 @@ and
     type="date"
     id="date"
   >
-
 
   <label>Branch</label>
 
@@ -662,8 +629,6 @@ and
   </select>
 
 
-  <!-- ONLINE -->
-
   <div class="branch">
 
     <h3>Online Tickets</h3>
@@ -671,63 +636,49 @@ and
     <div class="row">
 
       <div>
-
         <label>Premium Orbit</label>
-
         <input
           type="number"
           id="onlinePremium"
           value="0"
           min="0"
         >
-
       </div>
 
       <div>
-
         <label>Fanpit</label>
-
         <input
           type="number"
           id="onlineFanpit"
           value="0"
           min="0"
         >
-
       </div>
 
       <div>
-
         <label>VIP</label>
-
         <input
           type="number"
           id="onlineVIP"
           value="0"
           min="0"
         >
-
       </div>
 
       <div>
-
         <label>High Regular</label>
-
         <input
           type="number"
           id="onlineHigh"
           value="0"
           min="0"
         >
-
       </div>
 
     </div>
 
   </div>
 
-
-  <!-- OFFLINE -->
 
   <div class="branch">
 
@@ -736,59 +687,46 @@ and
     <div class="row">
 
       <div>
-
         <label>Premium Orbit</label>
-
         <input
           type="number"
           id="offlinePremium"
           value="0"
           min="0"
         >
-
       </div>
 
       <div>
-
         <label>Fanpit</label>
-
         <input
           type="number"
           id="offlineFanpit"
           value="0"
           min="0"
         >
-
       </div>
 
       <div>
-
         <label>VIP</label>
-
         <input
           type="number"
           id="offlineVIP"
           value="0"
           min="0"
         >
-
       </div>
 
       <div>
-
         <label>High Regular</label>
-
         <input
           type="number"
           id="offlineHigh"
           value="0"
           min="0"
         >
-
       </div>
 
     </div>
-
 
     <label>
       Offline Cash (EGP)
@@ -807,7 +745,6 @@ and
   <button
     class="green"
     id="saveDataBtn"
-    type="button"
   >
     Save Data
   </button>
@@ -817,11 +754,14 @@ and
 </div>
 
 
-<!-- ==================================================
-     SEARCH
-================================================== -->
+<!-- =================================================
+     SEARCH FOR BRANCH
+================================================= -->
 
-<div class="card">
+<div
+  class="card"
+  id="searchCard"
+>
 
   <h2>Search Day</h2>
 
@@ -835,7 +775,6 @@ and
   <button
     class="green"
     id="searchBtn"
-    type="button"
   >
     Show Day
   </button>
@@ -845,9 +784,9 @@ and
 </div>
 
 
-<!-- ==================================================
+<!-- =================================================
      BRANCH TICKET HANDOVER
-================================================== -->
+================================================= -->
 
 <div
   class="card"
@@ -860,14 +799,12 @@ and
     Enter customer ticket information.
   </p>
 
-
   <label>Date</label>
 
   <input
     type="date"
     id="ticketDate"
   >
-
 
   <label>Customer Name</label>
 
@@ -877,7 +814,6 @@ and
     placeholder="Customer name"
   >
 
-
   <label>Serial</label>
 
   <input
@@ -886,29 +822,27 @@ and
     placeholder="Ticket serial"
   >
 
-
   <label>Ticket Type</label>
 
   <select id="ticketType">
 
-    <option value="Premium Orbit">
+    <option>
       Premium Orbit
     </option>
 
-    <option value="Fanpit">
+    <option>
       Fanpit
     </option>
 
-    <option value="VIP">
+    <option>
       VIP
     </option>
 
-    <option value="High Regular">
+    <option>
       High Regular
     </option>
 
   </select>
-
 
   <label>Gmail</label>
 
@@ -918,7 +852,6 @@ and
     placeholder="customer@gmail.com"
   >
 
-
   <label>Phone</label>
 
   <input
@@ -926,7 +859,6 @@ and
     id="customerPhone"
     placeholder="Phone number"
   >
-
 
   <label>Sale Type</label>
 
@@ -942,56 +874,55 @@ and
 
   </select>
 
-
   <button
     class="purple"
     id="saveTicketBtn"
-    type="button"
   >
     Save Ticket
   </button>
 
-
   <p
     id="ticketMessage"
-    class="success-message"
+    style="color:#4ade80;"
   ></p>
 
 </div>
 
 
-<!-- ==================================================
-     HOST DASHBOARD
-================================================== -->
+<!-- =================================================
+     HOST ONLY
+================================================= -->
 
 <div
-  class="card"
-  id="hostTicketsCard"
+  class="card host-dashboard hidden"
+  id="hostDashboard"
 >
 
-  <h2>🎟️ All Branch Tickets</h2>
+  <h2>👑 Host Dashboard</h2>
 
   <div class="live">
 
     <span class="live-dot"></span>
 
-    LIVE — New tickets appear automatically
+    LIVE — Branch sales update automatically
 
   </div>
 
 
-  <label>Date</label>
+  <label>Select Date</label>
 
   <input
     type="date"
-    id="hostTicketDate"
+    id="hostDate"
   >
 
 
-  <div id="hostTicketsResults">
+  <div
+    id="hostDashboardResults"
+  >
 
     <p style="color:#aaa;">
-      Select a date.
+      Loading...
     </p>
 
   </div>
@@ -1004,172 +935,97 @@ and
 </div>
 
 
-<!-- ==================================================
-     JAVASCRIPT
-================================================== -->
-
 <script>
 
-
-/* ==================================================
+/* =================================================
    SUPABASE
-================================================== */
+================================================= */
 
 const SUPABASE_URL =
-  "https://ubaooclkpgminlbifpjf.supabase.co";
+"https://ubaooclkpgminlbifpjf.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_iNL7NMiqyDKAUCmUYNKqpQ_rpOi12EB";
-
+"sb_publishable_iNL7NMiqyDKAUCmUYNKqpQ_rpOi12EB";
 
 const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 
-/* ==================================================
+/* =================================================
    STATE
-================================================== */
+================================================= */
 
 let currentUser = null;
-
 let currentBranch = "";
-
-let isAllUser = false;
-
-
-/* ==================================================
-   ELEMENTS
-================================================== */
-
-const loginScreen =
-  document.getElementById(
-    "loginScreen"
-  );
-
-const website =
-  document.getElementById(
-    "website"
-  );
-
-const loginEmail =
-  document.getElementById(
-    "loginEmail"
-  );
-
-const loginPassword =
-  document.getElementById(
-    "loginPassword"
-  );
-
-const loginBtn =
-  document.getElementById(
-    "loginBtn"
-  );
-
-const loginError =
-  document.getElementById(
-    "loginError"
-  );
+let isHost = false;
 
 
-/* ==================================================
-   DATE
-================================================== */
+/* =================================================
+   HELPERS
+================================================= */
 
-function today() {
+function today(){
 
-  const d =
-    new Date();
+  const d = new Date();
 
   return (
     d.getFullYear() +
     "-" +
-    String(
-      d.getMonth() + 1
-    ).padStart(2,"0") +
+    String(d.getMonth()+1).padStart(2,"0") +
     "-" +
-    String(
-      d.getDate()
-    ).padStart(2,"0")
+    String(d.getDate()).padStart(2,"0")
   );
 
 }
 
 
-function setDates() {
+/* =================================================
+   ELEMENTS
+================================================= */
 
-  const d = today();
+const loginScreen =
+document.getElementById("loginScreen");
 
-  document.getElementById(
-    "date"
-  ).value = d;
+const website =
+document.getElementById("website");
 
-  document.getElementById(
-    "searchDate"
-  ).value = d;
+const loginBtn =
+document.getElementById("loginBtn");
 
-  document.getElementById(
-    "ticketDate"
-  ).value = d;
-
-  document.getElementById(
-    "hostTicketDate"
-  ).value = d;
-
-}
+const loginError =
+document.getElementById("loginError");
 
 
-/* ==================================================
-   SHOW USER
-================================================== */
+/* =================================================
+   USER PROFILE
+================================================= */
 
-async function loadUserProfile(user) {
+async function loadUserProfile(user){
 
-  const {
-    data,
-    error
-  } =
+  const {data,error} =
     await supabaseClient
       .from("branch_users")
       .select("branch")
-      .eq(
-        "user_id",
-        user.id
-      )
+      .eq("user_id",user.id)
       .maybeSingle();
 
-
-  if (error) {
-
-    console.error(error);
-
+  if(error)
     throw error;
 
-  }
-
-
-  if (!data) {
-
+  if(!data)
     throw new Error(
       "User is not assigned to a branch."
     );
 
-  }
+  currentUser = user;
+  currentBranch = data.branch;
 
-
-  currentUser =
-    user;
-
-  currentBranch =
-    data.branch;
-
-  isAllUser =
-    String(
-      currentBranch
-    ).toUpperCase() === "ALL";
+  isHost =
+    String(data.branch)
+      .toUpperCase() === "ALL";
 
 
   document.getElementById(
@@ -1181,28 +1037,62 @@ async function loadUserProfile(user) {
   document.getElementById(
     "userRole"
   ).textContent =
-    isAllUser
+    isHost
       ? "HOST — ALL BRANCHES"
       : currentBranch;
 
 
-  if (isAllUser) {
+  /*
+    HOST:
+    show ONLY dashboard
+  */
+
+  if(isHost){
 
     document.body.classList.add(
       "host-user"
     );
 
     document.getElementById(
-      "branch"
-    ).disabled = false;
+      "branchSalesCard"
+    ).classList.add("hidden");
+
+    document.getElementById(
+      "searchCard"
+    ).classList.add("hidden");
+
+    document.getElementById(
+      "ticketHandoverCard"
+    ).classList.add("hidden");
+
+    document.getElementById(
+      "hostDashboard"
+    ).classList.remove("hidden");
 
   }
 
-  else {
+  else{
 
     document.body.classList.remove(
       "host-user"
     );
+
+    document.getElementById(
+      "branchSalesCard"
+    ).classList.remove("hidden");
+
+    document.getElementById(
+      "searchCard"
+    ).classList.remove("hidden");
+
+    document.getElementById(
+      "ticketHandoverCard"
+    ).classList.remove("hidden");
+
+    document.getElementById(
+      "hostDashboard"
+    ).classList.add("hidden");
+
 
     document.getElementById(
       "branch"
@@ -1218,11 +1108,11 @@ async function loadUserProfile(user) {
 }
 
 
-/* ==================================================
+/* =================================================
    OPEN WEBSITE
-================================================== */
+================================================= */
 
-async function openWebsite(user) {
+async function openWebsite(user){
 
   await loadUserProfile(user);
 
@@ -1233,45 +1123,55 @@ async function openWebsite(user) {
     "hidden"
   );
 
-  document.body.classList.remove(
-    "logged-out"
-  );
+  document.getElementById(
+    "date"
+  ).value = today();
 
-  setDates();
+  document.getElementById(
+    "searchDate"
+  ).value = today();
+
+  document.getElementById(
+    "ticketDate"
+  ).value = today();
+
+  document.getElementById(
+    "hostDate"
+  ).value = today();
+
 
   calculateOfflineCash();
 
 
-  /*
-    Host:
-    automatically load today's tickets
-  */
+  if(isHost){
 
-  if (isAllUser) {
-
-    await loadHostTickets();
+    await loadHostDashboard();
 
   }
 
 }
 
 
-/* ==================================================
+/* =================================================
    LOGIN
-================================================== */
+================================================= */
 
-async function login() {
+async function login(){
 
   loginError.textContent = "";
 
   const email =
-    loginEmail.value.trim();
+    document.getElementById(
+      "loginEmail"
+    ).value.trim();
 
   const password =
-    loginPassword.value;
+    document.getElementById(
+      "loginPassword"
+    ).value;
 
 
-  if (!email || !password) {
+  if(!email || !password){
 
     loginError.textContent =
       "Enter email and password.";
@@ -1287,32 +1187,18 @@ async function login() {
     "Logging in...";
 
 
-  try {
+  try{
 
-    const {
-      data,
-      error
-    } =
+    const {data,error} =
       await supabaseClient.auth
         .signInWithPassword({
-
-          email: email,
-
-          password: password
-
+          email,
+          password
         });
 
 
-    if (error) {
-
-      loginError.textContent =
-        "Invalid login credentials.";
-
-      console.error(error);
-
-      return;
-
-    }
+    if(error)
+      throw error;
 
 
     await openWebsite(
@@ -1321,20 +1207,18 @@ async function login() {
 
   }
 
-  catch (error) {
+  catch(error){
 
     console.error(error);
 
     loginError.textContent =
-      error.message ||
-      "Login failed.";
+      "Invalid login credentials.";
 
   }
 
-  finally {
+  finally{
 
-    loginBtn.disabled =
-      false;
+    loginBtn.disabled = false;
 
     loginBtn.textContent =
       "Login";
@@ -1344,66 +1228,47 @@ async function login() {
 }
 
 
-/* ==================================================
-   LOGIN CLICK
-================================================== */
-
 loginBtn.addEventListener(
   "click",
   login
 );
 
 
-/* ==================================================
-   ENTER LOGIN
-================================================== */
-
-loginPassword.addEventListener(
+document.getElementById(
+  "loginPassword"
+).addEventListener(
   "keydown",
-  function(event) {
+  e => {
 
-    if (
-      event.key === "Enter"
-    ) {
-
+    if(e.key === "Enter")
       login();
-
-    }
 
   }
 );
 
 
-/* ==================================================
-   CHECK EXISTING SESSION
-================================================== */
+/* =================================================
+   SESSION
+================================================= */
 
-async function checkSession() {
+async function checkSession(){
 
-  const {
-    data,
-    error
-  } =
+  const {data,error} =
     await supabaseClient.auth
       .getSession();
 
-
-  if (error) {
+  if(error){
 
     console.error(error);
-
     return;
 
   }
 
+  if(
+    data?.session?.user
+  ){
 
-  if (
-    data &&
-    data.session &&
-    data.session.user
-  ) {
-
-    try {
+    try{
 
       await openWebsite(
         data.session.user
@@ -1411,11 +1276,12 @@ async function checkSession() {
 
     }
 
-    catch (error) {
+    catch(error){
 
       console.error(error);
 
-      await supabaseClient.auth.signOut();
+      await supabaseClient.auth
+        .signOut();
 
     }
 
@@ -1424,151 +1290,123 @@ async function checkSession() {
 }
 
 
-/* ==================================================
-   AUTH STATE
-================================================== */
-
 supabaseClient.auth
-  .onAuthStateChange(
-    async function(
-      event,
-      session
-    ) {
+.onAuthStateChange(
+  async(event,session)=>{
 
-      if (
-        event ===
-        "SIGNED_IN" &&
-        session &&
-        session.user
-      ) {
+    if(
+      event === "SIGNED_IN" &&
+      session?.user
+    ){
 
-        try {
+      try{
 
-          await openWebsite(
-            session.user
-          );
-
-        }
-
-        catch (error) {
-
-          console.error(error);
-
-        }
+        await openWebsite(
+          session.user
+        );
 
       }
 
+      catch(error){
 
-      if (
-        event ===
-        "SIGNED_OUT"
-      ) {
-
-        currentUser =
-          null;
-
-        currentBranch =
-          "";
-
-        isAllUser =
-          false;
-
-        website.classList.add(
-          "hidden"
-        );
-
-        loginScreen.style.display =
-          "flex";
+        console.error(error);
 
       }
 
     }
-  );
 
+    if(
+      event === "SIGNED_OUT"
+    ){
 
-/* ==================================================
-   LOGOUT
-================================================== */
+      location.reload();
 
-document.getElementById(
-  "logoutBtn"
-).addEventListener(
-  "click",
-  async function() {
-
-    await supabaseClient.auth.signOut();
+    }
 
   }
 );
 
 
-/* ==================================================
+/* =================================================
+   LOGOUT
+================================================= */
+
+document.getElementById(
+  "logoutBtn"
+).addEventListener(
+  "click",
+  async()=>{
+
+    await supabaseClient.auth
+      .signOut();
+
+  }
+);
+
+
+/* =================================================
    PRICES
-================================================== */
+================================================= */
 
 const PRICES = {
 
-  "Premium Orbit": 1500,
-
-  "Fanpit": 1200,
-
-  "VIP": 800,
-
-  "High Regular": 500
+  "Premium Orbit":1500,
+  "Fanpit":1200,
+  "VIP":800,
+  "High Regular":500
 
 };
 
 
-/* ==================================================
+/* =================================================
    OFFLINE CASH
-================================================== */
+================================================= */
 
-function calculateOfflineCash() {
+function calculateOfflineCash(){
 
   const premium =
     Number(
       document.getElementById(
         "offlinePremium"
-      ).value || 0
+      )?.value || 0
     );
 
   const fanpit =
     Number(
       document.getElementById(
         "offlineFanpit"
-      ).value || 0
+      )?.value || 0
     );
 
   const vip =
     Number(
       document.getElementById(
         "offlineVIP"
-      ).value || 0
+      )?.value || 0
     );
 
   const high =
     Number(
       document.getElementById(
         "offlineHigh"
-      ).value || 0
+      )?.value || 0
     );
 
 
   const total =
-
     premium * 1500 +
-
     fanpit * 1200 +
-
     vip * 800 +
-
     high * 500;
 
 
-  document.getElementById(
-    "offlineCash"
-  ).value =
-    total;
+  const input =
+    document.getElementById(
+      "offlineCash"
+    );
+
+  if(input)
+    input.value = total;
 
 
   return total;
@@ -1581,25 +1419,26 @@ function calculateOfflineCash() {
   "offlineFanpit",
   "offlineVIP",
   "offlineHigh"
-].forEach(
-  function(id) {
+].forEach(id=>{
 
-    document.getElementById(
-      id
-    ).addEventListener(
+  document.getElementById(id)
+    ?.addEventListener(
       "input",
       calculateOfflineCash
     );
 
-  }
-);
+});
 
 
-/* ==================================================
+/* =================================================
    SAVE SALES
-================================================== */
+================================================= */
 
-async function saveData() {
+async function saveData(){
+
+  if(isHost)
+    return;
+
 
   const date =
     document.getElementById(
@@ -1607,46 +1446,13 @@ async function saveData() {
     ).value;
 
   const branch =
-    document.getElementById(
-      "branch"
-    ).value;
-
-
-  if (!date) {
-
-    alert(
-      "Select date."
-    );
-
-    return;
-
-  }
-
-
-  const button =
-    document.getElementById(
-      "saveDataBtn"
-    );
-
-  const message =
-    document.getElementById(
-      "saveMessage"
-    );
-
-
-  button.disabled = true;
-
-  button.textContent =
-    "Saving...";
+    currentBranch;
 
 
   const data = {
 
-    sale_date:
-      date,
-
-    branch:
-      branch,
+    sale_date:date,
+    branch:branch,
 
     online_premium:
       Number(
@@ -1710,66 +1516,63 @@ async function saveData() {
   };
 
 
-  try {
+  const button =
+    document.getElementById(
+      "saveDataBtn"
+    );
 
-    const {
-      data: existing,
-      error: findError
-    } =
+  const message =
+    document.getElementById(
+      "saveMessage"
+    );
+
+
+  button.disabled = true;
+
+  button.textContent =
+    "Saving...";
+
+
+  try{
+
+    const {data:existing,error:findError} =
       await supabaseClient
         .from("ticket_sales")
         .select("id")
-        .eq(
-          "sale_date",
-          date
-        )
-        .eq(
-          "branch",
-          branch
-        )
+        .eq("sale_date",date)
+        .eq("branch",branch)
         .maybeSingle();
 
 
-    if (findError)
+    if(findError)
       throw findError;
 
 
-    let error = null;
+    let result;
 
 
-    if (existing) {
+    if(existing){
 
-      const result =
+      result =
         await supabaseClient
           .from("ticket_sales")
           .update(data)
-          .eq(
-            "id",
-            existing.id
-          );
-
-      error =
-        result.error;
+          .eq("id",existing.id);
 
     }
 
-    else {
+    else{
 
-      const result =
+      result =
         await supabaseClient
           .from("ticket_sales")
-          .insert([
-            data
-          ]);
-
-      error =
-        result.error;
+          .insert([data]);
 
     }
 
 
-    if (error)
-      throw error;
+    if(result.error)
+      throw result.error;
 
 
     message.style.color =
@@ -1778,9 +1581,13 @@ async function saveData() {
     message.textContent =
       "✓ Data saved successfully";
 
+
+    if(isHost)
+      await loadHostDashboard();
+
   }
 
-  catch (error) {
+  catch(error){
 
     console.error(error);
 
@@ -1788,15 +1595,13 @@ async function saveData() {
       "#ff6b6b";
 
     message.textContent =
-      "❌ " +
-      error.message;
+      "❌ " + error.message;
 
   }
 
-  finally {
+  finally{
 
-    button.disabled =
-      false;
+    button.disabled = false;
 
     button.textContent =
       "Save Data";
@@ -1814,11 +1619,11 @@ document.getElementById(
 );
 
 
-/* ==================================================
-   SEARCH SALES
-================================================== */
+/* =================================================
+   SEARCH DAY
+================================================= */
 
-async function searchDay() {
+async function searchDay(){
 
   const date =
     document.getElementById(
@@ -1831,37 +1636,20 @@ async function searchDay() {
     );
 
 
-  if (!date) {
-
-    alert(
-      "Select date."
-    );
-
-    return;
-
-  }
-
-
   results.innerHTML =
     "<p>Loading...</p>";
 
 
-  try {
+  try{
 
     let query =
       supabaseClient
         .from("ticket_sales")
         .select("*")
-        .eq(
-          "sale_date",
-          date
-        )
-        .order(
-          "branch"
-        );
+        .eq("sale_date",date);
 
 
-    if (!isAllUser) {
+    if(!isHost){
 
       query =
         query.eq(
@@ -1872,21 +1660,15 @@ async function searchDay() {
     }
 
 
-    const {
-      data,
-      error
-    } =
+    const {data,error} =
       await query;
 
 
-    if (error)
+    if(error)
       throw error;
 
 
-    if (
-      !data ||
-      data.length === 0
-    ) {
+    if(!data?.length){
 
       results.innerHTML =
         "<p>No data found.</p>";
@@ -1896,140 +1678,73 @@ async function searchDay() {
     }
 
 
-    let html = "";
-
-
-    data.forEach(
-      function(item) {
+    results.innerHTML =
+      data.map(item=>{
 
         const online =
-
-          Number(
-            item.online_premium || 0
-          ) +
-
-          Number(
-            item.online_fanpit || 0
-          ) +
-
-          Number(
-            item.online_vip || 0
-          ) +
-
-          Number(
-            item.online_high_regular || 0
-          );
-
+          Number(item.online_premium||0)+
+          Number(item.online_fanpit||0)+
+          Number(item.online_vip||0)+
+          Number(item.online_high_regular||0);
 
         const offline =
-
-          Number(
-            item.offline_premium || 0
-          ) +
-
-          Number(
-            item.offline_fanpit || 0
-          ) +
-
-          Number(
-            item.offline_vip || 0
-          ) +
-
-          Number(
-            item.offline_high_regular || 0
-          );
+          Number(item.offline_premium||0)+
+          Number(item.offline_fanpit||0)+
+          Number(item.offline_vip||0)+
+          Number(item.offline_high_regular||0);
 
 
-        html += `
+        return `
 
           <div class="result-box">
 
-            <h3>
-              ${item.branch}
-            </h3>
+            <h3>${item.branch}</h3>
 
-            <b>
-              Online Tickets:
-            </b>
-
+            <b>Online Tickets:</b>
             ${online}
-
-            <br>
-
-            Premium Orbit:
-            ${item.online_premium || 0}
-
-            <br>
-
-            Fanpit:
-            ${item.online_fanpit || 0}
-
-            <br>
-
-            VIP:
-            ${item.online_vip || 0}
-
-            <br>
-
-            High Regular:
-            ${item.online_high_regular || 0}
 
             <br><br>
 
-            <b>
-              Offline Tickets:
-            </b>
-
+            <b>Offline Tickets:</b>
             ${offline}
 
             <br>
 
             Premium Orbit:
-            ${item.offline_premium || 0}
+            ${item.offline_premium||0}
 
             <br>
 
             Fanpit:
-            ${item.offline_fanpit || 0}
+            ${item.offline_fanpit||0}
 
             <br>
 
             VIP:
-            ${item.offline_vip || 0}
+            ${item.offline_vip||0}
 
             <br>
 
             High Regular:
-            ${item.offline_high_regular || 0}
+            ${item.offline_high_regular||0}
 
             <br><br>
 
-            <b>
-              Offline Cash:
-            </b>
-
+            <b>Offline Cash:</b>
             ${Number(
-              item.offline_cash || 0
+              item.offline_cash||0
             ).toLocaleString()}
-
             EGP
 
           </div>
 
         `;
 
-      }
-    );
-
-
-    results.innerHTML =
-      html;
+      }).join("");
 
   }
 
-  catch (error) {
-
-    console.error(error);
+  catch(error){
 
     results.innerHTML =
       `<p style="color:#ff6b6b;">
@@ -2049,13 +1764,13 @@ document.getElementById(
 );
 
 
-/* ==================================================
+/* =================================================
    SAVE TICKET
-================================================== */
+================================================= */
 
-async function saveTicket() {
+async function saveTicket(){
 
-  if (isAllUser)
+  if(isHost)
     return;
 
 
@@ -2101,13 +1816,13 @@ async function saveTicket() {
     );
 
 
-  if (
+  if(
     !date ||
     !name ||
     !serial ||
     !gmail ||
     !phone
-  ) {
+  ){
 
     message.style.color =
       "#ff6b6b";
@@ -2132,50 +1847,36 @@ async function saveTicket() {
     "Saving...";
 
 
-  try {
+  try{
 
     const ticket = {
 
-      sale_date:
-        date,
+      sale_date:date,
 
-      branch:
-        currentBranch,
+      branch:currentBranch,
 
-      customer_name:
-        name,
+      customer_name:name,
 
-      serial:
-        serial,
+      serial:serial,
 
-      ticket_type:
-        type,
+      ticket_type:type,
 
-      gmail:
-        gmail,
+      gmail:gmail,
 
-      phone:
-        phone,
+      phone:phone,
 
-      sale_type:
-        saleType
+      sale_type:saleType
 
     };
 
 
-    const {
-      error
-    } =
+    const {error} =
       await supabaseClient
-        .from(
-          "ticket_handover"
-        )
-        .insert([
-          ticket
-        ]);
+        .from("ticket_handover")
+        .insert([ticket]);
 
 
-    if (error)
+    if(error)
       throw error;
 
 
@@ -2184,28 +1885,6 @@ async function saveTicket() {
 
     message.textContent =
       "✓ Ticket saved successfully";
-
-
-    const card =
-      document.getElementById(
-        "ticketHandoverCard"
-      );
-
-
-    card.classList.remove(
-      "ticket-success"
-    );
-
-
-    void card.offsetWidth;
-
-
-    card.classList.add(
-      "ticket-success"
-    );
-
-
-    playSuccessSound();
 
 
     document.getElementById(
@@ -2225,9 +1904,11 @@ async function saveTicket() {
     ).value = "";
 
 
+    playSuccessSound();
+
   }
 
-  catch (error) {
+  catch(error){
 
     console.error(error);
 
@@ -2235,15 +1916,13 @@ async function saveTicket() {
       "#ff6b6b";
 
     message.textContent =
-      "❌ " +
-      error.message;
+      "❌ " + error.message;
 
   }
 
-  finally {
+  finally{
 
-    button.disabled =
-      false;
+    button.disabled = false;
 
     button.textContent =
       "Save Ticket";
@@ -2261,304 +1940,562 @@ document.getElementById(
 );
 
 
-/* ==================================================
-   HOST LOAD TICKETS
-================================================== */
+/* =================================================
+   HOST DASHBOARD
+================================================= */
 
-async function loadHostTickets() {
+async function loadHostDashboard(){
 
-  if (!isAllUser)
+  if(!isHost)
     return;
 
 
   const date =
     document.getElementById(
-      "hostTicketDate"
+      "hostDate"
     ).value;
 
 
-  const results =
+  const container =
     document.getElementById(
-      "hostTicketsResults"
+      "hostDashboardResults"
     );
 
 
-  if (!date) {
-
-    results.innerHTML =
-      "<p>Select a date.</p>";
-
-    return;
-
-  }
+  container.innerHTML =
+    "<p>Loading...</p>";
 
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from(
-        "ticket_handover"
-      )
-      .select("*")
-      .eq(
-        "sale_date",
-        date
-      )
-      .order(
-        "created_at",
-        {
-          ascending: false
-        }
-      );
+  try{
+
+    const {data,error} =
+      await supabaseClient
+        .from("ticket_sales")
+        .select("*")
+        .eq("sale_date",date);
 
 
-  if (error) {
-
-    console.error(error);
-
-    results.innerHTML =
-      `<p style="color:#ff6b6b;">
-        ❌ ${error.message}
-      </p>`;
-
-    return;
-
-  }
+    if(error)
+      throw error;
 
 
-  if (
-    !data ||
-    data.length === 0
-  ) {
-
-    results.innerHTML =
-      "<p style='color:#aaa;'>No tickets found.</p>";
-
-    return;
-
-  }
+    const branches = [
+      "Zayed",
+      "Zamalek",
+      "Heliopolis",
+      "CFC"
+    ];
 
 
-  renderHostTickets(
-    data
-  );
-
-}
+    let grandOnline = 0;
+    let grandOffline = 0;
+    let grandCash = 0;
 
 
-/* ==================================================
-   RENDER HOST TICKETS
-================================================== */
-
-function renderHostTickets(
-  tickets
-) {
-
-  const results =
-    document.getElementById(
-      "hostTicketsResults"
-    );
+    let branchHTML = "";
 
 
-  let html = "";
+    branches.forEach(branchName=>{
+
+      const item =
+        data?.find(
+          x =>
+            String(x.branch)
+              .toLowerCase() ===
+            branchName.toLowerCase()
+        );
 
 
-  tickets.forEach(
-    function(ticket) {
+      const online = item
+        ? Number(item.online_premium||0) +
+          Number(item.online_fanpit||0) +
+          Number(item.online_vip||0) +
+          Number(item.online_high_regular||0)
+        : 0;
 
-      html += `
 
-        <div class="result-box">
+      const offline = item
+        ? Number(item.offline_premium||0) +
+          Number(item.offline_fanpit||0) +
+          Number(item.offline_vip||0) +
+          Number(item.offline_high_regular||0)
+        : 0;
 
-          <h3>
-            ${ticket.branch}
-          </h3>
 
-          <b>Date:</b>
-          ${ticket.sale_date}
+      const cash = item
+        ? Number(item.offline_cash||0)
+        : 0;
 
-          <br>
 
-          <b>Name:</b>
-          ${ticket.customer_name}
+      grandOnline += online;
+      grandOffline += offline;
+      grandCash += cash;
 
-          <br>
 
-          <b>Serial:</b>
-          ${ticket.serial}
+      const total =
+        online + offline;
 
-          <br>
 
-          <b>Ticket Type:</b>
-          ${ticket.ticket_type}
+      branchHTML += `
 
-          <br>
+        <div class="host-branch">
 
-          <b>Gmail:</b>
-          ${ticket.gmail}
+          <div class="host-branch-title">
 
-          <br>
+            <h3>
+              ${branchName}
+            </h3>
 
-          <b>Phone:</b>
-          ${ticket.phone}
+            <div class="branch-total">
+              Total: ${total}
+            </div>
 
-          <br>
+          </div>
 
-          <b>Sale Type:</b>
-          ${ticket.sale_type}
+
+          <div class="stats-row">
+
+            <div class="stat">
+
+              <div class="stat-title">
+                Online
+              </div>
+
+              <div class="stat-value online-number">
+                ${online}
+              </div>
+
+            </div>
+
+
+            <div class="stat">
+
+              <div class="stat-title">
+                Offline
+              </div>
+
+              <div class="stat-value offline-number">
+                ${offline}
+              </div>
+
+            </div>
+
+
+            <div class="stat">
+
+              <div class="stat-title">
+                Offline Cash
+              </div>
+
+              <div class="stat-value money-number">
+                ${cash.toLocaleString()} EGP
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="offline-details">
+
+            <h4>
+              Offline Tickets — ${branchName}
+            </h4>
+
+
+            <div class="offline-item">
+
+              <div class="offline-item-left">
+
+                <span class="offline-type">
+                  Premium Orbit
+                </span>
+
+                <span class="offline-branch">
+                  ${branchName}
+                </span>
+
+              </div>
+
+              <span class="offline-count">
+                ${
+                  item
+                    ? item.offline_premium || 0
+                    : 0
+                }
+              </span>
+
+            </div>
+
+
+            <div class="offline-item">
+
+              <div class="offline-item-left">
+
+                <span class="offline-type">
+                  Fanpit
+                </span>
+
+                <span class="offline-branch">
+                  ${branchName}
+                </span>
+
+              </div>
+
+              <span class="offline-count">
+                ${
+                  item
+                    ? item.offline_fanpit || 0
+                    : 0
+                }
+              </span>
+
+            </div>
+
+
+            <div class="offline-item">
+
+              <div class="offline-item-left">
+
+                <span class="offline-type">
+                  VIP
+                </span>
+
+                <span class="offline-branch">
+                  ${branchName}
+                </span>
+
+              </div>
+
+              <span class="offline-count">
+                ${
+                  item
+                    ? item.offline_vip || 0
+                    : 0
+                }
+              </span>
+
+            </div>
+
+
+            <div class="offline-item">
+
+              <div class="offline-item-left">
+
+                <span class="offline-type">
+                  High Regular
+                </span>
+
+                <span class="offline-branch">
+                  ${branchName}
+                </span>
+
+              </div>
+
+              <span class="offline-count">
+                ${
+                  item
+                    ? item.offline_high_regular || 0
+                    : 0
+                }
+              </span>
+
+            </div>
+
+          </div>
 
         </div>
 
       `;
 
-    }
-  );
+    });
 
 
-  results.innerHTML =
-    html;
+    container.innerHTML = `
+
+      <div class="summary-grid">
+
+        <div class="summary-card">
+
+          <h3>
+            Total Online
+          </h3>
+
+          <div class="summary-number online-number">
+            ${grandOnline}
+          </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+          <h3>
+            Total Offline
+          </h3>
+
+          <div class="summary-number offline-number">
+            ${grandOffline}
+          </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+          <h3>
+            Total Tickets
+          </h3>
+
+          <div class="summary-number total-number">
+            ${
+              grandOnline +
+              grandOffline
+            }
+          </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+          <h3>
+            Offline Cash
+          </h3>
+
+          <div class="summary-number money-number">
+            ${grandCash.toLocaleString()}
+            EGP
+          </div>
+
+        </div>
+
+      </div>
+
+
+      ${branchHTML}
+
+
+      <div class="grand-total">
+
+        <h2>
+          📊 Grand Total — ${date}
+        </h2>
+
+        <div class="grand-grid">
+
+          <div class="grand-item">
+
+            <div class="grand-label">
+              Online
+            </div>
+
+            <div class="grand-value online-number">
+              ${grandOnline}
+            </div>
+
+          </div>
+
+
+          <div class="grand-item">
+
+            <div class="grand-label">
+              Offline
+            </div>
+
+            <div class="grand-value offline-number">
+              ${grandOffline}
+            </div>
+
+          </div>
+
+
+          <div class="grand-item">
+
+            <div class="grand-label">
+              All Tickets
+            </div>
+
+            <div class="grand-value total-number">
+              ${
+                grandOnline +
+                grandOffline
+              }
+            </div>
+
+          </div>
+
+
+          <div class="grand-item">
+
+            <div class="grand-label">
+              Offline Cash
+            </div>
+
+            <div class="grand-value money-number">
+              ${grandCash.toLocaleString()}
+              EGP
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+    container.innerHTML =
+      `<p style="color:#ff6b6b;">
+        ❌ ${error.message}
+      </p>`;
+
+  }
 
 }
 
 
-/* ==================================================
-   HOST DATE CHANGE
-================================================== */
+/* =================================================
+   HOST DATE
+================================================= */
 
 document.getElementById(
-  "hostTicketDate"
+  "hostDate"
 ).addEventListener(
   "change",
-  loadHostTickets
+  loadHostDashboard
 );
 
 
-/* ==================================================
-   REALTIME
-================================================== */
+/* =================================================
+   REALTIME SALES
+================================================= */
 
-const ticketChannel =
-  supabaseClient
-    .channel(
-      "ticket-handover-live"
-    )
-    .on(
-      "postgres_changes",
-      {
-        event: "INSERT",
-        schema: "public",
-        table: "ticket_handover"
-      },
-      function(payload) {
+supabaseClient
+.channel("ticket-sales-live")
+.on(
+  "postgres_changes",
+  {
+    event:"*",
+    schema:"public",
+    table:"ticket_sales"
+  },
+  payload=>{
 
-        console.log(
-          "New ticket:",
-          payload.new
-        );
+    if(isHost){
 
+      const selected =
+        document.getElementById(
+          "hostDate"
+        ).value;
 
-        /*
-          لو المستخدم Host
-          والتاريخ الحالي هو تاريخ التذكرة
-        */
-
-        if (
-          isAllUser
-        ) {
-
-          const selectedDate =
-            document.getElementById(
-              "hostTicketDate"
-            ).value;
+      const changedDate =
+        payload.new?.sale_date ||
+        payload.old?.sale_date;
 
 
-          if (
-            selectedDate ===
-            payload.new.sale_date
-          ) {
+      if(
+        selected === changedDate
+      ){
 
-            loadHostTickets();
+        loadHostDashboard();
 
-            playSuccessSound();
-
-          }
-
-        }
+        playSuccessSound();
 
       }
-    )
-    .subscribe();
+
+    }
+
+  }
+)
+.subscribe();
 
 
-/* ==================================================
-   SUCCESS SOUND
-================================================== */
+/* =================================================
+   REALTIME TICKET HANDOVER
+   NOTE:
+   HOST DOES NOT SEE THE TICKETS HERE.
+================================================= */
 
-function playSuccessSound() {
+supabaseClient
+.channel("ticket-handover-live")
+.on(
+  "postgres_changes",
+  {
+    event:"INSERT",
+    schema:"public",
+    table:"ticket_handover"
+  },
+  payload=>{
 
-  try {
+    console.log(
+      "New branch ticket:",
+      payload.new
+    );
+
+  }
+)
+.subscribe();
+
+
+/* =================================================
+   SOUND
+================================================= */
+
+function playSuccessSound(){
+
+  try{
 
     const AudioContext =
       window.AudioContext ||
       window.webkitAudioContext;
 
-
-    if (!AudioContext)
+    if(!AudioContext)
       return;
-
 
     const audio =
       new AudioContext();
 
-
     const oscillator =
       audio.createOscillator();
-
 
     const gain =
       audio.createGain();
 
-
     oscillator.type =
       "sine";
 
-
     oscillator.frequency.value =
       700;
-
 
     gain.gain.setValueAtTime(
       .001,
       audio.currentTime
     );
 
-
     gain.gain.exponentialRampToValueAtTime(
       .15,
       audio.currentTime + .02
     );
-
 
     gain.gain.exponentialRampToValueAtTime(
       .001,
       audio.currentTime + .3
     );
 
-
-    oscillator.connect(
-      gain
-    );
-
+    oscillator.connect(gain);
 
     gain.connect(
       audio.destination
     );
 
-
     oscillator.start();
-
 
     oscillator.stop(
       audio.currentTime + .3
@@ -2566,7 +2503,7 @@ function playSuccessSound() {
 
   }
 
-  catch (error) {
+  catch(error){
 
     console.log(
       "Audio unavailable"
@@ -2577,16 +2514,11 @@ function playSuccessSound() {
 }
 
 
-/* ==================================================
+/* =================================================
    START
-================================================== */
-
-setDates();
-
-calculateOfflineCash();
+================================================= */
 
 checkSession();
-
 
 </script>
 
