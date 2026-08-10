@@ -1,2787 +1,3740 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Ticket Branches</title>
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Ticket Management</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#0d0f14;color:#fff}
-.hidden{display:none!important}
+
+/* =====================================================
+   GLOBAL
+===================================================== */
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:
+        linear-gradient(
+            135deg,
+            #06111d,
+            #0b1d2d,
+            #07131f
+        );
+
+    color:white;
+    min-height:100vh;
+}
+
+button,
+input,
+select{
+    font-family:Arial,sans-serif;
+}
 
 button{
- border:0;border-radius:10px;padding:13px 20px;
- cursor:pointer;font-weight:bold;font-size:15px
-}
-button:disabled{opacity:.6;cursor:not-allowed}
-
-input,select{
- width:100%;padding:13px;border-radius:10px;
- border:1px solid #3d414c;background:#20232b;
- color:#fff;font-size:16px;outline:none
+    border:0;
+    border-radius:10px;
+    padding:12px 18px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:.2s;
 }
 
-label{
- display:block;margin:14px 0 7px;color:#ddd
+button:hover{
+    transform:translateY(-1px);
 }
 
-#loginScreen{
- min-height:100vh;display:flex;align-items:center;
- justify-content:center;padding:20px;
- background:radial-gradient(circle at top,#392260,#0d0f14 60%)
+input,
+select{
+    width:100%;
+    padding:13px 14px;
+
+    border:1px solid #263f53;
+    border-radius:10px;
+
+    outline:none;
+
+    background:#122536;
+    color:white;
 }
 
-.login-box{
- width:100%;max-width:430px;padding:35px;
- background:#1b1e26;border:1px solid #414552;
- border-radius:22px
+input:focus,
+select:focus{
+    border-color:#38bdf8;
+    box-shadow:0 0 0 2px rgba(56,189,248,.12);
 }
 
-.login-box h1{text-align:center;margin:0}
-.login-box span,header span{color:#a878ff}
-
-.login-subtitle{
- text-align:center;color:#999;margin:10px 0 25px
+.hidden{
+    display:none !important;
 }
 
-#loginBtn{
- width:100%;margin-top:20px;
- background:#8b5cf6;color:white
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+#loginPage{
+    min-height:100vh;
+
+    background:
+        linear-gradient(
+            rgba(0,0,0,.48),
+            rgba(0,0,0,.72)
+        ),
+        url("blue-orbit.jpg");
+
+    background-size:cover;
+    background-position:center;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
 }
 
-#loginError{
- color:#ff7070;text-align:center;min-height:20px
+.loginBox{
+    width:390px;
+    max-width:100%;
+
+    padding:38px 32px;
+
+    text-align:center;
+
+    background:rgba(5,15,25,.86);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:24px;
+
+    backdrop-filter:blur(15px);
+
+    box-shadow:
+        0 25px 80px rgba(0,0,0,.65);
 }
 
-header{
- padding:18px 25px;background:#171920;
- border-bottom:1px solid #363944;
- display:flex;justify-content:space-between;
- align-items:center;gap:20px
+.loginLogo{
+    width:175px;
+    max-width:75%;
+
+    margin-bottom:20px;
+
+    border-radius:14px;
 }
 
-header h1{margin:0}
-
-.user-area{
- display:flex;align-items:center;gap:15px
+.loginBox h1{
+    margin-bottom:22px;
+    font-size:28px;
 }
 
-#userName{color:#ddd}
+.loginBox input{
+    margin:7px 0;
+}
 
-#userRole{
- color:#a98cff;font-weight:bold;
- font-size:13px;margin-top:4px
+.loginBtn{
+    width:100%;
+    margin-top:12px;
+
+    background:linear-gradient(
+        135deg,
+        #0ea5e9,
+        #2563eb
+    );
+
+    color:white;
+}
+
+.loginBtn:hover{
+    background:linear-gradient(
+        135deg,
+        #0284c7,
+        #1d4ed8
+    );
+}
+
+.error{
+    color:#ff7777;
+    margin-top:12px;
+    min-height:18px;
+}
+
+
+/* =====================================================
+   APP HEADER
+===================================================== */
+
+#app{
+    display:none;
+    min-height:100vh;
+}
+
+.header{
+    min-height:72px;
+
+    padding:12px 28px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    background:
+        linear-gradient(
+            90deg,
+            #091b2a,
+            #0d2437
+        );
+
+    border-bottom:1px solid #263e51;
+
+    position:sticky;
+    top:0;
+    z-index:50;
+
+    box-shadow:
+        0 8px 30px rgba(0,0,0,.25);
+}
+
+.headerLogo{
+    width:115px;
+    height:auto;
+    border-radius:10px;
+}
+
+.headerRight{
+    display:flex;
+    align-items:center;
+    gap:14px;
+
+    font-weight:bold;
+}
+
+#userBranch{
+    color:#d8f3ff;
 }
 
 .logout{
- background:#454952;color:white
+    background:#ef4444;
+    color:white;
 }
 
+.logout:hover{
+    background:#dc2626;
+}
+
+
+/* =====================================================
+   CONTAINER
+===================================================== */
+
 .container{
- max-width:1150px;margin:25px auto;padding:15px
+    width:100%;
+    max-width:1450px;
+
+    margin:auto;
+
+    padding:28px;
+}
+
+.title{
+    margin-bottom:22px;
+    font-size:30px;
+}
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+.dateBox{
+    background:
+        linear-gradient(
+            145deg,
+            #102b40,
+            #0d2233
+        );
+
+    border:1px solid #234157;
+
+    padding:20px;
+
+    border-radius:18px;
+
+    margin-bottom:20px;
+
+    box-shadow:
+        0 10px 35px rgba(0,0,0,.2);
+}
+
+.dateBox label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:bold;
+}
+
+.dateInput{
+    max-width:280px;
+}
+
+
+/* =====================================================
+   SALE CARDS
+===================================================== */
+
+.cards{
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+    gap:18px;
 }
 
 .card{
- background:#181b22;border:1px solid #373a45;
- border-radius:18px;padding:24px;margin-bottom:22px
+    background:
+        linear-gradient(
+            145deg,
+            #102b40,
+            #0d2030
+        );
+
+    border:1px solid #244359;
+
+    padding:28px;
+
+    border-radius:20px;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.2);
 }
 
-.card h2{margin-top:0}
+.card:hover{
+    transform:translateY(-4px);
 
-.branch{
- border:1px solid #393d48;border-radius:15px;
- padding:18px;margin-top:18px;background:#14171d
+    border-color:#38bdf8;
+
+    box-shadow:
+        0 15px 40px rgba(14,165,233,.15);
 }
 
-.branch h3{
- color:#ad8aff;margin-top:0
+.card h2{
+    margin-bottom:9px;
+    font-size:24px;
 }
 
-.row{
- display:grid;
- grid-template-columns:repeat(4,1fr);
- gap:12px
+.card p{
+    color:#a8c1d1;
 }
 
-.green{
- background:#059669;color:#fff;margin-top:18px
+
+/* =====================================================
+   FORM
+===================================================== */
+
+.formBox{
+    margin-top:22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #102b40,
+            #0d2233
+        );
+
+    border:1px solid #234157;
+
+    padding:25px;
+
+    border-radius:20px;
+
+    box-shadow:
+        0 10px 35px rgba(0,0,0,.2);
 }
 
-.purple{
- background:#8b5cf6;color:#fff;margin-top:18px
+.formBox h2{
+    margin-bottom:18px;
 }
 
-.gray{
- background:#4b4f59;color:white;margin-top:12px
+.formGrid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+    gap:13px;
 }
 
-.message{
- min-height:20px;margin-top:12px
+.formGrid input,
+.formGrid select{
+    margin:0;
 }
 
-.customer-grid{
- display:grid;
- grid-template-columns:repeat(2,1fr);
- gap:12px
+.priceBox{
+    margin-top:16px;
+
+    padding:16px;
+
+    background:#091a29;
+
+    border:1px solid #263e51;
+
+    border-radius:12px;
+
+    font-size:17px;
+    font-weight:bold;
+
+    color:#d9f3ff;
 }
 
-.ticket-card{
- background:#15181e;
- border:1px solid #393d47;
- border-radius:15px;
- padding:18px;
- margin-top:15px
+.saveBtn{
+    margin-top:16px;
+
+    background:#22c55e;
+    color:white;
 }
 
-.ticket-top{
- display:flex;
- justify-content:space-between;
- align-items:center;
- gap:15px
+.saveBtn:hover{
+    background:#16a34a;
 }
 
-.ticket-top h3{
- margin:0;color:#cbb6ff
+.cancelBtn{
+    margin-top:16px;
+    margin-left:8px;
+
+    background:#475569;
+    color:white;
 }
 
-.ticket-badge{
- padding:5px 9px;
- border-radius:7px;
- background:#30234b;
- color:#c9b5ff;
- font-size:12px;
- font-weight:bold
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+.searchBox{
+    margin-top:25px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #102b40,
+            #0d2233
+        );
+
+    border:1px solid #234157;
+
+    padding:22px;
+
+    border-radius:20px;
 }
 
-.edit-btn{
- background:#8b5cf6!important;
- color:#fff!important;
- margin-top:15px;
- display:inline-block!important;
- visibility:visible!important;
- opacity:1!important
+.searchBox h2{
+    margin-bottom:14px;
 }
 
-.summary-grid,.grand-grid{
- display:grid;
- grid-template-columns:repeat(4,1fr);
- gap:15px;
- margin-top:20px
+.searchResults{
+    margin-top:15px;
 }
 
-.summary-card,.grand-item,.stat{
- background:#22252d;
- border:1px solid #393d47;
- border-radius:12px;
- padding:18px
+.ticket{
+    background:#091a29;
+
+    border:1px solid #263e51;
+
+    padding:18px;
+
+    margin-top:10px;
+
+    border-radius:15px;
 }
 
-.summary-card h3{
- margin-top:0;color:#aaa
+.ticketTop{
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:10px;
 }
 
-.summary-number{
- font-size:30px;
- font-weight:bold;
- margin-top:8px
+.ticketInfo{
+    margin-top:10px;
+    line-height:1.8;
 }
 
-.online-number{color:#4ade80}
-.offline-number{color:#fbbf24}
-.money-number{color:#60a5fa}
-.total-number{color:#c084fc}
-
-.host-branch{
- margin-top:20px;
- background:#14171d;
- border:1px solid #393d47;
- border-radius:16px;
- padding:20px
+.ticketActions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
 }
 
-.host-branch-title{
- display:flex;
- justify-content:space-between;
- align-items:center
+.editBtn{
+    background:#f59e0b;
+    color:#111827;
 }
 
-.host-branch-title h3{
- color:#c084fc
+.editBtn:hover{
+    background:#d97706;
 }
 
-.branch-total{
- background:#8b5cf6;
- padding:7px 12px;
- border-radius:8px
+.deleteBtn{
+    background:#dc2626;
+    color:white;
 }
 
-.stats-row{
- display:grid;
- grid-template-columns:repeat(3,1fr);
- gap:12px
+.deleteBtn:hover{
+    background:#b91c1c;
 }
 
-.stat-title{
- color:#aaa;font-size:13px
+.badge{
+    display:inline-block;
+
+    padding:6px 10px;
+
+    border-radius:20px;
+
+    background:#164e63;
+
+    margin-top:7px;
+    margin-right:5px;
+
+    font-size:13px;
 }
 
-.stat-value{
- font-size:25px;
- font-weight:bold;
- margin-top:5px
+
+/* =====================================================
+   HOST
+===================================================== */
+
+.hostPanel{
+    margin-top:32px;
 }
 
-.offline-details{
- margin-top:18px;
- border-top:1px solid #393d47;
- padding-top:15px
+.hostTitle{
+    margin-bottom:18px;
+
+    font-size:28px;
 }
 
-.offline-details h4{
- color:#fbbf24
+.hostFilters{
+    background:
+        linear-gradient(
+            145deg,
+            #102b40,
+            #0d2233
+        );
+
+    border:1px solid #234157;
+
+    padding:20px;
+
+    border-radius:18px;
+
+    margin-bottom:22px;
 }
 
-.offline-item{
- display:flex;
- justify-content:space-between;
- background:#22252d;
- padding:12px;
- border-radius:9px;
- margin-top:8px
+.hostFilters label{
+    display:block;
+
+    margin-bottom:8px;
+
+    font-weight:bold;
 }
 
-.offline-count{
- color:#fbbf24;
- font-weight:bold
+.hostDate{
+    max-width:280px;
 }
 
-.grand-total{
- margin-top:25px;
- padding:25px;
- border-radius:18px;
- border:1px solid #8b5cf6;
- background:#211b30
+
+/* =====================================================
+   PRICE LIST
+===================================================== */
+
+.priceList{
+    margin-bottom:22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #102b40,
+            #0d2233
+        );
+
+    border:1px solid #234157;
+
+    padding:20px;
+
+    border-radius:18px;
 }
 
-@media(max-width:800px){
+.priceList h3{
+    margin-bottom:12px;
+}
 
- .row,
- .summary-grid,
- .grand-grid,
- .stats-row,
- .customer-grid{
-  grid-template-columns:1fr
- }
+.priceGrid{
+    display:grid;
 
- header{
-  flex-direction:column;
-  text-align:center
- }
+    grid-template-columns:
+        repeat(4,minmax(0,1fr));
 
- .ticket-top{
-  flex-direction:column;
-  align-items:flex-start
- }
+    gap:10px;
+}
+
+.priceItem{
+    background:#091a29;
+
+    border:1px solid #263e51;
+
+    padding:15px;
+
+    border-radius:12px;
+
+    text-align:center;
+
+    line-height:1.6;
+}
+
+
+/* =====================================================
+   BRANCH CARD
+===================================================== */
+
+.branchCard{
+    background:
+        linear-gradient(
+            145deg,
+            #102b40,
+            #0d2233
+        );
+
+    border:1px solid #234157;
+
+    padding:22px;
+
+    border-radius:20px;
+
+    margin-bottom:24px;
+
+    box-shadow:
+        0 10px 35px rgba(0,0,0,.2);
+
+    overflow:hidden;
+}
+
+.branchHeader{
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:18px;
+
+    flex-wrap:wrap;
+}
+
+.branchHeader h3{
+    font-size:24px;
+}
+
+.branchCash{
+    background:#064e3b;
+
+    border:1px solid #047857;
+
+    padding:8px 13px;
+
+    border-radius:20px;
+
+    color:#bbf7d0;
+
+    font-weight:bold;
+}
+
+
+/* =====================================================
+   HOST TABLE SECTION
+===================================================== */
+
+.tableTitle{
+    margin-top:20px;
+    margin-bottom:10px;
+
+    font-size:19px;
+
+    color:#d8f3ff;
+}
+
+.tableWrapper{
+    width:100%;
+    overflow-x:auto;
+
+    -webkit-overflow-scrolling:touch;
+
+    margin-bottom:20px;
+
+    border-radius:12px;
+}
+
+.summaryTable{
+    width:100%;
+
+    min-width:850px;
+
+    border-collapse:collapse;
+}
+
+.summaryTable th,
+.summaryTable td{
+    border:1px solid #294154;
+
+    padding:12px;
+
+    text-align:center;
+}
+
+.summaryTable th{
+    background:#091a29;
+
+    color:#cceeff;
+
+    font-weight:bold;
+}
+
+.summaryTable td{
+    background:#102b40;
+}
+
+.summaryTable .totalRow td{
+    background:#12354a;
+
+    font-weight:bold;
+}
+
+.onlineRow td{
+    background:#102b40;
+}
+
+.offlineRow td{
+    background:#102b40;
+}
+
+.cash{
+    color:#4ade80;
+    font-weight:bold;
+}
+
+
+/* =====================================================
+   GRAND TOTAL
+===================================================== */
+
+.grandTotal{
+    margin-top:28px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #0b1d2c,
+            #091a29
+        );
+
+    border:1px solid #2a465c;
+
+    padding:25px;
+
+    border-radius:20px;
+
+    overflow:hidden;
+}
+
+.grandTotal h2{
+    margin-bottom:18px;
+}
+
+.grandTable{
+    width:100%;
+
+    min-width:850px;
+
+    border-collapse:collapse;
+}
+
+.grandTable th,
+.grandTable td{
+    border:1px solid #294154;
+
+    padding:13px;
+
+    text-align:center;
+}
+
+.grandTable th{
+    background:#102b40;
+}
+
+.grandTable td{
+    background:#0d2233;
+}
+
+.grandTable .grandRow td{
+    background:#164e63;
+
+    font-weight:bold;
+
+    font-size:17px;
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.status{
+    margin-top:15px;
+
+    padding:12px 15px;
+
+    border-radius:10px;
+
+    display:none;
+
+    font-weight:bold;
+}
+
+.status.success{
+    display:block;
+
+    background:#064e3b;
+
+    border:1px solid #047857;
+
+    color:#bbf7d0;
+}
+
+.status.error{
+    display:block;
+
+    background:#450a0a;
+
+    border:1px solid #991b1b;
+
+    color:#fecaca;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:900px){
+
+    .container{
+        padding:20px;
+    }
+
+    .priceGrid{
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+    }
 
 }
+
+@media(max-width:700px){
+
+    .header{
+        padding:10px 14px;
+    }
+
+    .headerLogo{
+        width:90px;
+    }
+
+    .headerRight{
+        gap:8px;
+        font-size:13px;
+    }
+
+    .logout{
+        padding:9px 12px;
+    }
+
+    .container{
+        padding:15px;
+    }
+
+    .title{
+        font-size:25px;
+    }
+
+    .cards{
+        grid-template-columns:1fr;
+    }
+
+    .formGrid{
+        grid-template-columns:1fr;
+    }
+
+    .priceGrid{
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+    }
+
+    .branchCard{
+        padding:15px;
+    }
+
+    .branchHeader h3{
+        font-size:21px;
+    }
+
+    .loginBox{
+        padding:30px 22px;
+    }
+
+}
+
+@media(max-width:420px){
+
+    .priceGrid{
+        grid-template-columns:1fr;
+    }
+
+    .ticketTop{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+}
+
 </style>
+
 </head>
+
 
 <body>
 
-<!-- LOGIN -->
 
-<div id="loginScreen">
+<!-- =====================================================
+     LOGIN
+===================================================== -->
 
- <div class="login-box">
+<section id="loginPage">
 
-  <h1>
-   Ticket <span>Branches</span>
-  </h1>
+    <div class="loginBox">
 
-  <div class="login-subtitle">
-   Branch Management System
-  </div>
+        <img
+            src="blue-orbit.jpg"
+            class="loginLogo"
+            alt="Blue Orbit"
+        >
 
-  <label>Email</label>
+        <h1>
+            Ticket Management
+        </h1>
 
-  <input
-   id="loginEmail"
-   type="email"
-   placeholder="Enter your email"
-  >
+        <input
+            id="email"
+            type="email"
+            autocomplete="username"
+            placeholder="Email"
+        >
 
-  <label>Password</label>
+        <input
+            id="password"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Password"
+        >
 
-  <input
-   id="loginPassword"
-   type="password"
-   placeholder="Enter your password"
-  >
+        <button
+            class="loginBtn"
+            onclick="login()"
+        >
+            LOGIN
+        </button>
 
-  <button id="loginBtn">
-   Login
-  </button>
+        <div
+            id="loginError"
+            class="error"
+        ></div>
 
-  <p id="loginError"></p>
+    </div>
 
- </div>
-
-</div>
+</section>
 
 
-<!-- WEBSITE -->
+<!-- =====================================================
+     APP
+===================================================== -->
 
-<div id="website" class="hidden">
+<section id="app">
 
-<header>
 
- <h1>
-  Ticket <span>Branches</span>
- </h1>
+<header class="header">
 
- <div class="user-area">
+    <img
+        src="blue-orbit.jpg"
+        class="headerLogo"
+        alt="Blue Orbit"
+    >
 
-  <div>
-   <div id="userName"></div>
-   <div id="userRole"></div>
-  </div>
+    <div class="headerRight">
 
-  <button
-   id="logoutBtn"
-   class="logout"
-  >
-   Logout
-  </button>
+        <span id="userBranch"></span>
 
- </div>
+        <button
+            class="logout"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </div>
 
 </header>
 
 
-<div class="container">
+<main class="container">
+
+    <h1 class="title">
+        Ticket Management
+    </h1>
 
 
-<!-- SALES -->
+    <!-- =================================================
+         BRANCH SALE DATE
+    ================================================== -->
 
-<div class="card" id="branchSalesCard">
-
- <h2>Enter Ticket Sales</h2>
-
- <label>Date</label>
-
- <input
-  type="date"
-  id="date"
- >
-
- <label>Branch</label>
-
- <select id="branch">
-
-  <option value="Zayed">Zayed</option>
-  <option value="Zamalek">Zamalek</option>
-  <option value="Heliopolis">Heliopolis</option>
-  <option value="CFC">CFC</option>
-
- </select>
-
-
- <div class="branch">
-
-  <h3>Online Tickets</h3>
-
-  <div class="row">
-
-   <div>
-    <label>Premium Orbit</label>
-    <input
-     type="number"
-     id="onlinePremium"
-     value="0"
-     min="0"
+    <div
+        id="branchDateBox"
+        class="dateBox"
     >
-   </div>
 
-   <div>
-    <label>Fanpit</label>
-    <input
-     type="number"
-     id="onlineFanpit"
-     value="0"
-     min="0"
+        <label>
+            Sale Date
+        </label>
+
+        <input
+            id="saleDate"
+            class="dateInput"
+            type="date"
+        >
+
+    </div>
+
+
+    <!-- =================================================
+         SALE CARDS
+    ================================================== -->
+
+    <div
+        id="saleCards"
+        class="cards"
     >
-   </div>
 
-   <div>
-    <label>VIP</label>
-    <input
-     type="number"
-     id="onlineVIP"
-     value="0"
-     min="0"
+        <div
+            class="card"
+            onclick="chooseSale('Online')"
+        >
+
+            <h2>
+                ONLINE
+            </h2>
+
+            <p>
+                Online Ticket Sale
+            </p>
+
+        </div>
+
+
+        <div
+            class="card"
+            onclick="chooseSale('Offline')"
+        >
+
+            <h2>
+                OFFLINE
+            </h2>
+
+            <p>
+                Offline Ticket Sale
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         FORM
+    ================================================== -->
+
+    <div
+        id="formBox"
+        class="formBox hidden"
     >
-   </div>
 
-   <div>
-    <label>High Regular</label>
-    <input
-     type="number"
-     id="onlineHigh"
-     value="0"
-     min="0"
+        <h2 id="formTitle">
+            Ticket Handover
+        </h2>
+
+
+        <div class="formGrid">
+
+            <input
+                id="customerName"
+                placeholder="Customer Name"
+            >
+
+
+            <input
+                id="serial"
+                placeholder="Serial"
+            >
+
+
+            <select id="ticketType">
+
+                <option value="">
+                    Ticket Type
+                </option>
+
+                <option value="Premium">
+                    Premium
+                </option>
+
+                <option value="Fanbit">
+                    Fanbit
+                </option>
+
+                <option value="VIP">
+                    VIP
+                </option>
+
+                <option value="Regular">
+                    Regular
+                </option>
+
+            </select>
+
+
+            <input
+                id="gmail"
+                type="email"
+                placeholder="Gmail"
+            >
+
+
+            <input
+                id="phone"
+                placeholder="Phone"
+            >
+
+
+            <select id="saleType">
+
+                <option value="">
+                    Sale Type
+                </option>
+
+                <option value="Online">
+                    Online
+                </option>
+
+                <option value="Offline">
+                    Offline
+                </option>
+
+            </select>
+
+
+            <input
+                id="quantity"
+                type="number"
+                min="1"
+                value="1"
+                placeholder="Quantity"
+                oninput="updatePrice()"
+            >
+
+        </div>
+
+
+        <div
+            id="priceBox"
+            class="priceBox"
+        >
+            Online sale — No cash
+        </div>
+
+
+        <button
+            class="saveBtn"
+            onclick="saveTicket()"
+        >
+            SAVE
+        </button>
+
+
+        <button
+            class="cancelBtn"
+            onclick="cancelEdit()"
+        >
+            CANCEL
+        </button>
+
+
+        <div
+            id="saveStatus"
+            class="status"
+        ></div>
+
+    </div>
+
+
+    <!-- =================================================
+         SEARCH
+    ================================================== -->
+
+    <div class="searchBox">
+
+        <h2>
+            Search Tickets
+        </h2>
+
+        <input
+            id="search"
+            placeholder="Search by Phone / Customer / Gmail / Serial"
+            oninput="searchTickets()"
+        >
+
+        <div
+            id="searchResults"
+            class="searchResults"
+        ></div>
+
+    </div>
+
+
+    <!-- =================================================
+         HOST DASHBOARD
+    ================================================== -->
+
+    <div
+        id="hostPanel"
+        class="hostPanel hidden"
     >
-   </div>
 
-  </div>
+        <h2 class="hostTitle">
+            HOST DASHBOARD
+        </h2>
 
- </div>
 
+        <div class="hostFilters">
 
- <div class="branch">
+            <label>
+                Report Date
+            </label>
 
-  <h3>Offline Tickets</h3>
+            <input
+                id="hostDate"
+                class="hostDate"
+                type="date"
+                onchange="loadHostDashboard()"
+            >
 
-  <div class="row">
+        </div>
 
-   <div>
-    <label>Premium Orbit</label>
-    <input
-     type="number"
-     id="offlinePremium"
-     value="0"
-     min="0"
-    >
-   </div>
-
-   <div>
-    <label>Fanpit</label>
-    <input
-     type="number"
-     id="offlineFanpit"
-     value="0"
-     min="0"
-    >
-   </div>
 
-   <div>
-    <label>VIP</label>
-    <input
-     type="number"
-     id="offlineVIP"
-     value="0"
-     min="0"
-    >
-   </div>
-
-   <div>
-    <label>High Regular</label>
-    <input
-     type="number"
-     id="offlineHigh"
-     value="0"
-     min="0"
-    >
-   </div>
+        <!-- =================================================
+             PRICE LIST
+        ================================================== -->
 
-  </div>
+        <div class="priceList">
 
-  <label>Offline Cash</label>
+            <h3>
+                Offline Prices
+            </h3>
 
-  <input
-   type="number"
-   id="offlineCash"
-   value="0"
-   readonly
-  >
+            <div class="priceGrid">
 
- </div>
+                <div class="priceItem">
 
+                    <b>
+                        Premium
+                    </b>
 
- <button
-  class="green"
-  id="saveDataBtn"
- >
-  Save Data
- </button>
+                    <br>
 
- <p
-  id="saveMessage"
-  class="message"
- ></p>
+                    1,500 EGP
 
-</div>
+                </div>
 
 
-<!-- TICKET HANDOVER -->
+                <div class="priceItem">
 
-<div
- class="card"
- id="ticketHandoverCard"
->
+                    <b>
+                        Fanbit
+                    </b>
 
- <h2>🎟️ Ticket Handover</h2>
+                    <br>
 
- <label>Date</label>
+                    1,200 EGP
 
- <input
-  type="date"
-  id="ticketDate"
- >
+                </div>
 
- <div class="customer-grid">
 
-  <div>
-   <label>Customer Name</label>
-   <input id="customerName" type="text">
-  </div>
+                <div class="priceItem">
 
-  <div>
-   <label>Order Number</label>
-   <input id="orderNumber" type="text">
-  </div>
+                    <b>
+                        VIP
+                    </b>
 
-  <div>
-   <label>Serial</label>
-   <input id="ticketSerial" type="text">
-  </div>
+                    <br>
 
-  <div>
-   <label>Ticket Type</label>
+                    800 EGP
 
-   <select id="ticketType">
-    <option>Premium Orbit</option>
-    <option>Fanpit</option>
-    <option>VIP</option>
-    <option>High Regular</option>
-   </select>
+                </div>
 
-  </div>
 
-  <div>
-   <label>Gmail</label>
-   <input id="customerGmail" type="email">
-  </div>
+                <div class="priceItem">
 
-  <div>
-   <label>Phone</label>
-   <input id="customerPhone" type="tel">
-  </div>
+                    <b>
+                        Regular
+                    </b>
 
-  <div>
-   <label>Sale Type</label>
+                    <br>
 
-   <select id="saleType">
-    <option value="Online">Online</option>
-    <option value="Offline">Offline</option>
-   </select>
+                    500 EGP
 
-  </div>
+                </div>
 
- </div>
+            </div>
 
+        </div>
 
- <button
-  class="purple"
-  id="saveTicketBtn"
- >
-  Save Ticket
- </button>
 
+        <div
+            id="hostResults"
+        ></div>
 
- <button
-  class="gray hidden"
-  id="cancelEditBtn"
- >
-  Cancel Edit
- </button>
 
+        <div
+            id="grandTotal"
+            class="grandTotal"
+        ></div>
 
- <p
-  id="ticketMessage"
-  class="message"
- ></p>
+    </div>
 
-</div>
+</main>
 
-
-<!-- MY TICKETS -->
-
-<div
- class="card"
- id="branchTicketsCard"
->
-
- <h2>🎟️ My Tickets</h2>
-
- <label>Select Date</label>
-
- <input
-  type="date"
-  id="myTicketsDate"
- >
-
- <button
-  class="green"
-  id="loadMyTicketsBtn"
- >
-  Show My Tickets
- </button>
-
- <div id="myTicketsResults"></div>
-
-</div>
-
-
-<!-- SEARCH -->
-
-<div
- class="card"
- id="searchCard"
->
-
- <h2>Search Day</h2>
-
- <label>Select Date</label>
-
- <input
-  type="date"
-  id="searchDate"
- >
-
- <button
-  class="green"
-  id="searchBtn"
- >
-  Show Day
- </button>
-
- <div id="results"></div>
-
-</div>
-
-
-<!-- HOST -->
-
-<div
- class="card hidden"
- id="hostDashboard"
->
-
- <h2>👑 Host Dashboard</h2>
-
- <label>Select Date</label>
-
- <input
-  type="date"
-  id="hostDate"
- >
-
- <div id="hostDashboardResults"></div>
-
- <hr
-  style="margin:30px 0;border-color:#333"
- >
-
- <h2>🔎 Customer Search</h2>
-
- <label>Search Customer</label>
-
- <input
-  id="hostCustomerSearch"
-  placeholder="Name / Phone / Serial / Gmail / Order Number"
- >
-
- <button
-  class="purple"
-  id="hostSearchBtn"
- >
-  Search Customer
- </button>
-
- <div id="hostCustomerResults"></div>
-
-</div>
-
-</div>
-
-</div>
+</section>
 
 
 <script>
 
-/* ================================
+/* =====================================================
    SUPABASE
-================================ */
+===================================================== */
 
 const SUPABASE_URL =
-"https://ubaooclkpgminlbifpjf.supabase.co";
+    "https://fpfsgxrsppwpesritsva.supabase.co";
 
-const SUPABASE_KEY =
-"sb_publishable_iNL7NMiqyDKAUCmUYNKqpQ_rpOi12EB";
+const SUPABASE_ANON_KEY =
+    "sb_publishable_dHEyax8rhZKR4A1Ie8BmKw_ttSL2dZ3";
 
 const supabaseClient =
-window.supabase.createClient(
- SUPABASE_URL,
- SUPABASE_KEY
-);
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
 
 
-/* ================================
-   STATE
-================================ */
+/* =====================================================
+   GLOBALS
+===================================================== */
 
 let currentUser = null;
-let currentBranch = "";
-let isHost = false;
-let editingTicketId = null;
+
+let currentBranch = null;
+
+let editingId = null;
 
 
-/* ================================
-   HELPERS
-================================ */
+/* =====================================================
+   PRICES
+===================================================== */
+
+const PRICES = {
+
+    Premium:1500,
+
+    Fanbit:1200,
+
+    VIP:800,
+
+    Regular:500
+
+};
+
+
+/* =====================================================
+   TODAY
+===================================================== */
 
 function today(){
 
- const d = new Date();
+    const d =
+        new Date();
 
- return (
-  d.getFullYear() +
-  "-" +
-  String(d.getMonth()+1).padStart(2,"0") +
-  "-" +
-  String(d.getDate()).padStart(2,"0")
- );
+    const year =
+        d.getFullYear();
 
-}
+    const month =
+        String(
+            d.getMonth()+1
+        ).padStart(2,"0");
 
+    const day =
+        String(
+            d.getDate()
+        ).padStart(2,"0");
 
-function esc(value){
-
- return String(value ?? "")
-  .replace(/&/g,"&amp;")
-  .replace(/</g,"&lt;")
-  .replace(/>/g,"&gt;")
-  .replace(/"/g,"&quot;")
-  .replace(/'/g,"&#039;");
+    return `${year}-${month}-${day}`;
 
 }
 
 
-/* ================================
+/* =====================================================
+   INITIAL DATE
+===================================================== */
+
+document
+    .getElementById("saleDate")
+    .value = today();
+
+document
+    .getElementById("hostDate")
+    .value = today();
+
+
+/* =====================================================
    LOGIN
-================================ */
+===================================================== */
 
 async function login(){
 
- const email =
- document
- .getElementById("loginEmail")
- .value
- .trim();
+    const email =
+        document
+        .getElementById("email")
+        .value
+        .trim();
 
- const password =
- document
- .getElementById("loginPassword")
- .value;
+    const password =
+        document
+        .getElementById("password")
+        .value;
 
- const error =
- document
- .getElementById("loginError");
-
- const btn =
- document
- .getElementById("loginBtn");
-
- error.textContent = "";
-
- if(!email || !password){
-
-  error.textContent =
-  "Enter email and password.";
-
-  return;
-
- }
-
- btn.disabled = true;
-
- btn.textContent =
- "Logging in...";
+    const error =
+        document
+        .getElementById("loginError");
 
 
- try{
+    error.textContent = "";
 
-  const {
-   data,
-   error:loginError
-  } =
-  await supabaseClient.auth
-  .signInWithPassword({
-   email,
-   password
-  });
 
-  if(loginError)
-   throw loginError;
+    if(!email || !password){
 
-  await openWebsite(data.user);
+        error.textContent =
+            "Enter email and password.";
 
- }catch(e){
+        return;
 
-  console.error(e);
+    }
 
-  error.textContent =
-  e.message ||
-  "Login failed.";
 
- }finally{
+    const {data,error:loginError} =
+        await supabaseClient
+        .auth
+        .signInWithPassword({
 
-  btn.disabled = false;
+            email:email,
 
-  btn.textContent =
-  "Login";
+            password:password
 
- }
+        });
+
+
+    if(loginError){
+
+        error.textContent =
+            loginError.message;
+
+        return;
+
+    }
+
+
+    currentUser =
+        data.user;
+
+
+    await loadUser();
 
 }
 
 
-document
-.getElementById("loginBtn")
-.addEventListener(
- "click",
- login
-);
+/* =====================================================
+   LOAD USER
+===================================================== */
+
+async function loadUser(){
+
+    const {data,error} =
+        await supabaseClient
+        .from("branch_users")
+        .select("name,branch")
+        .eq(
+            "user_id",
+            currentUser.id
+        )
+        .single();
 
 
-document
-.getElementById("loginPassword")
-.addEventListener(
- "keydown",
- e=>{
+    if(error){
 
-  if(e.key==="Enter")
-   login();
+        alert(
+            "User branch was not found."
+        );
 
- }
-);
+        await logout();
 
+        return;
 
-/* ================================
-   PROFILE
-================================ */
-
-async function loadUserProfile(user){
-
- const {
-  data,
-  error
- } =
- await supabaseClient
- .from("branch_users")
- .select("branch")
- .eq("user_id",user.id)
- .maybeSingle();
+    }
 
 
- if(error)
-  throw error;
+    currentBranch =
+        data.branch;
 
 
- if(!data){
-
-  throw new Error(
-   "No branch profile found for this user."
-  );
-
- }
+    document
+        .getElementById("userBranch")
+        .textContent =
+        `${data.name} — ${data.branch}`;
 
 
- currentUser =
- user;
-
- currentBranch =
- String(
-  data.branch || ""
- ).trim();
+    document
+        .getElementById("loginPage")
+        .style
+        .display =
+        "none";
 
 
- isHost =
- currentBranch
- .toUpperCase() === "ALL";
+    document
+        .getElementById("app")
+        .style
+        .display =
+        "block";
 
 
- document
- .getElementById("userName")
- .textContent =
- user.email || "";
+    /*
+       HOST MODE
+    */
+
+    if(currentBranch === "ALL"){
+
+        /*
+           HOST CANNOT SELL
+        */
+
+        document
+            .getElementById("saleCards")
+            .classList
+            .add("hidden");
 
 
- document
- .getElementById("userRole")
- .textContent =
- isHost
- ? "HOST — ALL BRANCHES"
- : currentBranch;
+        document
+            .getElementById("branchDateBox")
+            .classList
+            .add("hidden");
 
 
-/* HOST */
-
- if(isHost){
-
-  document
-  .getElementById(
-   "branchSalesCard"
-  )
-  .classList.add("hidden");
-
-  document
-  .getElementById(
-   "ticketHandoverCard"
-  )
-  .classList.add("hidden");
-
-  document
-  .getElementById(
-   "branchTicketsCard"
-  )
-  .classList.add("hidden");
-
-  document
-  .getElementById(
-   "searchCard"
-  )
-  .classList.add("hidden");
-
-  document
-  .getElementById(
-   "hostDashboard"
-  )
-  .classList.remove("hidden");
+        document
+            .getElementById("formBox")
+            .classList
+            .add("hidden");
 
 
- }else{
+        /*
+           HOST DASHBOARD
+        */
 
-/* BRANCH */
+        document
+            .getElementById("hostPanel")
+            .classList
+            .remove("hidden");
 
-  document
-  .getElementById(
-   "branchSalesCard"
-  )
-  .classList.remove("hidden");
 
-  document
-  .getElementById(
-   "ticketHandoverCard"
-  )
-  .classList.remove("hidden");
+        await loadHostDashboard();
 
-  document
-  .getElementById(
-   "branchTicketsCard"
-  )
-  .classList.remove("hidden");
-
-  document
-  .getElementById(
-   "searchCard"
-  )
-  .classList.remove("hidden");
-
-  document
-  .getElementById(
-   "hostDashboard"
-  )
-  .classList.add("hidden");
-
-  document
-  .getElementById("branch")
-  .value =
-  currentBranch;
-
-  document
-  .getElementById("branch")
-  .disabled =
-  true;
-
- }
+    }
 
 }
 
 
-/* ================================
-   OPEN WEBSITE
-================================ */
-
-async function openWebsite(user){
-
- await loadUserProfile(user);
-
- document
- .getElementById("loginScreen")
- .classList.add("hidden");
-
- document
- .getElementById("website")
- .classList.remove("hidden");
-
-
- [
-  "date",
-  "ticketDate",
-  "myTicketsDate",
-  "searchDate",
-  "hostDate"
- ]
- .forEach(
-  id=>{
-
-   const el =
-   document.getElementById(id);
-
-   if(el)
-    el.value =
-    today();
-
-  }
- );
-
-
- calculateOfflineCash();
-
-
- if(isHost)
-  await loadHostDashboard();
- else
-  await loadMyTickets();
-
-}
-
-
-/* ================================
-   SESSION
-================================ */
-
-async function checkSession(){
-
- try{
-
-  const {
-   data,
-   error
-  } =
-  await supabaseClient
-  .auth
-  .getSession();
-
-  if(error)
-   throw error;
-
-  if(data.session){
-
-   await openWebsite(
-    data.session.user
-   );
-
-  }
-
- }catch(e){
-
-  console.error(e);
-
- }
-
-}
-
-
-checkSession();
-
-
-/* ================================
+/* =====================================================
    LOGOUT
-================================ */
+===================================================== */
+
+async function logout(){
+
+    await supabaseClient
+        .auth
+        .signOut();
+
+
+    currentUser = null;
+
+    currentBranch = null;
+
+    editingId = null;
+
+
+    document
+        .getElementById("app")
+        .style
+        .display =
+        "none";
+
+
+    document
+        .getElementById("loginPage")
+        .style
+        .display =
+        "flex";
+
+
+    document
+        .getElementById("loginError")
+        .textContent = "";
+
+}
+
+
+/* =====================================================
+   CHOOSE SALE
+===================================================== */
+
+function chooseSale(type){
+
+    /*
+       HOST BLOCK
+    */
+
+    if(currentBranch === "ALL"){
+
+        alert(
+            "HOST cannot create tickets."
+        );
+
+        return;
+
+    }
+
+
+    editingId = null;
+
+
+    document
+        .getElementById("formBox")
+        .classList
+        .remove("hidden");
+
+
+    document
+        .getElementById("formTitle")
+        .textContent =
+        `Ticket Handover — ${type}`;
+
+
+    document
+        .getElementById("saleType")
+        .value =
+        type;
+
+
+    updatePrice();
+
+}
+
+
+/* =====================================================
+   UPDATE PRICE
+===================================================== */
+
+function updatePrice(){
+
+    const saleType =
+        document
+        .getElementById("saleType")
+        .value;
+
+
+    const category =
+        document
+        .getElementById("ticketType")
+        .value;
+
+
+    const quantity =
+        Number(
+            document
+            .getElementById("quantity")
+            .value
+        ) || 1;
+
+
+    const priceBox =
+        document
+        .getElementById("priceBox");
+
+
+    if(saleType !== "Offline"){
+
+        priceBox.textContent =
+            "Online sale — No cash";
+
+        return;
+
+    }
+
+
+    if(!category){
+
+        priceBox.textContent =
+            "Choose ticket category";
+
+        return;
+
+    }
+
+
+    const price =
+        PRICES[category] || 0;
+
+
+    const total =
+        price * quantity;
+
+
+    priceBox.innerHTML =
+        `Price: ${price.toLocaleString()} EGP
+         × ${quantity}
+         = <b>${total.toLocaleString()} EGP</b>`;
+
+}
+
+
+/* =====================================================
+   FORM EVENTS
+===================================================== */
 
 document
-.getElementById("logoutBtn")
-.addEventListener(
- "click",
- async()=>{
-
-  await supabaseClient
-  .auth
-  .signOut();
-
-  location.reload();
-
- }
-);
-
-
-/* ================================
-   OFFLINE CASH
-================================ */
-
-function calculateOfflineCash(){
-
- const premium =
- Number(
-  document
-  .getElementById(
-   "offlinePremium"
-  ).value || 0
- );
-
- const fanpit =
- Number(
-  document
-  .getElementById(
-   "offlineFanpit"
-  ).value || 0
- );
-
- const vip =
- Number(
-  document
-  .getElementById(
-   "offlineVIP"
-  ).value || 0
- );
-
- const high =
- Number(
-  document
-  .getElementById(
-   "offlineHigh"
-  ).value || 0
- );
-
-
- const total =
- premium * 1500 +
- fanpit * 1200 +
- vip * 800 +
- high * 500;
-
-
- document
- .getElementById(
-  "offlineCash"
- )
- .value =
- total;
-
-
- return total;
-
-}
-
-
-[
- "offlinePremium",
- "offlineFanpit",
- "offlineVIP",
- "offlineHigh"
-]
-.forEach(
- id=>{
-
-  document
-  .getElementById(id)
-  .addEventListener(
-   "input",
-   calculateOfflineCash
-  );
-
- }
-);
-
-
-/* ================================
-   SAVE SALES
-================================ */
-
-async function saveData(){
-
- if(isHost)
-  return;
-
-
- const btn =
- document
- .getElementById(
-  "saveDataBtn"
- );
-
- const msg =
- document
- .getElementById(
-  "saveMessage"
- );
-
- const date =
- document
- .getElementById(
-  "date"
- ).value;
-
-
- const data = {
-
-  sale_date:date,
-
-  branch:currentBranch,
-
-  online_premium:
-   Number(
-    document
-    .getElementById(
-     "onlinePremium"
-    ).value || 0
-   ),
-
-  online_fanpit:
-   Number(
-    document
-    .getElementById(
-     "onlineFanpit"
-    ).value || 0
-   ),
-
-  online_vip:
-   Number(
-    document
-    .getElementById(
-     "onlineVIP"
-    ).value || 0
-   ),
-
-  online_high_regular:
-   Number(
-    document
-    .getElementById(
-     "onlineHigh"
-    ).value || 0
-   ),
-
-  offline_premium:
-   Number(
-    document
-    .getElementById(
-     "offlinePremium"
-    ).value || 0
-   ),
-
-  offline_fanpit:
-   Number(
-    document
-    .getElementById(
-     "offlineFanpit"
-    ).value || 0
-   ),
-
-  offline_vip:
-   Number(
-    document
-    .getElementById(
-     "offlineVIP"
-    ).value || 0
-   ),
-
-  offline_high_regular:
-   Number(
-    document
-    .getElementById(
-     "offlineHigh"
-    ).value || 0
-   ),
-
-  offline_cash:
-   calculateOfflineCash()
-
- };
-
-
- btn.disabled = true;
- btn.textContent = "Saving...";
-
-
- try{
-
-  const {
-   data:existing,
-   error:e1
-  } =
-  await supabaseClient
-  .from("ticket_sales")
-  .select("id")
-  .eq("sale_date",date)
-  .eq("branch",currentBranch)
-  .maybeSingle();
-
-
-  if(e1)
-   throw e1;
-
-
-  let result;
-
-
-  if(existing){
-
-   result =
-   await supabaseClient
-   .from("ticket_sales")
-   .update(data)
-   .eq(
-    "id",
-    existing.id
-   );
-
-  }else{
-
-   result =
-   await supabaseClient
-   .from("ticket_sales")
-   .insert([data]);
-
-  }
-
-
-  if(result.error)
-   throw result.error;
-
-
-  msg.style.color =
-  "#4ade80";
-
-  msg.textContent =
-  "✓ Data saved successfully";
-
-
- }catch(e){
-
-  console.error(e);
-
-  msg.style.color =
-  "#ff7070";
-
-  msg.textContent =
-  "❌ " + e.message;
-
-
- }finally{
-
-  btn.disabled = false;
-  btn.textContent = "Save Data";
-
- }
-
-}
+    .getElementById("saleType")
+    .addEventListener(
+        "change",
+        updatePrice
+    );
 
 
 document
-.getElementById("saveDataBtn")
-.addEventListener(
- "click",
- saveData
-);
+    .getElementById("ticketType")
+    .addEventListener(
+        "change",
+        updatePrice
+    );
 
 
-/* ================================
-   CLEAR TICKET FORM
-================================ */
-
-function clearTicketForm(){
-
- document
- .getElementById("customerName")
- .value = "";
-
- document
- .getElementById("orderNumber")
- .value = "";
-
- document
- .getElementById("ticketSerial")
- .value = "";
-
- document
- .getElementById("customerGmail")
- .value = "";
-
- document
- .getElementById("customerPhone")
- .value = "";
-
- document
- .getElementById("ticketType")
- .value =
- "Premium Orbit";
-
- document
- .getElementById("saleType")
- .value =
- "Online";
-
- editingTicketId =
- null;
-
- document
- .getElementById("saveTicketBtn")
- .textContent =
- "Save Ticket";
-
- document
- .getElementById("cancelEditBtn")
- .classList
- .add("hidden");
-
-}
-
-
-/* ================================
-   SAVE / UPDATE TICKET
-================================ */
+/* =====================================================
+   SAVE TICKET
+===================================================== */
 
 async function saveTicket(){
 
- if(isHost)
-  return;
+    /*
+       HOST BLOCK
+    */
+
+    if(currentBranch === "ALL"){
+
+        showStatus(
+            "saveStatus",
+            "Save unsuccessful: HOST cannot save tickets.",
+            false
+        );
+
+        return;
+
+    }
 
 
- const msg =
- document
- .getElementById(
-  "ticketMessage"
- );
-
- const btn =
- document
- .getElementById(
-  "saveTicketBtn"
- );
-
- const date =
- document
- .getElementById(
-  "ticketDate"
- ).value;
-
- const name =
- document
- .getElementById(
-  "customerName"
- ).value.trim();
-
- const order =
- document
- .getElementById(
-  "orderNumber"
- ).value.trim();
-
- const serial =
- document
- .getElementById(
-  "ticketSerial"
- ).value.trim();
-
- const type =
- document
- .getElementById(
-  "ticketType"
- ).value;
-
- const gmail =
- document
- .getElementById(
-  "customerGmail"
- ).value.trim();
-
- const phone =
- document
- .getElementById(
-  "customerPhone"
- ).value.trim();
-
- const saleType =
- document
- .getElementById(
-  "saleType"
- ).value;
+    const customerName =
+        document
+        .getElementById("customerName")
+        .value
+        .trim();
 
 
- if(
-  !date ||
-  !name ||
-  !serial ||
-  !gmail ||
-  !phone
- ){
-
-  msg.style.color =
-  "#ff7070";
-
-  msg.textContent =
-  "Please fill all required fields.";
-
-  return;
-
- }
+    const serial =
+        document
+        .getElementById("serial")
+        .value
+        .trim();
 
 
- const ticket = {
-
-  sale_date:date,
-  branch:currentBranch,
-  customer_name:name,
-  order_number:order,
-  serial:serial,
-  ticket_type:type,
-  gmail:gmail,
-  phone:phone,
-  sale_type:saleType
-
- };
+    const category =
+        document
+        .getElementById("ticketType")
+        .value;
 
 
- const wasEditing =
- Boolean(editingTicketId);
+    const gmail =
+        document
+        .getElementById("gmail")
+        .value
+        .trim();
 
 
- btn.disabled = true;
-
- btn.textContent =
- wasEditing
- ? "Saving Changes..."
- : "Saving...";
-
-
- try{
-
-  let result;
+    const phone =
+        document
+        .getElementById("phone")
+        .value
+        .trim();
 
 
-  if(wasEditing){
-
-   result =
-   await supabaseClient
-   .from("ticket_handover")
-   .update(ticket)
-   .eq(
-    "id",
-    editingTicketId
-   )
-   .eq(
-    "branch",
-    currentBranch
-   );
-
-  }else{
-
-   result =
-   await supabaseClient
-   .from("ticket_handover")
-   .insert([
-    ticket
-   ]);
-
-  }
+    const saleType =
+        document
+        .getElementById("saleType")
+        .value;
 
 
-  if(result.error)
-   throw result.error;
+    const quantity =
+        Number(
+            document
+            .getElementById("quantity")
+            .value
+        );
 
 
-  msg.style.color =
-  "#4ade80";
-
-  msg.textContent =
-  wasEditing
-  ? "✓ Customer updated successfully"
-  : "✓ Ticket saved successfully";
+    const saleDate =
+        document
+        .getElementById("saleDate")
+        .value;
 
 
-  clearTicketForm();
+    if(
+        !customerName ||
+        !serial ||
+        !category ||
+        !gmail ||
+        !phone ||
+        !saleType ||
+        !quantity ||
+        quantity < 1 ||
+        !saleDate
+    ){
 
-  await loadMyTickets();
+        showStatus(
+            "saveStatus",
+            "Save unsuccessful: Please fill all required fields.",
+            false
+        );
+
+        return;
+
+    }
 
 
- }catch(e){
-
-  console.error(e);
-
-  msg.style.color =
-  "#ff7070";
-
-  msg.textContent =
-  "❌ " + e.message;
+    const unitPrice =
+        saleType === "Offline"
+        ? Number(PRICES[category] || 0)
+        : 0;
 
 
- }finally{
+    const amount =
+        saleType === "Offline"
+        ? unitPrice * quantity
+        : 0;
 
-  btn.disabled = false;
-  btn.textContent =
-  "Save Ticket";
 
- }
+    /*
+       IMPORTANT:
+       Branch is always the logged-in branch.
+       HOST cannot create tickets.
+    */
+
+    const ticketData = {
+
+        branch:
+            currentBranch,
+
+        sale_type:
+            saleType,
+
+        quantity:
+            quantity,
+
+        customer_name:
+            customerName,
+
+        serial:
+            serial,
+
+        ticket_type:
+            category,
+
+        category:
+            category,
+
+        gmail:
+            gmail,
+
+        phone:
+            phone,
+
+        sale_date:
+            saleDate,
+
+        price:
+            unitPrice,
+
+        amount:
+            amount,
+
+        created_by:
+            currentUser.id,
+
+        updated_at:
+            new Date().toISOString()
+
+    };
+
+
+    let result;
+
+
+    /* =================================================
+       EDIT
+    ================================================= */
+
+    if(editingId){
+
+        /*
+           Only edit ticket belonging to this branch.
+        */
+
+        result =
+            await supabaseClient
+            .from("tickets")
+            .update(ticketData)
+            .eq(
+                "id",
+                editingId
+            )
+            .eq(
+                "branch",
+                currentBranch
+            );
+
+    }
+
+
+    /* =================================================
+       NEW
+    ================================================= */
+
+    else{
+
+        result =
+            await supabaseClient
+            .from("tickets")
+            .insert([
+                ticketData
+            ]);
+
+    }
+
+
+    if(result.error){
+
+        showStatus(
+            "saveStatus",
+            "Save unsuccessful: " +
+            result.error.message,
+            false
+        );
+
+        return;
+
+    }
+
+
+    showStatus(
+        "saveStatus",
+        editingId
+        ? "Save successful — Ticket updated."
+        : "Save successful — Ticket created.",
+        true
+    );
+
+
+    clearForm();
+
+
+    document
+        .getElementById("formBox")
+        .classList
+        .add("hidden");
+
+
+    await searchTickets();
+
+
+    /*
+       HOST automatically refreshes
+       if needed.
+    */
+
+    if(currentBranch === "ALL"){
+
+        await loadHostDashboard();
+
+    }
 
 }
 
 
-document
-.getElementById("saveTicketBtn")
-.addEventListener(
- "click",
- saveTicket
-);
+/* =====================================================
+   STATUS MESSAGE
+===================================================== */
+
+function showStatus(
+    elementId,
+    message,
+    success
+){
+
+    const box =
+        document
+        .getElementById(elementId);
 
 
-/* ================================
+    if(!box)
+        return;
+
+
+    box.textContent =
+        message;
+
+
+    box.className =
+        "status " +
+        (
+            success
+            ? "success"
+            : "error"
+        );
+
+
+    setTimeout(() => {
+
+        box.className =
+            "status";
+
+    },5000);
+
+}
+
+
+/* =====================================================
+   CLEAR FORM
+===================================================== */
+
+function clearForm(){
+
+    editingId = null;
+
+
+    document
+        .getElementById("customerName")
+        .value = "";
+
+
+    document
+        .getElementById("serial")
+        .value = "";
+
+
+    document
+        .getElementById("ticketType")
+        .value = "";
+
+
+    document
+        .getElementById("gmail")
+        .value = "";
+
+
+    document
+        .getElementById("phone")
+        .value = "";
+
+
+    document
+        .getElementById("saleType")
+        .value = "";
+
+
+    document
+        .getElementById("quantity")
+        .value = "1";
+
+
+    updatePrice();
+
+}
+
+
+/* =====================================================
+   CANCEL
+===================================================== */
+
+function cancelEdit(){
+
+    clearForm();
+
+
+    document
+        .getElementById("formBox")
+        .classList
+        .add("hidden");
+
+}
+
+
+/* =====================================================
    EDIT TICKET
-================================ */
+===================================================== */
 
-async function editTicket(id){
+function editTicket(ticket){
 
- if(!id){
+    /*
+       HOST CANNOT EDIT
+    */
 
-  alert(
-   "Ticket ID is missing."
-  );
+    if(currentBranch === "ALL"){
 
-  return;
+        alert(
+            "HOST cannot edit tickets."
+        );
 
- }
+        return;
 
-
- try{
-
-  const {
-   data,
-   error
-  } =
-  await supabaseClient
-  .from("ticket_handover")
-  .select("*")
-  .eq("id",id)
-  .eq("branch",currentBranch)
-  .single();
+    }
 
 
-  if(error)
-   throw error;
+    /*
+       Safety check
+    */
+
+    if(ticket.branch !== currentBranch){
+
+        alert(
+            "You can only edit tickets from your branch."
+        );
+
+        return;
+
+    }
 
 
-  editingTicketId =
-  id;
+    editingId =
+        ticket.id;
 
 
-  document
-  .getElementById(
-   "ticketDate"
-  )
-  .value =
-  data.sale_date ||
-  today();
-
-  document
-  .getElementById(
-   "customerName"
-  )
-  .value =
-  data.customer_name ||
-  "";
-
-  document
-  .getElementById(
-   "orderNumber"
-  )
-  .value =
-  data.order_number ||
-  "";
-
-  document
-  .getElementById(
-   "ticketSerial"
-  )
-  .value =
-  data.serial ||
-  "";
-
-  document
-  .getElementById(
-   "ticketType"
-  )
-  .value =
-  data.ticket_type ||
-  "Premium Orbit";
-
-  document
-  .getElementById(
-   "customerGmail"
-  )
-  .value =
-  data.gmail ||
-  "";
-
-  document
-  .getElementById(
-   "customerPhone"
-  )
-  .value =
-  data.phone ||
-  "";
-
-  document
-  .getElementById(
-   "saleType"
-  )
-  .value =
-  data.sale_type ||
-  "Online";
+    document
+        .getElementById("formBox")
+        .classList
+        .remove("hidden");
 
 
-  document
-  .getElementById(
-   "saveTicketBtn"
-  )
-  .textContent =
-  "Save Changes";
+    document
+        .getElementById("formTitle")
+        .textContent =
+        "Edit Ticket";
 
 
-  document
-  .getElementById(
-   "cancelEditBtn"
-  )
-  .classList
-  .remove("hidden");
+    document
+        .getElementById("customerName")
+        .value =
+        ticket.customer_name || "";
 
 
-  document
-  .getElementById(
-   "ticketMessage"
-  )
-  .textContent = "";
+    document
+        .getElementById("serial")
+        .value =
+        ticket.serial || "";
 
 
-  document
-  .getElementById(
-   "ticketHandoverCard"
-  )
-  .scrollIntoView({
-   behavior:"smooth",
-   block:"start"
-  });
+    document
+        .getElementById("ticketType")
+        .value =
+        ticket.category ||
+        ticket.ticket_type ||
+        "";
 
 
- }catch(e){
+    document
+        .getElementById("gmail")
+        .value =
+        ticket.gmail || "";
 
-  console.error(e);
 
-  alert(
-   "Could not open customer:\n" +
-   e.message
-  );
+    document
+        .getElementById("phone")
+        .value =
+        ticket.phone || "";
 
- }
+
+    document
+        .getElementById("saleType")
+        .value =
+        ticket.sale_type || "";
+
+
+    document
+        .getElementById("quantity")
+        .value =
+        ticket.quantity || 1;
+
+
+    document
+        .getElementById("saleDate")
+        .value =
+        ticket.sale_date ||
+        today();
+
+
+    updatePrice();
+
+
+    window.scrollTo({
+
+        top:0,
+
+        behavior:"smooth"
+
+    });
 
 }
 
 
-/* ================================
-   EDIT BUTTON
-================================ */
-
-document
-.getElementById(
- "myTicketsResults"
-)
-.addEventListener(
- "click",
- e=>{
+/* =====================================================
+   DELETE TICKET — PERMANENT
+===================================================== */
 
-  const button =
-  e.target.closest(
-   ".edit-btn"
-  );
+async function deleteTicket(ticketId){
 
-  if(!button)
-   return;
+    /*
+       HOST CANNOT DELETE
+    */
 
+    if(currentBranch === "ALL"){
 
-  editTicket(
-   button.getAttribute(
-    "data-ticket-id"
-   )
-  );
+        alert(
+            "HOST cannot delete tickets."
+        );
 
- }
-);
+        return;
 
+    }
 
-/* ================================
-   CANCEL EDIT
-================================ */
 
-document
-.getElementById(
- "cancelEditBtn"
-)
-.addEventListener(
- "click",
- ()=>{
+    if(!ticketId){
 
-  clearTicketForm();
+        alert(
+            "Delete unsuccessful."
+        );
 
-  document
-  .getElementById(
-   "ticketMessage"
-  )
-  .textContent = "";
+        return;
 
- }
-);
+    }
 
 
-/* ================================
-   MY TICKETS
-================================ */
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to permanently delete this ticket?\n\n" +
+            "It will be removed from the Branch, HOST Dashboard, Search and all totals."
+        );
 
-async function loadMyTickets(){
 
- if(isHost)
-  return;
+    if(!confirmDelete){
 
+        return;
 
- const date =
- document
- .getElementById(
-  "myTicketsDate"
- ).value;
+    }
 
- const container =
- document
- .getElementById(
-  "myTicketsResults"
- );
 
+    /*
+       PERMANENT DELETE
+    */
 
- container.innerHTML =
- "<p>Loading...</p>";
+    const {error} =
+        await supabaseClient
+        .from("tickets")
+        .delete()
+        .eq(
+            "id",
+            ticketId
+        )
+        .eq(
+            "branch",
+            currentBranch
+        );
 
 
- try{
+    if(error){
 
-  const {
-   data,
-   error
-  } =
-  await supabaseClient
-  .from("ticket_handover")
-  .select("*")
-  .eq(
-   "sale_date",
-   date
-  )
-  .eq(
-   "branch",
-   currentBranch
-  )
-  .order(
-   "id",
-   {
-    ascending:false
-   }
-  );
+        alert(
+            "Delete unsuccessful:\n" +
+            error.message
+        );
 
+        return;
 
-  if(error)
-   throw error;
+    }
 
 
-  if(!data || !data.length){
-
-   container.innerHTML =
-   "<p style='color:#999'>No tickets found.</p>";
-
-   return;
-
-  }
-
-
-  container.innerHTML =
-  data
-  .map(
-   ticket=>`
-
-   <div class="ticket-card">
-
-    <div class="ticket-top">
-
-     <h3>
-      ${esc(ticket.customer_name)}
-     </h3>
-
-     <span class="ticket-badge">
-      ${esc(ticket.sale_type)}
-     </span>
-
-    </div>
-
-    <br>
-
-    <b>Date:</b>
-    ${esc(ticket.sale_date)}
-
-    <br><br>
-
-    <b>Order Number:</b>
-    ${esc(ticket.order_number) || "—"}
-
-    <br>
-
-    <b>Serial:</b>
-    ${esc(ticket.serial)}
-
-    <br>
-
-    <b>Ticket:</b>
-    ${esc(ticket.ticket_type)}
-
-    <br>
-
-    <b>Gmail:</b>
-    ${esc(ticket.gmail)}
-
-    <br>
-
-    <b>Phone:</b>
-    ${esc(ticket.phone)}
-
-    <br>
-
-    <button
-     type="button"
-     class="edit-btn"
-     data-ticket-id="${esc(ticket.id)}"
-    >
-     ✏️ Edit
-    </button>
-
-   </div>
-
-  `
-  )
-  .join("");
-
-
- }catch(e){
-
-  console.error(e);
-
-  container.innerHTML =
-  `
-   <p style="color:#ff7070">
-    ❌ ${esc(e.message)}
-   </p>
-  `;
-
- }
-
-}
-
-
-document
-.getElementById(
- "loadMyTicketsBtn"
-)
-.addEventListener(
- "click",
- loadMyTickets
-);
-
-
-document
-.getElementById(
- "myTicketsDate"
-)
-.addEventListener(
- "change",
- loadMyTickets
-);
-
-
-/* ================================
-   SEARCH DAY
-================================ */
-
-async function searchDay(){
-
- const date =
- document
- .getElementById(
-  "searchDate"
- ).value;
-
- const results =
- document
- .getElementById(
-  "results"
- );
-
-
- results.innerHTML =
- "<p>Loading...</p>";
-
-
- try{
-
-  let query =
-  supabaseClient
-  .from("ticket_sales")
-  .select("*")
-  .eq(
-   "sale_date",
-   date
-  );
-
-
-  if(!isHost)
-   query =
-   query.eq(
-    "branch",
-    currentBranch
-   );
-
-
-  const {
-   data,
-   error
-  } =
-  await query;
-
-
-  if(error)
-   throw error;
-
-
-  if(!data || !data.length){
-
-   results.innerHTML =
-   "<p>No data found.</p>";
-
-   return;
-
-  }
-
-
-  results.innerHTML =
-  data
-  .map(
-   item=>{
-
-    const online =
-    Number(
-     item.online_premium || 0
-    ) +
-    Number(
-     item.online_fanpit || 0
-    ) +
-    Number(
-     item.online_vip || 0
-    ) +
-    Number(
-     item.online_high_regular || 0
+    alert(
+        "Delete successful."
     );
 
 
-    const offline =
-    Number(
-     item.offline_premium || 0
-    ) +
-    Number(
-     item.offline_fanpit || 0
-    ) +
-    Number(
-     item.offline_vip || 0
-    ) +
-    Number(
-     item.offline_high_regular || 0
-    );
+    editingId = null;
 
 
-    return `
-
-    <div class="ticket-card">
-
-     <h3>
-      ${esc(item.branch)}
-     </h3>
-
-     <b>Online Tickets:</b>
-     ${online}
-
-     <br><br>
-
-     <b>Offline Tickets:</b>
-     ${offline}
-
-     <br>
-
-     Premium Orbit:
-     ${item.offline_premium || 0}
-
-     <br>
-
-     Fanpit:
-     ${item.offline_fanpit || 0}
-
-     <br>
-
-     VIP:
-     ${item.offline_vip || 0}
-
-     <br>
-
-     High Regular:
-     ${item.offline_high_regular || 0}
-
-     <br><br>
-
-     <b>Offline Cash:</b>
-     ${Number(
-      item.offline_cash || 0
-     ).toLocaleString()} EGP
-
-    </div>
-
-    `;
-
-   }
-  )
-  .join("");
+    document
+        .getElementById("formBox")
+        .classList
+        .add("hidden");
 
 
- }catch(e){
+    clearForm();
 
-  results.innerHTML =
-  `
-   <p style="color:#ff7070">
-    ❌ ${esc(e.message)}
-   </p>
-  `;
 
- }
+    await searchTickets();
+
+
+    /*
+       Refresh HOST if needed
+    */
+
+    if(currentBranch === "ALL"){
+
+        await loadHostDashboard();
+
+    }
 
 }
 
 
-document
-.getElementById(
- "searchBtn"
-)
-.addEventListener(
- "click",
- searchDay
-);
+/* =====================================================
+   SEARCH TICKETS
+===================================================== */
+
+async function searchTickets(){
+
+    const search =
+        document
+        .getElementById("search")
+        .value
+        .trim();
 
 
-/* ================================
+    /*
+       If empty
+    */
+
+    if(!search){
+
+        document
+            .getElementById("searchResults")
+            .innerHTML = "";
+
+        return;
+
+    }
+
+
+    let query =
+        supabaseClient
+        .from("tickets")
+        .select("*");
+
+
+    /*
+       Branch user sees only
+       their branch in search.
+    */
+
+    if(currentBranch &&
+       currentBranch !== "ALL"){
+
+        query =
+            query.eq(
+                "branch",
+                currentBranch
+            );
+
+    }
+
+
+    /*
+       Search
+    */
+
+    const safeSearch =
+        search
+        .replaceAll(",","");
+
+
+    query =
+        query.or(
+
+            `phone.ilike.%${safeSearch}%,` +
+            `customer_name.ilike.%${safeSearch}%,` +
+            `gmail.ilike.%${safeSearch}%,` +
+            `serial.ilike.%${safeSearch}%`
+
+        );
+
+
+    query =
+        query.order(
+            "created_at",
+            {
+                ascending:false
+            }
+        );
+
+
+    const {data,error} =
+        await query;
+
+
+    if(error){
+
+        document
+            .getElementById("searchResults")
+            .innerHTML =
+            `<p>
+                ${escapeHTML(error.message)}
+            </p>`;
+
+        return;
+
+    }
+
+
+    renderTickets(
+        data || []
+    );
+
+}
+
+
+/* =====================================================
+   RENDER SEARCH
+===================================================== */
+
+function renderTickets(
+    tickets
+){
+
+    const container =
+        document
+        .getElementById("searchResults");
+
+
+    if(!tickets.length){
+
+        container.innerHTML =
+            "<p>No tickets found.</p>";
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+
+        tickets.map(ticket => `
+
+        <div class="ticket">
+
+            <div class="ticketTop">
+
+                <strong>
+
+                    ${escapeHTML(
+                        ticket.customer_name
+                    )}
+
+                </strong>
+
+
+                <div class="ticketActions">
+
+                    <button
+                        class="editBtn"
+                        onclick='editTicket(${JSON.stringify(ticket)})'
+                    >
+                        EDIT
+                    </button>
+
+
+                    ${
+                        currentBranch !== "ALL"
+                        ?
+
+                        `
+                        <button
+                            class="deleteBtn"
+                            onclick="deleteTicket('${ticket.id}')"
+                        >
+                            DELETE
+                        </button>
+                        `
+
+                        :
+
+                        ""
+                    }
+
+                </div>
+
+            </div>
+
+
+            <span class="badge">
+
+                Branch:
+                ${escapeHTML(
+                    ticket.branch
+                )}
+
+            </span>
+
+
+            <span class="badge">
+
+                ${escapeHTML(
+                    ticket.sale_type
+                )}
+
+            </span>
+
+
+            <span class="badge">
+
+                ${escapeHTML(
+                    ticket.category ||
+                    ticket.ticket_type
+                )}
+
+            </span>
+
+
+            <div class="ticketInfo">
+
+                <div>
+
+                    <b>Date:</b>
+                    ${escapeHTML(
+                        ticket.sale_date || "-"
+                    )}
+
+                </div>
+
+
+                <div>
+
+                    <b>Serial:</b>
+                    ${escapeHTML(
+                        ticket.serial
+                    )}
+
+                </div>
+
+
+                <div>
+
+                    <b>Gmail:</b>
+                    ${escapeHTML(
+                        ticket.gmail
+                    )}
+
+                </div>
+
+
+                <div>
+
+                    <b>Phone:</b>
+                    ${escapeHTML(
+                        ticket.phone
+                    )}
+
+                </div>
+
+
+                <div>
+
+                    <b>Quantity:</b>
+                    ${Number(
+                        ticket.quantity || 0
+                    )}
+
+                </div>
+
+
+                <div>
+
+                    <b>Offline Cash:</b>
+
+                    ${
+                        Number(
+                            ticket.amount || 0
+                        ).toLocaleString()
+                    }
+
+                    EGP
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `)
+        .join("");
+
+}
+
+
+/* =====================================================
    HOST DASHBOARD
-================================ */
+===================================================== */
 
 async function loadHostDashboard(){
 
- if(!isHost)
-  return;
+    if(currentBranch !== "ALL")
+        return;
 
 
- const date =
- document
- .getElementById(
-  "hostDate"
- ).value;
-
- const container =
- document
- .getElementById(
-  "hostDashboardResults"
- );
+    const date =
+        document
+        .getElementById("hostDate")
+        .value;
 
 
- container.innerHTML =
- "<p>Loading...</p>";
+    if(!date)
+        return;
 
 
- try{
-
-  const {
-   data,
-   error
-  } =
-  await supabaseClient
-  .from("ticket_sales")
-  .select("*")
-  .eq(
-   "sale_date",
-   date
-  );
+    const {data,error} =
+        await supabaseClient
+        .from("tickets")
+        .select("*")
+        .eq(
+            "sale_date",
+            date
+        );
 
 
-  if(error)
-   throw error;
+    if(error){
+
+        document
+            .getElementById("hostResults")
+            .innerHTML =
+            `<p>
+                ${escapeHTML(error.message)}
+            </p>`;
+
+        document
+            .getElementById("grandTotal")
+            .innerHTML = "";
+
+        return;
+
+    }
 
 
-  const branches = [
-   "Zayed",
-   "Zamalek",
-   "Heliopolis",
-   "CFC"
-  ];
+    buildHostDashboard(
+        data || []
+    );
+
+}
 
 
-  let grandOnline = 0;
-  let grandOffline = 0;
-  let grandCash = 0;
-  let html = "";
+/* =====================================================
+   HOST DASHBOARD CALCULATIONS
+===================================================== */
+
+function createEmptySummary(){
+
+    return {
+
+        Premium:0,
+
+        Fanbit:0,
+
+        VIP:0,
+
+        Regular:0,
+
+        total:0,
+
+        cash:0
+
+    };
+
+}
 
 
-  branches.forEach(
-   branch=>{
+function buildHostDashboard(
+    tickets
+){
 
-    const item =
-    data?.find(
-     x=>
-      String(
-       x.branch
-      ).toLowerCase() ===
-      branch.toLowerCase()
+    /*
+       IMPORTANT:
+       Branches are created ONLY
+       when there is actual data.
+    */
+
+    const branches = {};
+
+
+    const categories = [
+        "Premium",
+        "Fanbit",
+        "VIP",
+        "Regular"
+    ];
+
+
+    tickets.forEach(ticket => {
+
+        const branch =
+            ticket.branch ||
+            "Unknown";
+
+
+        if(!branches[branch]){
+
+            branches[branch] = {
+
+                Online:
+                    createEmptySummary(),
+
+                Offline:
+                    createEmptySummary()
+
+            };
+
+        }
+
+
+        const category =
+            ticket.category ||
+            ticket.ticket_type;
+
+
+        const quantity =
+            Number(
+                ticket.quantity || 0
+            );
+
+
+        if(
+            !categories.includes(
+                category
+            )
+        ){
+
+            return;
+
+        }
+
+
+        if(
+            ticket.sale_type === "Online"
+        ){
+
+            branches[branch]
+                .Online[category]
+                += quantity;
+
+
+            branches[branch]
+                .Online.total
+                += quantity;
+
+        }
+
+
+        if(
+            ticket.sale_type === "Offline"
+        ){
+
+            branches[branch]
+                .Offline[category]
+                += quantity;
+
+
+            branches[branch]
+                .Offline.total
+                += quantity;
+
+
+            /*
+               Use stored amount.
+               This makes totals reliable.
+            */
+
+            branches[branch]
+                .Offline.cash
+                += Number(
+                    ticket.amount || 0
+                );
+
+        }
+
+    });
+
+
+    renderBranchTables(
+        branches
     );
 
 
-    const online =
-    item
-    ?
-    Number(
-     item.online_premium || 0
-    ) +
-    Number(
-     item.online_fanpit || 0
-    ) +
-    Number(
-     item.online_vip || 0
-    ) +
-    Number(
-     item.online_high_regular || 0
-    )
-    : 0;
-
-
-    const offline =
-    item
-    ?
-    Number(
-     item.offline_premium || 0
-    ) +
-    Number(
-     item.offline_fanpit || 0
-    ) +
-    Number(
-     item.offline_vip || 0
-    ) +
-    Number(
-     item.offline_high_regular || 0
-    )
-    : 0;
-
-
-    const cash =
-    item
-    ?
-    Number(
-     item.offline_cash || 0
-    )
-    : 0;
-
-
-    grandOnline += online;
-    grandOffline += offline;
-    grandCash += cash;
-
-
-    html += `
-
-    <div class="host-branch">
-
-     <div class="host-branch-title">
-
-      <h3>
-       ${branch}
-      </h3>
-
-      <div class="branch-total">
-       Total:
-       ${online + offline}
-      </div>
-
-     </div>
-
-
-     <div class="stats-row">
-
-      <div class="stat">
-
-       <div class="stat-title">
-        Online
-       </div>
-
-       <div class="stat-value online-number">
-        ${online}
-       </div>
-
-      </div>
-
-
-      <div class="stat">
-
-       <div class="stat-title">
-        Offline
-       </div>
-
-       <div class="stat-value offline-number">
-        ${offline}
-       </div>
-
-      </div>
-
-
-      <div class="stat">
-
-       <div class="stat-title">
-        Cash
-       </div>
-
-       <div class="stat-value money-number">
-        ${cash.toLocaleString()} EGP
-       </div>
-
-      </div>
-
-     </div>
-
-
-     <div class="offline-details">
-
-      <h4>
-       Offline Tickets
-      </h4>
-
-      <div class="offline-item">
-       <span>Premium Orbit</span>
-       <span class="offline-count">
-        ${item?.offline_premium || 0}
-       </span>
-      </div>
-
-      <div class="offline-item">
-       <span>Fanpit</span>
-       <span class="offline-count">
-        ${item?.offline_fanpit || 0}
-       </span>
-      </div>
-
-      <div class="offline-item">
-       <span>VIP</span>
-       <span class="offline-count">
-        ${item?.offline_vip || 0}
-       </span>
-      </div>
-
-      <div class="offline-item">
-       <span>High Regular</span>
-       <span class="offline-count">
-        ${item?.offline_high_regular || 0}
-       </span>
-      </div>
-
-     </div>
-
-    </div>
-
-    `;
-
-   }
-  );
-
-
-  container.innerHTML = `
-
-  <div class="summary-grid">
-
-   <div class="summary-card">
-
-    <h3>
-     Total Online
-    </h3>
-
-    <div class="summary-number online-number">
-     ${grandOnline}
-    </div>
-
-   </div>
-
-
-   <div class="summary-card">
-
-    <h3>
-     Total Offline
-    </h3>
-
-    <div class="summary-number offline-number">
-     ${grandOffline}
-    </div>
-
-   </div>
-
-
-   <div class="summary-card">
-
-    <h3>
-     Total Tickets
-    </h3>
-
-    <div class="summary-number total-number">
-     ${grandOnline + grandOffline}
-    </div>
-
-   </div>
-
-
-   <div class="summary-card">
-
-    <h3>
-     Total Cash
-    </h3>
-
-    <div class="summary-number money-number">
-     ${grandCash.toLocaleString()} EGP
-    </div>
-
-   </div>
-
-  </div>
-
-
-  ${html}
-
-
-  <div class="grand-total">
-
-   <h2>
-    📊 Grand Total — ${date}
-   </h2>
-
-   <div class="grand-grid">
-
-    <div class="grand-item">
-     <div>Online</div>
-     <div class="grand-value online-number">
-      ${grandOnline}
-     </div>
-    </div>
-
-    <div class="grand-item">
-     <div>Offline</div>
-     <div class="grand-value offline-number">
-      ${grandOffline}
-     </div>
-    </div>
-
-    <div class="grand-item">
-     <div>All Tickets</div>
-     <div class="grand-value total-number">
-      ${grandOnline + grandOffline}
-     </div>
-    </div>
-
-    <div class="grand-item">
-     <div>Total Cash</div>
-     <div class="grand-value money-number">
-      ${grandCash.toLocaleString()} EGP
-     </div>
-    </div>
-
-   </div>
-
-  </div>
-
-  `;
-
-
- }catch(e){
-
-  console.error(e);
-
-  container.innerHTML =
-  `
-   <p style="color:#ff7070">
-    ❌ ${esc(e.message)}
-   </p>
-  `;
-
- }
+    renderGrandTotal(
+        branches
+    );
 
 }
 
 
-document
-.getElementById(
- "hostDate"
-)
-.addEventListener(
- "change",
- loadHostDashboard
-);
+/* =====================================================
+   BRANCH TABLES
+===================================================== */
+
+function renderBranchTables(
+    branches
+){
+
+    const container =
+        document
+        .getElementById("hostResults");
 
 
-/* ================================
-   HOST CUSTOMER SEARCH
-================================ */
-
-async function hostCustomerSearch(){
-
- if(!isHost)
-  return;
+    const branchNames =
+        Object.keys(branches)
+        .sort();
 
 
- const search =
- document
- .getElementById(
-  "hostCustomerSearch"
- )
- .value
- .trim();
+    if(!branchNames.length){
+
+        container.innerHTML = `
+
+            <div class="branchCard">
+
+                <h3>
+                    No tickets for this date.
+                </h3>
+
+                <p style="
+                    margin-top:8px;
+                    color:#9fb6c6;
+                ">
+                    The dashboard will update automatically
+                    when a branch saves a ticket.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
 
 
- const container =
- document
- .getElementById(
-  "hostCustomerResults"
- );
+    container.innerHTML =
+
+        branchNames.map(branch => {
+
+            const b =
+                branches[branch];
 
 
- if(!search){
+            return `
 
-  container.innerHTML =
-  "<p style='color:#aaa'>Write something to search.</p>";
+            <div class="branchCard">
 
-  return;
+                <div class="branchHeader">
 
- }
-
-
- container.innerHTML =
- "<p>Searching...</p>";
-
-
- try{
-
-  const pattern =
-  "%" + search + "%";
+                    <h3>
+                        ${escapeHTML(
+                            branch
+                        )}
+                    </h3>
 
 
-  const {
-   data,
-   error
-  } =
-  await supabaseClient
-  .from("ticket_handover")
-  .select("*")
-  .or(
-   "customer_name.ilike."+pattern+
-   ",phone.ilike."+pattern+
-   ",serial.ilike."+pattern+
-   ",gmail.ilike."+pattern+
-   ",order_number.ilike."+pattern
-  )
-  .order(
-   "id",
-   {
-    ascending:false
-   }
-  )
-  .limit(50);
+                    <div class="branchCash">
+
+                        Offline Cash:
+                        ${
+                            b.Offline.cash
+                            .toLocaleString()
+                        }
+                        EGP
+
+                    </div>
+
+                </div>
 
 
-  if(error)
-   throw error;
+                <!-- =================================
+                     OFFLINE TABLE
+                ================================== -->
+
+                <div class="tableTitle">
+
+                    OFFLINE SALES
+
+                </div>
 
 
-  if(!data || !data.length){
+                <div class="tableWrapper">
 
-   container.innerHTML =
-   "<p style='color:#aaa'>No customer found.</p>";
+                    <table
+                        class="summaryTable"
+                    >
 
-   return;
+                        <thead>
 
-  }
+                            <tr>
 
+                                <th>
+                                    Category
+                                </th>
 
-  container.innerHTML =
-  data
-  .map(
-   ticket=>`
+                                <th>
+                                    Tickets Sold
+                                </th>
 
-   <div class="ticket-card">
+                                <th>
+                                    Unit Price
+                                </th>
 
-    <div class="ticket-top">
+                                <th>
+                                    Total Cash
+                                </th>
 
-     <h3>
-      ${esc(ticket.customer_name)}
-     </h3>
+                            </tr>
 
-     <span class="ticket-badge">
-      ${esc(ticket.sale_type)}
-     </span>
-
-    </div>
-
-    <br>
-
-    <b>Branch:</b>
-    ${esc(ticket.branch)}
-
-    <br><br>
-
-    <b>Date:</b>
-    ${esc(ticket.sale_date)}
-
-    <br>
-
-    <b>Order:</b>
-    ${esc(ticket.order_number) || "—"}
-
-    <br>
-
-    <b>Serial:</b>
-    ${esc(ticket.serial)}
-
-    <br>
-
-    <b>Ticket:</b>
-    ${esc(ticket.ticket_type)}
-
-    <br>
-
-    <b>Gmail:</b>
-    ${esc(ticket.gmail)}
-
-    <br>
-
-    <b>Phone:</b>
-    ${esc(ticket.phone)}
-
-   </div>
-
-   `
-  )
-  .join("");
+                        </thead>
 
 
- }catch(e){
+                        <tbody>
 
-  container.innerHTML =
-  `
-   <p style="color:#ff7070">
-    ❌ ${esc(e.message)}
-   </p>
-  `;
+                            <tr>
 
- }
+                                <td>
+                                    Premium
+                                </td>
+
+                                <td>
+                                    ${b.Offline.Premium}
+                                </td>
+
+                                <td>
+                                    1,500 EGP
+                                </td>
+
+                                <td class="cash">
+
+                                    ${
+                                        (
+                                            b.Offline.Premium
+                                            * PRICES.Premium
+                                        )
+                                        .toLocaleString()
+                                    }
+
+                                    EGP
+
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    Fanbit
+                                </td>
+
+                                <td>
+                                    ${b.Offline.Fanbit}
+                                </td>
+
+                                <td>
+                                    1,200 EGP
+                                </td>
+
+                                <td class="cash">
+
+                                    ${
+                                        (
+                                            b.Offline.Fanbit
+                                            * PRICES.Fanbit
+                                        )
+                                        .toLocaleString()
+                                    }
+
+                                    EGP
+
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    VIP
+                                </td>
+
+                                <td>
+                                    ${b.Offline.VIP}
+                                </td>
+
+                                <td>
+                                    800 EGP
+                                </td>
+
+                                <td class="cash">
+
+                                    ${
+                                        (
+                                            b.Offline.VIP
+                                            * PRICES.VIP
+                                        )
+                                        .toLocaleString()
+                                    }
+
+                                    EGP
+
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    Regular
+                                </td>
+
+                                <td>
+                                    ${b.Offline.Regular}
+                                </td>
+
+                                <td>
+                                    500 EGP
+                                </td>
+
+                                <td class="cash">
+
+                                    ${
+                                        (
+                                            b.Offline.Regular
+                                            * PRICES.Regular
+                                        )
+                                        .toLocaleString()
+                                    }
+
+                                    EGP
+
+                                </td>
+
+                            </tr>
+
+
+                            <tr class="totalRow">
+
+                                <td>
+                                    TOTAL OFFLINE
+                                </td>
+
+                                <td>
+                                    ${b.Offline.total}
+                                </td>
+
+                                <td>
+                                    -
+                                </td>
+
+                                <td class="cash">
+
+                                    ${
+                                        b.Offline.cash
+                                        .toLocaleString()
+                                    }
+
+                                    EGP
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- =================================
+                     ONLINE TABLE
+                ================================== -->
+
+                <div class="tableTitle">
+
+                    ONLINE SALES
+
+                </div>
+
+
+                <div class="tableWrapper">
+
+                    <table
+                        class="summaryTable"
+                    >
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Category
+                                </th>
+
+                                <th>
+                                    Tickets Sold
+                                </th>
+
+                                <th>
+                                    Cash
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            <tr>
+
+                                <td>
+                                    Premium
+                                </td>
+
+                                <td>
+                                    ${b.Online.Premium}
+                                </td>
+
+                                <td>
+                                    0 EGP
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    Fanbit
+                                </td>
+
+                                <td>
+                                    ${b.Online.Fanbit}
+                                </td>
+
+                                <td>
+                                    0 EGP
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    VIP
+                                </td>
+
+                                <td>
+                                    ${b.Online.VIP}
+                                </td>
+
+                                <td>
+                                    0 EGP
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    Regular
+                                </td>
+
+                                <td>
+                                    ${b.Online.Regular}
+                                </td>
+
+                                <td>
+                                    0 EGP
+                                </td>
+
+                            </tr>
+
+
+                            <tr class="totalRow">
+
+                                <td>
+                                    TOTAL ONLINE
+                                </td>
+
+                                <td>
+                                    ${b.Online.total}
+                                </td>
+
+                                <td>
+                                    0 EGP
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- =================================
+                     BRANCH TOTAL
+                ================================== -->
+
+                <div class="tableTitle">
+
+                    BRANCH TOTAL
+
+                </div>
+
+
+                <div class="tableWrapper">
+
+                    <table
+                        class="summaryTable"
+                    >
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Total
+                                </th>
+
+                                <th>
+                                    Premium
+                                </th>
+
+                                <th>
+                                    Fanbit
+                                </th>
+
+                                <th>
+                                    VIP
+                                </th>
+
+                                <th>
+                                    Regular
+                                </th>
+
+                                <th>
+                                    Total Tickets
+                                </th>
+
+                                <th>
+                                    Offline Cash
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            <tr class="totalRow">
+
+                                <td>
+                                    ALL
+                                </td>
+
+                                <td>
+
+                                    ${
+                                        b.Online.Premium +
+                                        b.Offline.Premium
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    ${
+                                        b.Online.Fanbit +
+                                        b.Offline.Fanbit
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    ${
+                                        b.Online.VIP +
+                                        b.Offline.VIP
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    ${
+                                        b.Online.Regular +
+                                        b.Offline.Regular
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    ${
+                                        b.Online.total +
+                                        b.Offline.total
+                                    }
+
+                                </td>
+
+                                <td class="cash">
+
+                                    ${
+                                        b.Offline.cash
+                                        .toLocaleString()
+                                    }
+
+                                    EGP
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+            `;
+
+        })
+        .join("");
 
 }
 
 
-document
-.getElementById(
- "hostSearchBtn"
-)
-.addEventListener(
- "click",
- hostCustomerSearch
-);
+/* =====================================================
+   GRAND TOTAL
+===================================================== */
+
+function renderGrandTotal(
+    branches
+){
+
+    const totals = {
+
+        Online:
+            createEmptySummary(),
+
+        Offline:
+            createEmptySummary()
+
+    };
 
 
-document
-.getElementById(
- "hostCustomerSearch"
-)
-.addEventListener(
- "keydown",
- e=>{
+    Object.values(branches)
+    .forEach(branch => {
 
-  if(e.key==="Enter")
-   hostCustomerSearch();
+        const online =
+            branch.Online;
 
- }
-);
+        const offline =
+            branch.Offline;
 
 
-/* ================================
-   REALTIME
-================================ */
+        totals.Online.Premium
+            += online.Premium;
 
-supabaseClient
-.channel("sales-live")
-.on(
- "postgres_changes",
- {
-  event:"*",
-  schema:"public",
-  table:"ticket_sales"
- },
- ()=>{
-  if(isHost)
-   loadHostDashboard();
- }
-)
-.subscribe();
+        totals.Online.Fanbit
+            += online.Fanbit;
+
+        totals.Online.VIP
+            += online.VIP;
+
+        totals.Online.Regular
+            += online.Regular;
+
+        totals.Online.total
+            += online.total;
 
 
-supabaseClient
-.channel("tickets-live")
-.on(
- "postgres_changes",
- {
-  event:"*",
-  schema:"public",
-  table:"ticket_handover"
- },
- ()=>{
-  if(isHost){
+        totals.Offline.Premium
+            += offline.Premium;
 
-   const search =
-   document
-   .getElementById(
-    "hostCustomerSearch"
-   )
-   .value
-   .trim();
+        totals.Offline.Fanbit
+            += offline.Fanbit;
 
-   if(search)
-    hostCustomerSearch();
+        totals.Offline.VIP
+            += offline.VIP;
 
-  }else{
+        totals.Offline.Regular
+            += offline.Regular;
 
-   loadMyTickets();
+        totals.Offline.total
+            += offline.total;
 
-  }
- }
-)
-.subscribe();
+        totals.Offline.cash
+            += offline.cash;
+
+    });
+
+
+    document
+        .getElementById("grandTotal")
+        .innerHTML = `
+
+        <h2>
+            GRAND TOTAL — ALL BRANCHES
+        </h2>
+
+
+        <div class="tableWrapper">
+
+            <table class="grandTable">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Sale Type
+                        </th>
+
+                        <th>
+                            Premium
+                        </th>
+
+                        <th>
+                            Fanbit
+                        </th>
+
+                        <th>
+                            VIP
+                        </th>
+
+                        <th>
+                            Regular
+                        </th>
+
+                        <th>
+                            Total Tickets
+                        </th>
+
+                        <th>
+                            Offline Cash
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+                            ONLINE
+                        </td>
+
+                        <td>
+                            ${totals.Online.Premium}
+                        </td>
+
+                        <td>
+                            ${totals.Online.Fanbit}
+                        </td>
+
+                        <td>
+                            ${totals.Online.VIP}
+                        </td>
+
+                        <td>
+                            ${totals.Online.Regular}
+                        </td>
+
+                        <td>
+                            ${totals.Online.total}
+                        </td>
+
+                        <td>
+                            0 EGP
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            OFFLINE
+                        </td>
+
+                        <td>
+                            ${totals.Offline.Premium}
+                        </td>
+
+                        <td>
+                            ${totals.Offline.Fanbit}
+                        </td>
+
+                        <td>
+                            ${totals.Offline.VIP}
+                        </td>
+
+                        <td>
+                            ${totals.Offline.Regular}
+                        </td>
+
+                        <td>
+                            ${totals.Offline.total}
+                        </td>
+
+                        <td class="cash">
+
+                            ${
+                                totals.Offline.cash
+                                .toLocaleString()
+                            }
+
+                            EGP
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr class="grandRow">
+
+                        <td>
+                            ALL TOTAL
+                        </td>
+
+                        <td>
+
+                            ${
+                                totals.Online.Premium +
+                                totals.Offline.Premium
+                            }
+
+                        </td>
+
+                        <td>
+
+                            ${
+                                totals.Online.Fanbit +
+                                totals.Offline.Fanbit
+                            }
+
+                        </td>
+
+                        <td>
+
+                            ${
+                                totals.Online.VIP +
+                                totals.Offline.VIP
+                            }
+
+                        </td>
+
+                        <td>
+
+                            ${
+                                totals.Online.Regular +
+                                totals.Offline.Regular
+                            }
+
+                        </td>
+
+                        <td>
+
+                            ${
+                                totals.Online.total +
+                                totals.Offline.total
+                            }
+
+                        </td>
+
+                        <td class="cash">
+
+                            ${
+                                totals.Offline.cash
+                                .toLocaleString()
+                            }
+
+                            EGP
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        `;
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHTML(
+    value
+){
+
+    return String(
+        value ?? ""
+    )
+
+    .replaceAll(
+        "&",
+        "&amp;"
+    )
+
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+
+    .replaceAll(
+        ">",
+        "&gt;"
+    )
+
+    .replaceAll(
+        '"',
+        "&quot;"
+    )
+
+    .replaceAll(
+        "'",
+        "&#039;"
+    );
+
+}
+
+
+/* =====================================================
+   AUTO LOGIN
+===================================================== */
+
+(async function(){
+
+    const {data} =
+        await supabaseClient
+        .auth
+        .getSession();
+
+
+    if(data.session){
+
+        currentUser =
+            data.session.user;
+
+
+        await loadUser();
+
+    }
+
+})();
 
 </script>
 
